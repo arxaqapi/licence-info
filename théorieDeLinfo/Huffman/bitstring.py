@@ -1,6 +1,6 @@
 # conversion of character strings to bitstrings (lists of 0 and 1)
 
-from htrees import *
+from htrees import *z
 
 # convert a character with code in the range 0 .. 255 to a single byte, 
 # represented as list of 0 and 1

@@ -18,10 +18,12 @@ print(membre(a1, 'a'))
 print(membre(a2, 'b'))
 print(membre(a3, 'd'))
 afficher_arbre(a3, 0)
-"""
+
 print(nb_feuilles(a1))
 print(nb_feuilles(a2))
 print(nb_feuilles(a3))
-print(nb_feuilles(a4))
 
+"""
 print(nb_nds_int(a4))
+print(nb_feuilles(a4))
+print(nb_noeuds(a4))

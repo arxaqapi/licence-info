@@ -1,4 +1,5 @@
 from __future__ import print_function
+import os, sys
 
 from htrees import *
 from htree_dot_noviz import display_htree
@@ -34,6 +35,7 @@ def afficher_arbre(ht, ind):
         print('  '*ind, ht.val, ':', ht.code)
 
 ############## EXo 4 ################
+
 def nb_feuilles(ht):
     if isinstance(ht, Leaf):
         return 1
@@ -41,7 +43,10 @@ def nb_feuilles(ht):
         return nb_feuilles(ht.low) + nb_feuilles(ht.high)
 
 def nb_nds_int(ht):
-    if isinstance(ht, Node):
-        return 1
+    if isinstance(ht, Leaf):
+        return 0
     else:
-        return nb_nds_int(ht.low) + nb_nds_int(ht.high)
+        return nb_nds_int(ht.low) + nb_nds_int(ht.high) + 1
+
+def nb_noeuds(ht):
+    return nb_feuilles(ht) + nb_nds_int(ht)
