@@ -10,10 +10,10 @@ L1 S2
 └─── Algo
 │   
 └───théorieDeLinfo
-|   └─ Huffman
+|   └─── Huffman
 |
 └───tpC
-|   └─ tp1
+|   └─── tp1
 |
 └───tpMéthodesNum
 ```
