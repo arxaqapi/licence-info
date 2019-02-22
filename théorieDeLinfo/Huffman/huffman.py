@@ -46,12 +46,13 @@ def huffman (filename):
     code_bl_len = len(code_bl)
     code_str = bit_list_to_string (code_bl)
     write_file_latin1 (filename, fn_cod_suffix_constant, code_str)
-    
-    # decode string. 
+
+    # decode string.
     # The decoded string can be longer than code_bl due to bit stuffing
     # in bit_list_to_string; therefore limit to code_bl_len
     decode_bl = (string_to_bit_list(code_str))[:code_bl_len]
     decode_str = decode_bit_list_to_string(decode_bl, ht)
     write_file_latin1 (filename, fn_dec_suffix_constant, decode_str)
 
-
+### testing the construct_huffman_tree() function with miserables.txt graphviz.it
+#test_construct_huffman_tree('miserables')
