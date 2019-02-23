@@ -36,7 +36,7 @@ def increment(dico, key): # if not in dico add clé/val au dico
         dico[key] += 1 # increment value
     return dico
 
-def ch_distrib(entryDico):    ### calculate the frequence distribution for a string
+def ch_distrib(entryDico):   ### calculate the frequence distribution for a string
     dico_freq = {}
     lenghtFreqStr = float(len(entryDico))
     for c in entryDico:         # for each element in the string:
@@ -80,7 +80,18 @@ def dict_merge_f (d1, d2):
     dres.update(d2)
     return dres
 
+def tab_cod(mot, ht):
+    for i in mot:  # atteint le noeud visé
+        if i==1:
+            ht = ht.low
+        else:
+            ht = ht.high
+    if isinstance(ht, Leaf): # on renvoi table correspondante
+        return {ht.code : ht.val}
+    else:
+        return dict_merge_f(tab_cod("", ht), tab_cod("", ht))  # recusif
 
+    return
 #----------------------------------------------------------------------
 # Coding of a string with a coding table, resp. decoding with a Huffman tree
 #----------------------------------------------------------------------
