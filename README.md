@@ -14,6 +14,8 @@ L1 S2
 |
 └───tpC
 |   └─── tp1
+|   └─── tp2
+|   └─── tp3
 |
 └───tpMéthodesNum
 ```
