@@ -1,18 +1,18 @@
 #include <stdio.h>
 
-#define VAL 20
+#define VAL 30
 #define VOY 6
 
 int main() // ex2.1
 {
     char phrase[VAL];
     char voyelles[VOY] = {'a', 'e', 'i', 'o', 'u', 'y'};
-    int compteur = 0, compteurVoyelles = 0, i = 0;
+    int compteur = 0, compteurVoyelles = 0, i = 0, testLow, testInte = 0;
 
     printf("Enter character array: ");
     scanf("%s", &phrase);
 
-    while(phrase[i] != '#')
+    while((phrase[i] != '#') && (testInte == 0))
     {
         compteur ++;
         for(int y = 0; y < VOY; y++)
@@ -22,9 +22,20 @@ int main() // ex2.1
                 compteurVoyelles ++;
             }
         }
+        
+        testLow = isupper(phrase[i]);
+        if(testLow != 0)
+        {
+            testInte = 1;
+        }
         i ++;
     }
-    printf("Total count of elements is : %d and the total count of vowels is : %d\n", compteur, compteurVoyelles);
+    if(testInte == 1)
+    {
+        printf("Erreur charac n°: %d", i);
+    }else {
+        printf("Total count of elements is : %d and the total count of vowels is : %d\n", compteur, compteurVoyelles);
+    }
     return 0;
 }  
 /*

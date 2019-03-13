@@ -80,6 +80,8 @@ def dict_merge_f (d1, d2):
     dres.update(d2)
     return dres
 
+
+
 def tab_cod(mot, ht):
     for i in mot:  # atteint le noeud visé
         if i==1:
@@ -90,8 +92,21 @@ def tab_cod(mot, ht):
         return {ht.code : ht.val}
     else:
         return dict_merge_f(tab_cod("", ht), tab_cod("", ht))  # recusif
-
+    #return MAIS QUESQEAFAIT WTF
+    """
+def tab_cod(mot, ht):
+    mot = {}
+    if isinstance(ht, htLeaf):
+        return {ht.cod : ht.val}
     return
+"""
+
+def htree_to_coding_tab(ht):
+    
+    return 
+
+
+
 #----------------------------------------------------------------------
 # Coding of a string with a coding table, resp. decoding with a Huffman tree
 #----------------------------------------------------------------------
