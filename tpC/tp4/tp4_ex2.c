@@ -27,13 +27,14 @@ int main() {
     printf("%d %d\n", nbRowsMax, nbColsMax); //ok
     printf("%hhu\n", MaxNvxGris);//ok
 
-    for(int i = 0; i < nbRowsMax; i++) // ok
+    for(int i = 0; i < nbColsMax; i++)
     {
-        for(int j = 0; j < nbColsMax; j++)
+        for(int j = 0; j < nbRowsMax; j++)
         {
-            printf("%hhu ", tableau[nbColsMax-j][i]);
+            printf("%hhu ", tableau[j][nbColsMax-i]);
         }
         printf("\n");
     }
+    
     return 0;
 }
