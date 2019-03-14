@@ -3,24 +3,7 @@
 
 from htrees import *
 from tree_func import afficher_arbre
-#### ONLY FOR #readfile######
 
-from htree_dot_noviz import display_htree
-
-from htree_construct import *
-from bitstring import *
-
-# Boolean constant determining whether trees are displayed with graphviz-dot
-display_tree_constant = True
-
-# name suffix for file containing coded/ decoded text
-fn_cod_suffix_constant = "_coded"
-fn_dec_suffix_constant = "_decoded"
-
-
-def read_file_latin1 (filename):
-    with open(filename + ".txt", encoding='ISO-8859-1') as fn:
-        return (fn.read())
 
 
 #----------------------------------------------------------------------
@@ -81,32 +64,43 @@ def dict_merge_f (d1, d2):
     return dres
 
 
-
-def tab_cod(mot, ht):
-    for i in mot:  # atteint le noeud visé
-        if i==1:
-            ht = ht.low
-        else:
-            ht = ht.high
-    if isinstance(ht, Leaf): # on renvoi table correspondante
-        return {ht.code : ht.val}
+def tab_cod(m, ht):
+    if isinstance(ht, Leaf):
+        return {ht.code : m} #on renvoit la table correspondante à la feuille
     else:
-        return dict_merge_f(tab_cod("", ht), tab_cod("", ht))  # recusif
-    #return MAIS QUESQEAFAIT WTF
-    """
-def tab_cod(mot, ht):
-    mot = {}
-    if isinstance(ht, htLeaf):
-        return {ht.cod : ht.val}
-    return
-"""
+        return dict_merge_f(tab_cod(m + [0], ht.low), tab_cod(m + [1], ht.high))
+
 
 def htree_to_coding_tab(ht):
-    
-    return 
-
-
+    return tab_cod([], ht) 
 
 #----------------------------------------------------------------------
 # Coding of a string with a coding table, resp. decoding with a Huffman tree
 #----------------------------------------------------------------------
+def code_source_string_to_bit_list(chaine, tabCod): # ex15
+    lst = []
+    for i in chaine:
+        lst.extend(tabCod[i])
+    return lst
+
+def decode_bit_list_to_char(bl, ht, pos): # ex 17
+    if isinstance(ht, Leaf):
+        return ht.code, pos
+    elif bl[pos] == 0:
+        return decode_bit_list_to_char(bl, ht.low, pos + 1)
+    return decode_bit_list_to_char(bl, ht.high, pos + 1)
+
+def bit_list_to_string(bl): 
+    chaine = []
+    for i in bl:
+        chaine.extend(i)
+    return chaine
+
+
+def decode_bit_list_to_string(bl, ht):  # ex18
+    chaine = "" 
+    i = 0
+    while i < len(bl):
+        char, i = decode_bit_list_to_char(bl, ht, i)
+        chaine += char
+    return chaine
