@@ -87,11 +87,17 @@ int Differentes(char *ch1, char *ch2)
  * Destination : adresse du premiere caractere de la chaine destination
  * Source : adresse du premiere caractere de la chaine a ajouter
  */
-/*void Ajout(char *Destination, char *Source)
+void Ajout(char *Destination, char *Source)
 {
-  A completer
+  int longDestination = Longueur(Destination);
+  int j = 0;
+  for(int i = longDestination; i < longDestination + Longueur(Source); i++)
+  { 
+    Destination[i] = Source[j];
+    j ++;
+  }
 }
-*/
+
 
 
 /* Fonction principale */
@@ -128,7 +134,7 @@ int main(void)
     Lecture(ch3,1);
   }
 
-  /*printf("\nTest de Ajout\n-------------\n");
+  printf("\nTest de Ajout\n-------------\n");
   Copie(ch3,"o");
   while (Differentes(ch3,"n"))
   {
@@ -141,7 +147,7 @@ int main(void)
     printf("ch1=\"%s\", ch2=\"%s\"\n",ch1,ch2);
     printf("Voulez-vous continuer le test de Ajout (tapez n pour arreter) : ");
     Lecture(ch3,1);
-  }*/
+  }
 
   return 0;
 }
