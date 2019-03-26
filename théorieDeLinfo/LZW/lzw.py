@@ -126,9 +126,10 @@ print("Taille fichier original: ", len(read_file("alice.txt")))
 print("Taille texte compr: ", len(compress(read_file("alice.txt"))))
 """
 
-def compressed_code_to_string(compr): # ex 9
+def compressed_code_to_string(compr): # ex 9 working
     string = ""
-    for i in compr:
+    taille = len(compr)
+    for i in range(taille):
         string += chr(compr[i])
     return(string)
 
