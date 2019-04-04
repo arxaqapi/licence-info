@@ -69,3 +69,24 @@ $$\lim\limits_{x\rArr}$$
 
 ## 2. Chapitre 2
 ## Interpolation polynomiale
+
+on cherche a reconstruire une fonction $f$ par des polynomes
+
+$p \in P^1 \implies (m+1)$ coéfficients à trouver
+## 2.1 Forme de Lagrange
+on definit $(n+1)$ polynomes
+
+$$\forall j= 0,1,...,n$$
+$$l_j,n(x) = \displaystyle\prod_{k=0;k=\not{j}}^n\frac{x-a_k}{a_j-a_k}$$
+$$P_f(x) = \displaystyle\sum_{k=0}^nf_kl_k,n(x)$$
+* n est le degré de $l_j,n(x)$
+* $l_j,n(x)$ sont les polynomes de lagrange.
+
+**vocab:**
+* $a_0,a_1,a_n$ sont les points d'interpolations
+* $f_0,f_1,f_n$ sont les valeurs interpolées
+* $f$ est la fonction interpolées
+* $P_f$ est le poly d'interpolation de $f$
+
+### Majoration/calcul d'erreur
+$$||E||_{\infin}\leqslant\frac{||f^{n+1}||}{(n+1)!}||\Pi_a||_\infin[a;b]$$
