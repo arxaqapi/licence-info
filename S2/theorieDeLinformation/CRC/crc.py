@@ -46,7 +46,6 @@ def add_poly(poly1, poly2):  # ok ex 5
 
     poly3.extend(poly2[taille_poly_1:])
     return poly3
-# print(add_poly([0,1,1,0], [1,0,1,1,0]))
 
 
 def diff_poly(poly1, poly2):
@@ -63,6 +62,14 @@ def mult_monome_poly(mono, poly):
     return poly_fin + poly
 
 
+def create_mono(nb):
+    monome = []
+    for i in range(nb):
+        monome.append(0)
+    monome.append(1)
+    return monome
+
+
 def mult_poly(poly1, poly2):
     poly_fin = []
     taille_poly1 = len(poly1)
@@ -74,22 +81,37 @@ def mult_poly(poly1, poly2):
 # print(mult_poly([0, 1, 1], [1, 0, 1, 1]))
 
 
-def eucl_poly(poly1, poly2):
-    poly_quotient = []
-    poly_reste = poly1[:]
-
-    degree_poly_2 = deg(poly2)
-    coeff_dominant_poly2 = coeff(poly2)
-
-    while poly_reste != [] and deg(poly_reste) >= degree_poly_2:
-        s = (coeff(poly_reste)/coeff_dominant_poly2) * \
-            mult_monome_poly(deg(poly_reste) - degree_poly_2, [])# attention condition
-            ## pas de * mais un if, pas de *[]
-        poly_quotient = add_poly(poly_quotient, s)
-        poly_reste = mult_poly(diff_poly(poly_quotient, s), poly2)
-    return (poly_quotient, poly_reste)
+def eucl_poly(poly_A, poly_B):
+    Q = []
+    R = poly_A[:]
+    d = deg(poly_B)
+    c = coeff(poly_B)
+    
+    i = 0
+    while (not is_null_poly(R) and deg(R) >= d) and i<2:
+        i += 1
+        if (coeff(R) / c) % 2 == 1:
+            S = create_mono(deg(R) - d)
+        else:
+            S = []
+        print("S: ", S)
+        Q = add_poly(Q, S)
+        print("Q: ", Q)
+        R = mult_poly(diff_poly(R, S), poly_B)
+        print("R: ", R)
+        d = deg(poly_B)
+        c = coeff(poly_B)
+    return (Q, R)
 
 print(eucl_poly([0, 1, 1, 0, 1], [1, 1]))
+
+
+def div_poly(poly_1, poly_2):  # quotient
+    return eucl_poly(poly_1, poly_2)[0]
+
+
+def mod_poly(poly_1, poly_2):  # reste
+    return eucl_poly(poly_1, poly_2)[1]
 
 
     #################
