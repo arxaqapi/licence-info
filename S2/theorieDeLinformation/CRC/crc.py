@@ -87,18 +87,13 @@ def eucl_poly(poly_A, poly_B):
     d = deg(poly_B)
     c = coeff(poly_B)
     
-    i = 0
-    while (not is_null_poly(R) and deg(R) >= d) and i<2:
-        i += 1
+    while (not is_null_poly(R) and deg(R) >= d):
         if (coeff(R) / c) % 2 == 1:
             S = create_mono(deg(R) - d)
         else:
             S = []
-        print("S: ", S)
         Q = add_poly(Q, S)
-        print("Q: ", Q)
-        R = mult_poly(diff_poly(R, S), poly_B)
-        print("R: ", R)
+        R = diff_poly(R, mult_poly(S, poly_B))
         d = deg(poly_B)
         c = coeff(poly_B)
     return (Q, R)
@@ -121,3 +116,16 @@ def mod_poly(poly_1, poly_2):  # reste
 
 def pad(poly, number):
     return poly + [0]*number
+
+
+def cod(msg, poly_gen, taille):
+    p_int = []
+    degree = deg(poly_gen)
+    p_int = pad(d, degree)
+    p_int.append(1)
+    return pad(add_poly(mult_poly(msg, p_int), mod_poly(msg, p_int)), taille)
+
+
+def decod(message, poly, lenght):
+    taille = len(message) - taille
+    return divPoly(message, [0]*taille + [1]), modPoly(message, poly) == 0
