@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#define MAX_CHARA 80
+#define MAX_CARA 80
 
 int main()
 {
