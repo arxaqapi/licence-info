@@ -86,7 +86,7 @@ def eucl_poly(poly_A, poly_B):
     R = poly_A[:]
     d = deg(poly_B)
     c = coeff(poly_B)
-    
+
     while (not is_null_poly(R) and deg(R) >= d):
         if (coeff(R) / c) % 2 == 1:
             S = create_mono(deg(R) - d)

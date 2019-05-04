@@ -1,11 +1,11 @@
 # Compression and decompression with LZW algorithm
 # Can be used in two modes:
-# small alphabet size: alpha_small = True and alpha_size between 3 and 10 
+# small alphabet size: alpha_small = True and alpha_size between 3 and 10
 #     with initialization dictionaries of the form {'a': 0, 'b': 1 ...}
 #     typical use: decompress(compress("abacababac"))
 # large alphabet size: alpha_small = False and alpha_size = 128
 #     with initialization of large dictionaries, typically ASCII or UTF-8 character sets
-#     typical use: write_file ("alice_dec.txt", decompress(compress(read_file("alice.txt")))) 
+#     typical use: write_file ("alice_dec.txt", decompress(compress(read_file("alice.txt"))))
 
 # Size of the alphabet
 alpha_small = False
@@ -15,26 +15,27 @@ alpha_size = 128
 dict_size = 256
 
 
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # Auxiliary functions
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
 # read from file with filename
-def read_file (filename):
+def read_file(filename):
     with open(filename) as fn:
         return (fn.read())
 
 
 # write str to file with filename
-def write_file (filename, str):
+def write_file(filename, str):
     with open(filename, "w+") as fn:
         fn.write(str)
 
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # Compression
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
-def init_dict(): # ex1
+
+def init_dict():  # ex1
     dico = {}
     start = 'a'
     if not alpha_small:
@@ -44,7 +45,7 @@ def init_dict(): # ex1
     return dico
 
 
-def compress(st): # ex2
+def compress(st):  # ex2
     compr = []
     dico = init_dict()
     motPartiel = ""
@@ -57,9 +58,10 @@ def compress(st): # ex2
             motPartiel = c
     compr.append(dico[motPartiel])
     # print("Taille dico: {}".format(len(dico))) # ex 7
-    return compr 
+    return compr
 
 # print(compress("abacababac"))  # EX 3
+
 
 def compress_lim(st):  # ex8
     compr = []
@@ -78,9 +80,10 @@ def compress_lim(st):  # ex8
     compr.append(dico[motPartiel])
     return compr
 
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # Decompression
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
+
 
 def init_inv_dict():  # ex 4
     dico = {}
@@ -93,7 +96,8 @@ def init_inv_dict():  # ex 4
 # print(init_dict())
 # print(init_inv_dict())
 
-def decompress(compr): # ex5
+
+def decompress(compr):  # ex5
     # Build the dictionary.
     dinv = init_inv_dict()
     pos = alpha_size
@@ -101,9 +105,9 @@ def decompress(compr): # ex5
     m_act = dinv[compr[0]]
     string = m_act
     for k in compr[1:]:
-        #print(k)
-        #print(dinv)
-        #print("string: " + string)
+        # print(k)
+        # print(dinv)
+        # print("string: " + string)
         m_ant = m_act
         if k in dinv:
             m_act = dinv[k]
@@ -120,20 +124,23 @@ def decompress(compr): # ex5
 # print(compress("abaabcabadaba"))
 # print(decompress(compress("abaabcabadaba")))
 
+
 """  # ex 7
 print(compress(read_file("alice.txt")))
 print("Taille fichier original: ", len(read_file("alice.txt")))
 print("Taille texte compr: ", len(compress(read_file("alice.txt"))))
 """
 
-def compressed_code_to_string(compr): # ex 9 working
+
+def compressed_code_to_string(compr):  # ex 9 working
     string = ""
     taille = len(compr)
     for i in range(taille):
         string += chr(compr[i])
     return(string)
 
-def string_to_compressed_code(st): # ex
+
+def string_to_compressed_code(st):  # ex
     compr = []
     for c in st:
         compr.append(ord(c))

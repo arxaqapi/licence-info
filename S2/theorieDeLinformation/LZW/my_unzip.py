@@ -2,6 +2,7 @@
 import sys
 from lzw import read_file, write_file, decompress, string_to_compressed_code
 
+
 def main():
     fn_in = sys.argv[1]
     fn_out = sys.argv[2]

@@ -16,7 +16,8 @@ def profondeur(ht):  # fonction recursive qui calcule la prodondeur d'un arbre
     if isinstance(ht, Leaf):
         return 0  # pronfondeur feuille = 0
     else:
-        return (max(profondeur(ht.low), profondeur(ht.high))+1) #calcule max des enfants
+        return (max(profondeur(ht.low), profondeur(ht.high))+1)
+        # calcule max des enfants
 
 
 def membre(ht, cha):  # cherche si charactère das arbre
