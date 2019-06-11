@@ -1,5 +1,6 @@
 #include <stdio.h>
-
+<
+>
 #define MAX 10 //80
 
 /* Lecture d'une ligne de texte tapee au clavier
