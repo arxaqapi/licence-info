@@ -1,0 +1,18 @@
+taille dynamique = à déclaré dans le tas le "heap"
+
+else {
+	à déclarer dans la pile "stack"
+}
+
+## Alloc dynamique a l'exec
+
+* malloc (nbrOctet)
+	// int *a = NULL;
+	// a = malloc(10 * sizeof(int));
+* free(a);
+	// Libère la mémoire
+* realloc()
+	// modifie taille de la mémoire
+
+
+MAJ entré, minuscule sortie
