@@ -24,4 +24,4 @@ L1 S2
         methodesNumeriques
             classes
             tp
-```
+```C

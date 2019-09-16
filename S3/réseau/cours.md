@@ -1,10 +1,10 @@
-Réseau
-11/9/19
-Rahim.KACIMI@irit.fr
+# Réseau
+# 11/9/19
+# Rahim.KACIMI@irit.fr
 
 compte rendu des TP avant la prochaine séance
 
-/!\ OSI
+* /!\ OSI
 
 Téléphone Bourseul, breveté par Bell
 
