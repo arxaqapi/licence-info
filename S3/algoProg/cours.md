@@ -37,3 +37,41 @@ fonction est dite **Terminale** si l'appel récursif est la dernière instructio
 
 permet de transformer un terminale en itératif
 
+## 17/09/19
+
+palindrome à refaire /!\ à l'algo de cours
+
+* knuth
+
+triplet de Hoare:
+
+1. Précondition
+2. abstraction du programme
+3. Postcondition
+
+contrat: P
+
+si la précondition est satisfaisante alors c(e,s) se termine en satisfiant la postconditionion
+
+# 23/09/2019
+
+pas de il n'existe pas mais non il existe
+
+
+
+
+### Specification du programme
+
+#### Ceci est un contrat /!\
+
+```
+/* Précondition */
+Action(E, s)  // ajout de &s en C
+/* Postcondition */
+```
+
+* La précondition exprime a l'aide d'une formule logique, les propriétés que doivent satisfaires les données fournies par l'utilisatieur du programme
+* Action(), représente une abstraction de l'algorithme
+* la postcondition exprime, à l'aide de formule logique, les propriétés satisfaites par les variables du programme à la fin de l'exécution de celui-ci
+
+
