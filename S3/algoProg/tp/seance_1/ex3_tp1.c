@@ -26,8 +26,12 @@ struct Tab nRandFiller(int nbVal) {
 
 void tabCleaner(struct Tab structTo) {
 // if .tab[i] % 7 == 0: del and .n --
-  
-
+  int amoutOfMoved = 0; // incrment each time %7==0 to swithc with last value always
+  for(int i = 0; i < structTo.n; i++) {
+    if(structTo.tab[i] % 7 == 0) {
+      
+    }
+  }
 }
 
 int main(void) {
