@@ -75,3 +75,4 @@ Action(E, s)  // ajout de &s en C
 * la postcondition exprime, à l'aide de formule logique, les propriétés satisfaites par les variables du programme à la fin de l'exécution de celui-ci
 
 
+
