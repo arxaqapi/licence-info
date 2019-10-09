@@ -17,6 +17,26 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+void demandeDimensions(int *matI1, int *matJ1, int *matI2, int *matJ2) {
+  scanf("%s\n", );
+  scanf("%s\n", );
+  scanf("%s\n", );
+  scanf("%s\n", );
+
+  if (matJ1 != matI2) {
+    printf("Erreur, dimensions non valides\n");
+  }
+}
+
+void multiplieMatrice(int[] tab) {
+}
+
 int main(void) {
+  int matI1;
+  int matJ1;
+  int matI2;
+  int matJ2;
+
+  demandeDimensions(&matI1, &matJ1, &matI2, &matJ2);
   return 0;
 }
