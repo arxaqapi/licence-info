@@ -1,4 +1,4 @@
-Activité 1:
+; Activité 1:
 
 Conception d'une application d'achat/vente de vêtements et d'accessoires de prêt à porter
 
@@ -24,7 +24,6 @@ Conception d'une application d'achat/vente de vêtements et d'accessoires de pr�
 			* nombre d'articles
 			* ajout des photos: galerie ou app photo si mobile
 			* validations de l'ajout
-//	* accéder aux informations du compte
 
 * option de tris par type de vétements, taille, marques ...
 
