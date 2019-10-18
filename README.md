@@ -1,4 +1,4 @@
-# License Info
+# Licence Info
 
 ## Content
 
