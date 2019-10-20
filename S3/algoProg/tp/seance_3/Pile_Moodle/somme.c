@@ -35,25 +35,33 @@ int somme_iter(char *c) {
 
 	pile_t p;
 	init_pile(&p);
-
 	//	printf("%c\n", *(c+1));
 
-	while( *c != '\0')
+	while(*c != '\0')
 	{
-		if (*c == '+') {
+		if (*c == '+' && !pile_vide(&p)) {
 			/* code */
-		} else if (pile_vide(&p)) {
-			reconstitutionDuChiffre = *c - '0';
-			printf("%d\n", reconstitutionDuChiffre);
-			empiler(&p, reconstitutionDuChiffre);
-			p.tete ++;
-			printf("%d\n", p.elts[p.tete]);
+			somme = somme + p.elts[p.tete];
+			depiler(&p);
+			reconstitutionDuChiffre = 0;
 
+		} else if(*c == '+' && pile_vide(&p)) {
+			somme = 0;
+		} else if (pile_vide(&p)) {
+			empiler(&p, *c - '0');
+
+		} else {
+			reconstitutionDuChiffre = p.elts[p.tete] * 10 + (*c - '0');
+			depiler(&p);
+			empiler(&p, reconstitutionDuChiffre);
 		}
 
 		c ++;
 	}
-	return somme;
+	if (pile_vide(&p)) {
+		return 0;
+	}
+	return somme + p.elts[p.tete];
 }
 
 int main() {
