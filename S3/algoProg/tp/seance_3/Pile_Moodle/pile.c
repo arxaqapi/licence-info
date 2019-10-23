@@ -73,7 +73,8 @@ bool pile_pleine(const pile_t *p){
  * @param p		Pile à afficher.
  */
 void afficher_pile(const pile_t *p){
-  for (int i = 0; i < p->tete; i++) {
-    printf("*%d\n", p->elts[i]);
+  for (int i = 0; i <= p->tete; i++) {
+    printf("%d :", p->elts[i]);
   }
+  printf("\n");
 }

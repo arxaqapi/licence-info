@@ -40,7 +40,7 @@ int somme_iter(char *c) {
 	while(*c != '\0')
 	{
 		if (*c == '+' && !pile_vide(&p)) {
-			/* code */
+			
 			somme = somme + p.elts[p.tete];
 			depiler(&p);
 			reconstitutionDuChiffre = 0;
@@ -48,6 +48,7 @@ int somme_iter(char *c) {
 		} else if(*c == '+' && pile_vide(&p)) {
 			somme = 0;
 		} else if (pile_vide(&p)) {
+			
 			empiler(&p, *c - '0');
 
 		} else {

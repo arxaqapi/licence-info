@@ -5,7 +5,8 @@ CFLAGS =-Wall -g
 EXECS = \
 	test-pile \
 	verif-parent \
-	somme
+	somme \
+	hanoi_imp
 
 all : $(EXECS)
 
@@ -19,6 +20,9 @@ verif-parent: verif-parent.o pile.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
 somme: somme.o pile.o
+	$(CC) -o $@ $^ $(CFLAGS)
+
+hanoi_imp: hanoi_imp.o pile.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
 pile.o: pile.h
