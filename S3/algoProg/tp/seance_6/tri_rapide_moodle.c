@@ -203,7 +203,7 @@ void TriFusion (tableau tabT, int ind_prem, int ind_der, tableau tabM) {
 		ind_milieu = (ind_prem + ind_der) / 2;
 		TriFusion(tabT, ind_prem, ind_milieu, tabM);
 		TriFusion(tabT, ind_milieu + 1, ind_der, tabM);
-		fusionner(tabT, ind_prem, ind_milieu, ind_milieu + 1, ind_der, tabM);
+		fusionner(tabT, ind_prem, ind_milieu, /*ind_milieu + 1,*/ ind_der, tabM);
 	}
 }
 
@@ -260,10 +260,10 @@ int main(int argc,char **argv)
 	printf("-------------------------------\n");
 	printf("Tri Fusion\n");
 	initCopieTab(t,t2,dim);
-	now = clock(); // d�part chrono
-    triRapideIte(t2,0,dim-1);
-	TriFusion(t2, t3)
+	now = clock(); // depart chrono
+	TriFusion(t2, 0, dim - 1, t3);
     end =clock();
 	printf("\nTemps CPU : %.2f \n\n",(double) (end - now) / CLOCKS_PER_SEC);
+	printf("tab trie par fusion' ");afficher_tab(t2,dim);
     return 0;
 }
