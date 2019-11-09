@@ -181,19 +181,39 @@ void tri_bulle(tableau t,int dim)
 }
 
 //	Tri Fusion
-void fusionner(tableau tabT, int dp1, int fp1/*, int dp2*/, int fp2, tableau tabM) {
-
+void fusionner(tableau tabT, int dp1, int fp1, int dp2, int fp2, tableau tabM) {
 	// dp2 = fp1 + 1
-	while(dp1 < fp1 && (fp1 + 1) < fp2) {
-		if (tabT[dp1] > tabT[fp1 + 1]) {
-			echanger(&tabT[dp1], &tabT[fp1 + 1]);
+	int tailleZone = fp2 - dp1 + 1;
+	int indTabT = dp1;
+
+	//copy
+	for(int i = 0; i < tailleZone; i++) {
+		tabM[i] = tabT[i];
+	}
+
+	//copy from M to T
+	while(dp1 <= fp1 
+			&& dp2 <= fp2){
+		if(tabM[dp1] < tabM[dp2]) {
+			tabT[indTabT] = tabM[dp1];
 			dp1 ++;
-			echanger(&tabT[dp1], &tabT[fp1 + 1]);
 		} else {
-			echanger(&tabT[dp1 + 1], &tabT[fp1 + 1]);
-			fp1 ++;
-			dp1 ++;
+			tabT[indTabT] = tabM[dp2];
+			dp2 ++;
 		}
+		indTabT ++;
+	}
+
+	// last elements
+	while(dp1 <= fp1) {
+		tabT[indTabT] = tabM[dp1];
+		indTabT ++;
+		dp1 ++;
+	}
+	while(dp2 <= fp2) {
+		tabT[indTabT] = tabM[dp2];
+		indTabT ++;
+		dp2 ++;
 	}
 }
 
@@ -203,7 +223,7 @@ void TriFusion (tableau tabT, int ind_prem, int ind_der, tableau tabM) {
 		ind_milieu = (ind_prem + ind_der) / 2;
 		TriFusion(tabT, ind_prem, ind_milieu, tabM);
 		TriFusion(tabT, ind_milieu + 1, ind_der, tabM);
-		fusionner(tabT, ind_prem, ind_milieu, /*ind_milieu + 1,*/ ind_der, tabM);
+		fusionner(tabT, ind_prem, ind_milieu, ind_milieu + 1, ind_der, tabM);
 	}
 }
 
@@ -260,6 +280,7 @@ int main(int argc,char **argv)
 	printf("-------------------------------\n");
 	printf("Tri Fusion\n");
 	initCopieTab(t,t2,dim);
+	initCopieTab(t,t3,dim);
 	now = clock(); // depart chrono
 	TriFusion(t2, 0, dim - 1, t3);
     end =clock();

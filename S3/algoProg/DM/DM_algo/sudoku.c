@@ -4,6 +4,9 @@
 
 
 /* Implanter les fonctions de sudoku.h ici */
+
+/* Retourne les coordonnees de la case a 
+partir de son indice dans le sudoku */
 T_coordonnees obtenirCoords(int indice) {
     T_coordonnees caseSudoku;
     caseSudoku.ligne = indice / 9;
@@ -11,8 +14,10 @@ T_coordonnees obtenirCoords(int indice) {
     return caseSudoku;
 }
 
+/* Retourne l'indice d'une case dans 
+le sudoku a partir de ses coordonnees */
 int obtenirIndice(T_coordonnees coords) {
-    return 9 * (coords.ligne + coords.colonne);
+    return 9 * coords.ligne + coords.colonne;
 }
 
 T_coordonnees debutRegion(int indiceRegion) {
@@ -54,7 +59,7 @@ T_sudoku lireSudoku(char* chemin) {
 
         fclose(fichierSudoku);
     }
-    afficherSudoku(sudokuNonInit);
+    
     return sudokuNonInit;//sudok
 }
 
@@ -68,13 +73,13 @@ void initialiserSudoku(T_sudoku* s) {
     for(int i = 0; i < 81; i++) {
         if (s->grille[i].val != 0) {
             s->grille[i].n_candidats = 0;
-            for(int caseCandidats = 0; caseCandidats < 9; caseCandidats ++) {
-                s->grille[i].candidats[caseCandidats] = 0;
+            for(int idCaseCandidats = 0; idCaseCandidats < 9; idCaseCandidats ++) {
+                s->grille[i].candidats[idCaseCandidats] = 0;
             }
         } else {
             s->grille[i].n_candidats = 9;
-            for(int caseCandidats = 0; caseCandidats < 9; caseCandidats ++) {
-                s->grille[i].candidats[caseCandidats] = caseCandidats + 1;
+            for(int idCaseCandidats = 0; idCaseCandidats < 9; idCaseCandidats ++) {
+                s->grille[i].candidats[idCaseCandidats] = idCaseCandidats + 1;
             }
         }
     }
@@ -84,10 +89,27 @@ void initialiserSudoku(T_sudoku* s) {
 int rechercherValeur(int val, T_case c){
 /* Renvoie l'indice de val dans le tableau de candidats de c.
 Si l'indice n'est pas present, renvoie c.n_candidats */
+    int indiceDeValDansCandidats;
+    for(int i = 0; i < c.n_candidats; i++) {
+        if (c.candidats[i] == val) {
+            indiceDeValDansCandidats = i;
+            return indiceDeValDansCandidats;
+        }
+    }
+    return c.n_candidats;
+
 }
 void supprimerValeur(int ival, T_case* pc) {
 /* ival est l'indice de la valeur a supprimer,
 on considere que la valeur a supprimer est presente dans les candidats de la case */
+    //sup and décale??
+    for(int i = ival; i < pc->n_candidats - 1; i++) {
+        pc->candidats[i + 1] = pc->candidats[i];
+    }
+    pc->n_candidats --;
+    for(int i = pc->n_candidats; i < 9; i++) {
+        pc->candidats[i] = 0;
+    }
 }
 
 
