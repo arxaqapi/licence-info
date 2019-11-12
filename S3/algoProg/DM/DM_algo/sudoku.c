@@ -124,6 +124,31 @@ void afficherSudoku(T_sudoku s) {
     }
 }
 
+/* Implementation des regles */
+
+int R1_case(T_case* pc) {
+    /* Applique R1 sur la case */
+    //return 1; si règle appliqué
+    //return 0; si non appliqué
+    if (pc->n_candidats == 1) {
+        pc->val = pc->candidats[0];
+        //supprimerValeur(pc->candidats[0], pc);
+        return 1;
+    }
+    return 0;
+}
+
+int R1_sudoku(T_sudoku* ps) {
+    /* Applique R1 sur toutes les cases du sudoku,
+renvoie 1 si une modification a eu lieu, 0 sinon */
+    for(int i = 0; i < 81; i++) {
+        if(R1_case(&ps->grille[i])) {
+            supprimerValeur(ps->grille[i].candidats[0], &ps->grille[i]);
+        }
+        R1_case(&ps->grille[i]);
+    }
+}
+
 //int main(void) {
     /*
     T_sudoku sudo;

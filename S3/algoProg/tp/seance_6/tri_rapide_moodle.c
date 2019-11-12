@@ -183,38 +183,23 @@ void tri_bulle(tableau t,int dim)
 //	Tri Fusion
 void fusionner(tableau tabT, int dp1, int fp1, int dp2, int fp2, tableau tabM) {
 	// dp2 = fp1 + 1
-	int tailleZone = fp2 - dp1 + 1;
-	int indTabT = dp1;
+	//int tailleZone = fp2 - dp1 + 1;
+	//int indTabT = dp1;
 
 	//copy
-	for(int i = 0; i < tailleZone; i++) {
+	for(int i = dp1; i <= fp2; i++) {
 		tabM[i] = tabT[i];
 	}
-
-	//copy from M to T
-	while(dp1 <= fp1 
-			&& dp2 <= fp2){
-		if(tabM[dp1] < tabM[dp2]) {
-			tabT[indTabT] = tabM[dp1];
+	for(int idFin = dp1; idFin < fp2; idFin ++) {
+		if (dp1 <= fp1 && ( dp2 >= fp2 || tabM[dp1] <= tabM[dp2])) {
+			tabT[idFin] = tabM[dp1];
 			dp1 ++;
 		} else {
-			tabT[indTabT] = tabM[dp2];
+			tabT[idFin] = tabM[dp2];
 			dp2 ++;
 		}
-		indTabT ++;
 	}
 
-	// last elements
-	while(dp1 <= fp1) {
-		tabT[indTabT] = tabM[dp1];
-		indTabT ++;
-		dp1 ++;
-	}
-	while(dp2 <= fp2) {
-		tabT[indTabT] = tabM[dp2];
-		indTabT ++;
-		dp2 ++;
-	}
 }
 
 void TriFusion (tableau tabT, int ind_prem, int ind_der, tableau tabM) {
