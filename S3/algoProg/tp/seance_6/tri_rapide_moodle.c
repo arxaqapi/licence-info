@@ -207,6 +207,28 @@ void TriFusion (tableau tabT, int ind_prem, int ind_der, tableau tabM) {
 	}
 }
 
+void TrisFusionIte(tableau tabT, int ind_prem, int ind_der, tableau tabM) {
+	pile_t pileGauche;
+	pile_t pileDroite;
+	int ind_milieu;
+
+	int ind_prem_gauche = ind_prem;
+	int ind_der_gauche;
+	int ind_prem_droit;
+	int ind_der_droit = ind_der;
+
+	init_pile(&pileGauche);
+	init_pile(&pileDroite);
+
+	while(ind_prem < ind_der) {
+		ind_milieu = (ind_prem + ind_der) / 2;
+		empiler(&pileGauche, ind_prem_gauche);
+		empiler(&pileGauche, ind_der_gauche);
+		ind_der
+	}
+
+}
+
 // =================== MAIN =================
 /* 2 arguments:     le nom du fichier ,   le nombre d'entiers du fichier trait�s*/
 
