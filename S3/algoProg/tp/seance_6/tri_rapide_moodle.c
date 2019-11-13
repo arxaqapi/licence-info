@@ -182,16 +182,12 @@ void tri_bulle(tableau t,int dim)
 
 //	Tri Fusion
 void fusionner(tableau tabT, int dp1, int fp1, int dp2, int fp2, tableau tabM) {
-	// dp2 = fp1 + 1
-	//int tailleZone = fp2 - dp1 + 1;
-	//int indTabT = dp1;
-
-	//copy
+	
 	for(int i = dp1; i <= fp2; i++) {
 		tabM[i] = tabT[i];
 	}
-	for(int idFin = dp1; idFin < fp2; idFin ++) {
-		if (dp1 <= fp1 && ( dp2 >= fp2 || tabM[dp1] <= tabM[dp2])) {
+	for(int idFin = dp1; idFin <= fp2; idFin ++) {
+		if (dp1 <= fp1 && ( dp2 > fp2 || tabM[dp1] <= tabM[dp2])) {
 			tabT[idFin] = tabM[dp1];
 			dp1 ++;
 		} else {
@@ -199,7 +195,6 @@ void fusionner(tableau tabT, int dp1, int fp1, int dp2, int fp2, tableau tabM) {
 			dp2 ++;
 		}
 	}
-
 }
 
 void TriFusion (tableau tabT, int ind_prem, int ind_der, tableau tabM) {
@@ -232,7 +227,7 @@ int main(int argc,char **argv)
     //printf("tab 1:");ecriture_tab(t,dim);
 
     initCopieTab(t,t2,dim); // les tris se feront toujours sur t2 qui sera r�initialis� � chaque fois
-
+	/*
     printf("Tri bulles\n");
     now = clock(); // d�part chrono
     tri_bulle(t2,dim);
@@ -240,16 +235,15 @@ int main(int argc,char **argv)
     printf("\nTemps CPU : %.2f secondes \n\n",(double) (end-now)/CLOCKS_PER_SEC); // fin chrono
     //printf("tab 1 trie' ");afficher_tab(t2,dim); // pour v�rifier sur un petit vecteur
     printf("-------------------------------\n");
-
+	*/
     initCopieTab(t,t2,dim); // r�initialisation de t2
 
     printf("Tri rapide r�cursif\n");
     now = clock(); // d�part chrono
     triRapide(t2,0,dim-1);
     end =clock();
-    printf("\nTemps CPU : %.2f secondes mais l'avez-vous ajoute' ? \n\n",(double) (end - now) / CLOCKS_PER_SEC); // fin chrono
+    printf("\nTemps CPU : %.2f secondes \n\n",(double) (end - now) / CLOCKS_PER_SEC); // fin chrono
     //printf("tab 1 trie' ");afficher_tab(t2,dim); // pour v�rifier sur un petit vecteur
-    printf("-------------------------------\n");
 
 	// tri rapide derec
 	printf("-------------------------------\n");
@@ -258,7 +252,7 @@ int main(int argc,char **argv)
 	now = clock(); // d�part chrono
     triRapideIte(t2,0,dim-1);
     end =clock();
-	printf("\nTemps CPU : %.2f \n\n",(double) (end - now) / CLOCKS_PER_SEC);
+	printf("\nTemps CPU : %.2f secondes\n\n",(double) (end - now) / CLOCKS_PER_SEC);
 	//	printf("tab derec trie' ");afficher_tab(t2,dim);
 
 	// M�me principe pour le tri fusion
@@ -269,7 +263,8 @@ int main(int argc,char **argv)
 	now = clock(); // depart chrono
 	TriFusion(t2, 0, dim - 1, t3);
     end =clock();
-	printf("\nTemps CPU : %.2f \n\n",(double) (end - now) / CLOCKS_PER_SEC);
-	printf("tab trie par fusion' ");afficher_tab(t2,dim);
+	printf("\nTemps CPU : %.2f secondes\n\n",(double) (end - now) / CLOCKS_PER_SEC);
+	//printf("tab trie par fusion' ");
+	//afficher_tab(t2,dim);
     return 0;
 }
