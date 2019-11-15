@@ -1,9 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?><project name="Project2019" company="" webLink="" view-date="2019-10-15" view-index="0" gantt-divider-location="300" resource-divider-location="300" version="2.8.10" locale="fr_FR">
+<?xml version="1.0" encoding="UTF-8"?><project name="Project2019" company="" webLink="" view-date="2019-10-14" view-index="0" gantt-divider-location="519" resource-divider-location="300" version="2.8.10" locale="fr_FR">
     <description/>
-    <view zooming-state="default:2" id="gantt-chart">
-        <field id="tpd3" name="Nom" width="167" order="0"/>
-        <field id="tpd4" name="Date de début" width="65" order="1"/>
-        <field id="tpd5" name="Date de fin" width="64" order="2"/>
+    <view zooming-state="default:4" id="gantt-chart">
+        <field id="tpd3" name="Nom" width="247" order="0"/>
+        <field id="tpd4" name="Date de début" width="131" order="1"/>
+        <field id="tpd5" name="Date de fin" width="137" order="2"/>
+        <option id="taskLabelUp" value="name"/>
+        <option id="taskLabelRight" value=""/>
+        <option id="color.recent">
+            <![CDATA[#ffcc00]]>
+        </option>
     </view>
     <view id="resource-table">
         <field id="0" name="Nom" width="210" order="0"/>
@@ -33,8 +38,17 @@
             <taskproperty id="tpd8" name="coordinator" type="default" valuetype="text"/>
             <taskproperty id="tpd9" name="predecessorsr" type="default" valuetype="text"/>
         </taskproperties>
-        <task id="6" name="Etude du cahier des charges" color="#8cb6ce" meeting="false" start="2019-10-15" duration="17" complete="0" thirdDate="2019-11-15" thirdDate-constraint="0" expand="true"/>
-        <task id="8" name="tâche_8" meeting="false" start="2019-10-15" duration="1" complete="0" expand="true"/>
+        <task id="6" name="Etude du cahier des charges" color="#8cb6ce" meeting="false" start="2019-10-15" duration="32" complete="0" thirdDate="2019-11-15" thirdDate-constraint="0" expand="true">
+            <task id="22" name="Lecture et prise de note sur le cahier des charges" meeting="false" start="2019-10-15" duration="2" complete="0" expand="true"/>
+            <task id="26" name="Organisation des idées" meeting="false" start="2019-10-17" duration="5" complete="0" expand="true"/>
+            <task id="27" name="Recherche sur les structures de données nécessaires" meeting="false" start="2019-10-22" duration="6" complete="0" expand="true"/>
+            <task id="21" name="Réalisation du premier livrable" color="#8cb6ce" meeting="false" start="2019-11-04" duration="12" complete="0" thirdDate="2019-10-13" thirdDate-constraint="0" expand="true"/>
+        </task>
+        <task id="9" name="Programmation" color="#ffcc00" meeting="false" start="2019-11-16" duration="15" complete="0" thirdDate="2019-10-15" thirdDate-constraint="0" expand="true">
+            <task id="12" name="Implémentation des balises" color="#ffcc00" meeting="false" start="2019-11-16" duration="3" complete="0" thirdDate="2019-10-15" thirdDate-constraint="0" expand="true"/>
+            <task id="15" name="Implémentation du programme de test avec tools.py" color="#ffcc00" meeting="false" start="2019-11-19" duration="5" complete="0" thirdDate="2019-10-15" thirdDate-constraint="0" expand="true"/>
+            <task id="33" name="Initialisation des structures de données" color="#8cb6ce" meeting="false" start="2019-11-24" duration="7" complete="0" thirdDate="2019-10-22" thirdDate-constraint="0" expand="true"/>
+        </task>
     </tasks>
     <resources/>
     <allocations/>
