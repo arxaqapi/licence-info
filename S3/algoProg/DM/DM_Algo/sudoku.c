@@ -148,19 +148,3 @@ renvoie 1 si une modification a eu lieu, 0 sinon */
         R1_case(&ps->grille[i]);
     }
 }
-
-//int main(void) {
-    /*
-    T_sudoku sudo;
-    
-    int arr[] = { 0, 3, 5, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8};
-    for(int i = 0; i < 20; i++) {
-        sudo.grille[i].val = arr[i];
-    }
-
-    afficherSudoku(sudo);
-    */
-    //lireSudoku("one.txt");
-
-//    return 0;
-//}

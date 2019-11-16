@@ -44,56 +44,39 @@ int main(){
  
   int note = 0;
   int note_locale = 0;
-  FILE* f,*f1;
+  FILE* f, *fpre, *f1;
 
   
-    printf("\n==================================================================\n");
-    printf("Brute force\n");
-    f=fopen("sols/solFBrute.txt","r");
-    //printf("Avancee:  0%%");
-    //fflush(stdout);
-    T_sudoku sudokuSol,sudokuEtudiant[100];
-    int i,j,test,change=1;
-    for(i=0;i<100;i++){
-      /*if(i<10){
-	printf("\b\b%d%%",i);
-      }else{
-	printf("\b\b\b%d%%",i);
-      }
-      fflush(stdout);*/
-    
-	change=1;
-      	for(j=0;j<81;j++){
-		sudokuEtudiant[i].grille[j].val=tests[i][j];
-      	}
-      	initialiserSudoku(&(sudokuEtudiant[i]));
-      	sudokuSol=chargerSudokuComplet(f);
-      	R1_sudoku(&(sudokuEtudiant[i]));
-      	while(change){
-		change=0;
-		change+=R2_sudoku(&(sudokuEtudiant[i]));
-		change+=R1_sudoku(&(sudokuEtudiant[i]));
-		change+=R3_sudoku(&(sudokuEtudiant[i]));
-		change+=R1_sudoku(&(sudokuEtudiant[i]));
-      	}
-  	if(i==0 || i==1 ||i ==2 ||i ==5 ||i ==7 ||i ==9 ||i ==10 ||i ==13 ||i ==14 ||i ==15 )
-         {
-      		bruteForce(&(sudokuEtudiant[i]));
 
-      		test=comparerSudokus(&(sudokuEtudiant[i]),&sudokuSol);
-      		if(test==81){
-			note_locale+=1;
-      		}
-      		else{
-			printf("\nErreur sur le sudoku : %d, case : %d",i,test);
-      		}
-        }
+    printf("\n==================================================================\n");
+    printf("Regle R1\n");
+    f=fopen("sols/solR1.txt","r");
+    fpre = fopen("sols/solPrecomputedR1.txt", "r");
+    T_sudoku sudokuSol,sudokuEtudiant[100];
+    int i,j,test;
+    // FIXME not 100 anymore, depends on the precomputed amount
+    for(i=0;i<100;i++){
+      for(j=0;j<81;j++){
+        sudokuEtudiant[i].grille[j].val=tests[i][j];
+      }
+
+      // use the pre-computed solutions which admits some differences using R1
+      //initialiserSudoku(&(sudokuEtudiant[i]));
+      sudokuEtudiant[i] = chargerSudokuComplet(fpre);
+      sudokuSol=chargerSudokuComplet(f);
+      R1_sudoku(&(sudokuEtudiant[i]));
+      test=comparerSudokus(&(sudokuEtudiant[i]),&sudokuSol);
+      if(test==81){
+        note_locale+=1;
+      }
+      else{
+        printf("\nErreur sur le sudoku : %d, case : %d",i,test);
+      }
     }
-    printf("\n\nTotal: %d/10\n", note_locale);
+    printf("\n\nTotal: %d/100\n", note_locale);
     note+=note_locale;
     fclose(f);
-    fprintf(stderr,"%d",note);
+    fprintf(stderr,"%d",note_locale);
     return 0;
 }
-  
 

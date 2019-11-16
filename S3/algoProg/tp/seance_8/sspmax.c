@@ -5,7 +5,6 @@
 
 typedef long tab[NMAX];
 
-
 /**
  * Calcul du poids d'un sous-séquence
  * @param deb indice du début de la sous-séquence
@@ -125,14 +124,5 @@ long main(void) {
     printf("F1: Temps CPU:%.2fsecondes\n",(double)(fin-debut)/CLOCKS_PER_SEC);
     printf("f1: %li\n", max);
 
-    /*
-
-    max = f1(testT2, 9);
-    max2 = f2(testT2, 9);
-    max3 = f3(testT2, 9);
-    printf("f1: %d\n", max);
-    printf("f2: %d\n", max2);
-    printf("f3: %d\n", max3);
-    */
     return 0;
 }

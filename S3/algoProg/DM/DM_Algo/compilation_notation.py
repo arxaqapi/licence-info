@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 
 import subprocess
@@ -21,7 +21,7 @@ def noter():
     else:
         say("Echec de compilation partie 0\nNote provisoire : 0\n")
         sys.exit(1)
-    process=subprocess.Popen("./notation0",shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+    process=subprocess.Popen("./notation0",shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE, bufsize=1)
     (out,err)=process.communicate()
     if(process.returncode==0):
         print(out.decode('utf-8'))
@@ -35,7 +35,7 @@ def noter():
         say("Echec de compilation partie 1\n")
         print("Note provisoire : "+str(note))
         sys.exit(1)
-    process=subprocess.Popen("./notation1",shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+    process=subprocess.Popen("./notation1",shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE, bufsize=1)
     
     (out,err)=process.communicate()
     if(process.returncode==0):
@@ -51,7 +51,7 @@ def noter():
         say("Echec de compilation partie 2\n")
         print("Note provisoire : "+str(note))
         sys.exit(1)
-    process=subprocess.Popen("./notation2",shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+    process=subprocess.Popen("./notation2",shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE, bufsize=1)
     
     (out,err)=process.communicate()
     if(process.returncode==0):
@@ -67,7 +67,7 @@ def noter():
         say("Echec de compilation partie 3\n")
         print("Note provisoire : "+str(note))
         sys.exit(1)
-    process=subprocess.Popen("./notation3",shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+    process=subprocess.Popen("./notation3",shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE, bufsize=1)
     
     (out,err)=process.communicate()
     if(process.returncode==0):
@@ -85,10 +85,10 @@ def noter():
         say("Echec de compilation partie 4\n")
         print("Note provisoire : "+str(note))
         sys.exit(1)
-    process=subprocess.Popen("./notation4",shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+    process=subprocess.Popen("./notation4",shell=True,stdout=sys.stdout,stderr=subprocess.PIPE, bufsize=1)
     (out,err)=process.communicate()
     if(process.returncode==0):
-        print(out.decode('utf-8'))
+        #print(out.decode('utf-8'))
         note+=3*(float(err.decode('utf-8'))/10)
 
     print("\nNote provisoire : "+str(note)+"/10")
