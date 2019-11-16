@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <assert.h>
-#define NMAX 1000
+#include  <time.h>
+#define NMAX 100000
 
-typedef int tab[NMAX];
+typedef long tab[NMAX];
 
 
 /**
@@ -12,8 +13,8 @@ typedef int tab[NMAX];
  * @param t tableau t de taille max NMAX
  * @return poids de la sous-séquence
  */
-int poids(int deb, int fin, tab t) {
-    int poidsSousSeq = 0;
+long poids(long deb, long fin, tab t) {
+    long poidsSousSeq = 0;
     for(; deb <= fin; deb ++) {
         poidsSousSeq += t[deb];
     }
@@ -26,15 +27,15 @@ int poids(int deb, int fin, tab t) {
  * @param taille taille du tableau
  * @return poids de la sous-séquence de poids max
  */
-int f1(tab t, int taille) {
-    int max = t[0];
+long f1(tab t, long taille) {
+    long max = t[0];
 
-    int maxDeb;
-    int maxFin;
-    int somme;
+    long maxDeb;
+    long maxFin;
+    long somme;
 
-    for(int deb = 0; deb < taille; deb ++) {
-        for(int fin = deb; fin < taille; fin ++) {
+    for(long deb = 0; deb < taille; deb ++) {
+        for(long fin = deb; fin < taille; fin ++) {
             somme = poids(deb, fin, t);
             if(somme > max) {
                 max = somme;
@@ -52,13 +53,13 @@ int f1(tab t, int taille) {
  * @param taille taille du tableau
  * @return poids de la sous-séquence de poids max
  */
-int f2(tab t, int taille) {
-    int max = t[0];
-    int somme;
+long f2(tab t, long taille) {
+    long max = t[0];
+    long somme;
 
-    for(int deb = 0; deb < taille; deb ++) {
+    for(long deb = 0; deb < taille; deb ++) {
         somme = 0;
-        for(int fin = deb; fin < taille; fin ++) {
+        for(long fin = deb; fin < taille; fin ++) {
             somme += t[fin];
             if(somme > max) {
                 max = somme;
@@ -68,13 +69,13 @@ int f2(tab t, int taille) {
     return max;
 }
 
-int f3(tab t, int taille) {
+long f3(tab t, long taille) {
     // NOT WORKING ERROR
     // Enoncé non compris
-    int res = t[0];
-    int max = t[0];
+    long res = t[0];
+    long max = t[0];
 
-    for(int deb = 1; deb < taille; deb ++) {
+    for(long deb = 1; deb < taille; deb ++) {
         if (res > 0) {
             res += t[deb];
         } else {
@@ -87,17 +88,51 @@ int f3(tab t, int taille) {
     return max;
 }
 
-int main(void) {
-    int max, max2, max3;
+long main(void) {
+    srand(time(NULL));
+    //  long x = rand()%21-10;
+    long max, max2, max3;
+
+    clock_t debut = clock();
+    clock_t fin = clock();
+
 
     tab testT = {-1, 3, -3, 1, 6};
-    tab testT2 = {2,-1,0,-2,3,-4,8,-1,2};
+    tab testT2 = {2, -1, 0, -2, 3, -4, 8, -1, 2};
 
-    max = f1(testT, 5);
-    max2 = f2(testT, 5);
-    max3 = f3(testT, 5);
+    tab tableau;
+    for(long i = 0; i < 100000; i++) {
+        tableau[i] = rand()%21-10;
+    }
+
+    
+
+    debut = clock();
+    max2 = f2(tableau, 100000);
+    fin = clock();
+    printf("F2: Temps CPU:%.2fsecondes\n",(double)(fin-debut)/CLOCKS_PER_SEC);
+    printf("f2: %li\n", max2);
+
+    debut = clock();
+    max3 = f3(tableau, 100000);
+    fin = clock();
+    printf("F3: Temps CPU:%.2fsecondes\n",(double)(fin-debut)/CLOCKS_PER_SEC);
+    printf("f3: %li\n", max3);
+
+    debut = clock();
+    max = f1(tableau, 100000);
+    fin = clock();
+    printf("F1: Temps CPU:%.2fsecondes\n",(double)(fin-debut)/CLOCKS_PER_SEC);
+    printf("f1: %li\n", max);
+
+    /*
+
+    max = f1(testT2, 9);
+    max2 = f2(testT2, 9);
+    max3 = f3(testT2, 9);
     printf("f1: %d\n", max);
     printf("f2: %d\n", max2);
     printf("f3: %d\n", max3);
+    */
     return 0;
 }
