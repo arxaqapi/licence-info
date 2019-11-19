@@ -195,7 +195,7 @@ int retireCandidatGroupement(T_sudoku *ps, int indDeComparaison)
       if (idVal != indDeComparaison && ps->grille[idVal].val == 0)
       {
         idValARetirer = rechercherValeur(valeurARetirer, ps->grille[idVal]);
-        if (idValARetirer != ps->grille[idVal].n_candidats)
+        if (idValARetirer < ps->grille[idVal].n_candidats)
         {
           supprimerValeur(idValARetirer, &ps->grille[idVal]);
           modif = 1;
@@ -218,7 +218,7 @@ int retireCandidatLigne(T_sudoku *ps, int indDeComparaison)
     {
       idVal = rechercherValeur(valeurARetirer, ps->grille[x]);
 
-      if (idVal != ps->grille[x].n_candidats)
+      if (idVal < ps->grille[x].n_candidats)
       {
         supprimerValeur(idVal, &ps->grille[x]);
         modif = 1;
@@ -244,7 +244,7 @@ int retireCandidatColonne(T_sudoku *ps, int indDeComparaison)
     {
       idVal = rechercherValeur(valeurARetirer, ps->grille[indElementColonne]);
 
-      if (idVal != ps->grille[indElementColonne].n_candidats)
+      if (idVal < ps->grille[indElementColonne].n_candidats)
       {
         supprimerValeur(idVal, &ps->grille[indElementColonne]);
         modif = 1;
