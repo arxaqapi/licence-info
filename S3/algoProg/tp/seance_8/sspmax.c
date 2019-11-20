@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <assert.h>
-#include  <time.h>
+#include <time.h>
+
 #define NMAX 100000
 
-typedef long tab[NMAX];
+typedef int tab[NMAX];
 
 /**
  * Calcul du poids d'un sous-séquence
@@ -12,9 +13,11 @@ typedef long tab[NMAX];
  * @param t tableau t de taille max NMAX
  * @return poids de la sous-séquence
  */
-long poids(long deb, long fin, tab t) {
-    long poidsSousSeq = 0;
-    for(; deb <= fin; deb ++) {
+int poids(int deb, int fin, tab t)
+{
+    int poidsSousSeq = 0;
+    for (; deb <= fin; deb++)
+    {
         poidsSousSeq += t[deb];
     }
     return poidsSousSeq;
@@ -26,20 +29,22 @@ long poids(long deb, long fin, tab t) {
  * @param taille taille du tableau
  * @return poids de la sous-séquence de poids max
  */
-long f1(tab t, long taille) {
-    long max = t[0];
+int f1(tab t, int taille, int *i_deb, int *i_fin)
+{
+    int max = t[0];
 
-    long maxDeb;
-    long maxFin;
-    long somme;
+    int somme;
 
-    for(long deb = 0; deb < taille; deb ++) {
-        for(long fin = deb; fin < taille; fin ++) {
+    for (int deb = 0; deb < taille; deb++)
+    {
+        for (int fin = deb; fin < taille; fin++)
+        {
             somme = poids(deb, fin, t);
-            if(somme > max) {
+            if (somme > max)
+            {
                 max = somme;
-                maxDeb = deb;
-                maxFin = fin;
+                *i_deb = deb;
+                *i_fin = fin;
             }
         }
     }
@@ -52,77 +57,146 @@ long f1(tab t, long taille) {
  * @param taille taille du tableau
  * @return poids de la sous-séquence de poids max
  */
-long f2(tab t, long taille) {
-    long max = t[0];
-    long somme;
+int f2(tab t, int taille, int *i_deb, int *i_fin)
+{
+    int max = t[0];
+    int somme;
 
-    for(long deb = 0; deb < taille; deb ++) {
+    for (int deb = 0; deb < taille; deb++)
+    {
         somme = 0;
-        for(long fin = deb; fin < taille; fin ++) {
+        for (int fin = deb; fin < taille; fin++)
+        {
             somme += t[fin];
-            if(somme > max) {
+            if (somme > max)
+            {
                 max = somme;
+                *i_deb = deb;
+                *i_fin = fin;
             }
         }
     }
     return max;
 }
 
-long f3(tab t, long taille) {
-    // NOT WORKING ERROR
-    // Enoncé non compris
-    long res = t[0];
-    long max = t[0];
+/**
+ * Solution dynamique O(n)
+ * @param t tableau t de taille max NMAX
+ * @param taille taille du tableau
+ * @return poids de la sous-séquence de poids max
+ */
+int f3(tab t, int taille, int *i_deb, int *i_fin)
+{
+    int res = t[0];
+    int max = t[0];
 
-    for(long deb = 1; deb < taille; deb ++) {
-        if (res > 0) {
+    int recuperation_i_deb = 0;
+    for (int deb = 1; deb < taille; deb++)
+    {
+        if (res > 0)
+        {
             res += t[deb];
-        } else {
-            res = t[deb];
         }
-        if (res > max) {
+        else
+        {
+            res = t[deb];
+            //  *i_deb = deb;
+            //  On ne peu 'deviner' le début
+        }
+        if (res > max)
+        {
             max = res;
+            *i_fin = deb;
         }
     }
+    *i_deb = *i_fin;
+    while (recuperation_i_deb != max)
+    {
+        recuperation_i_deb += t[*i_deb];
+        (*i_deb) --;
+    }
+    (*i_deb) ++;
+    
     return max;
 }
 
-long main(void) {
+int main(void)
+{
     srand(time(NULL));
-    //  long x = rand()%21-10;
-    long max, max2, max3;
+    //  int x = rand()%21-10;
+    int max, max2, max3;
+    int id_deb, id_fin, id_deb2, id_fin2, id_deb3, id_fin3;
+    printf("%d", id_deb3);
 
     clock_t debut = clock();
     clock_t fin = clock();
 
-
-    tab testT = {-1, 3, -3, 1, 6};
-    tab testT2 = {2, -1, 0, -2, 3, -4, 8, -1, 2};
-
     tab tableau;
-    for(long i = 0; i < 100000; i++) {
-        tableau[i] = rand()%21-10;
+    for (int i = 0; i < 1000; i++)
+    {
+        tableau[i] = rand() % 21 - 10;
     }
-
-    
+    /*
+    debut = clock();
+    max2 = f2(tableau, 1000, &id_deb, &id_fin);
+    fin = clock();
+    printf("F:-:f2: Temps CPU:%.2fsecondes\n", (double)(fin - debut) / CLOCKS_PER_SEC);
+    printf("f2: %d\n", max2);
+    printf("id deb = %d | id fin = %d\n", id_deb, id_fin);
+    id_deb = 0;
+    id_fin = 0;
+    printf("==================================\n");
 
     debut = clock();
-    max2 = f2(tableau, 100000);
+    max3 = f3(tableau, 1000, &id_deb, &id_fin);
     fin = clock();
-    printf("F2: Temps CPU:%.2fsecondes\n",(double)(fin-debut)/CLOCKS_PER_SEC);
-    printf("f2: %li\n", max2);
+    printf("F:-:f3: Temps CPU:%.2fsecondes\n", (double)(fin - debut) / CLOCKS_PER_SEC);
+    printf("f3: %d\n", max3);
+    printf("id deb = %d | id fin = %d\n", id_deb, id_fin);
+    id_deb = 0;
+    id_fin = 0;
+    printf("==================================\n");
 
     debut = clock();
-    max3 = f3(tableau, 100000);
+    max = f1(tableau, 1000, &id_deb, &id_fin);
     fin = clock();
-    printf("F3: Temps CPU:%.2fsecondes\n",(double)(fin-debut)/CLOCKS_PER_SEC);
-    printf("f3: %li\n", max3);
+    printf("F:-:f1: Temps CPU:%.2fsecondes\n", (double)(fin - debut) / CLOCKS_PER_SEC);
+    printf("f1: %d\n", max);
+    printf("id deb = %d | id fin = %d\n", id_deb, id_fin);
+*/
+    int nbVal = 1000;
+    int nbTest = 200;
+    int nbSuccess = 0;
 
-    debut = clock();
-    max = f1(tableau, 100000);
-    fin = clock();
-    printf("F1: Temps CPU:%.2fsecondes\n",(double)(fin-debut)/CLOCKS_PER_SEC);
-    printf("f1: %li\n", max);
+    for (int i = 0; i < nbTest; i++)
+    {
+        for (int i = 0; i < nbVal; i++)
+        {
+            tableau[i] = rand() % 21 - 10;
+        }
+        max3 = f3(tableau, nbVal, &id_deb3, &id_fin3);
+        max2 = f2(tableau, nbVal, &id_deb2, &id_fin2);
+        max = f1(tableau, nbVal, &id_deb, &id_fin);
+    printf("\n");
+        if ((id_deb == id_deb2) && (id_deb2 == id_deb3) && (id_fin == id_fin2) && (id_fin2 == id_fin3) && (max == max2) && (max2 == max3))
+        {
+            printf("Test n°%d: Success\n", i + 1);
+            nbSuccess ++;
+        }
+        else
+        {
+            printf("Test n°%d: Failed\n", i + 1);
+        }
+        printf("f1: %d\n", max);
+        printf("id deb = %d | id fin = %d\n", id_deb, id_fin);
+        printf("==================================\n");
+        printf("f2: %d\n", max2);
+        printf("id deb = %d | id fin = %d\n", id_deb2, id_fin2);
+        printf("==================================\n");
+        printf("f3: %d\n", max3);
+        printf("id deb = %d | id fin = %d\n", id_deb3, id_fin3);
+    }
+    printf("\n\nNombre de test reussi = %d/%d", nbSuccess, nbTest);
 
     return 0;
 }

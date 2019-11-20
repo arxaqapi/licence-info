@@ -9,3 +9,6 @@ testC/
 *.fls
 *.log
 *.synctex.gz
+
+
+*.netbeans*
