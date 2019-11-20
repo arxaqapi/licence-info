@@ -177,6 +177,8 @@ void afficherSudoku(T_sudoku s)
 
 /* Implementation des regles */
 
+//  Implementation R1
+
 int retireCandidatGroupement(T_sudoku *ps, int indDeComparaison)
 {
   T_coordonnees coordDebutRegion = debutRegion(indiceRegion(obtenirCoords(indDeComparaison)));
@@ -310,32 +312,9 @@ int R1_sudoku(T_sudoku *ps)
   if (verifSiModification != 0) return 1; 
   return verifSiModification;
 }
-/*
-int R1_sudoku(T_sudoku *ps)
-{
-  int count = 0;
-  for (int i = 0; i < 81; i++)
-  {
-    if (R1_case(&ps->grille[i]) == 1)
-    {
-      // ligne
-      retireCandidatLigne(ps, i);
-      //parcours les 9 cases de la colonne
-      retireCandidatColonne(ps, i);
-      retireCandidatGroupement(ps, i);
-    }
-  }
-  if (count == 0)
-  {
-    return 0;
-  }
-  else
-  {
-    return 1;
-  }
-}*/
 
-/** Applique R2 sur la case
+
+//  Implementation R2
 
 /**
  * @param indCase indice de la case sur laquelle on applique R2
