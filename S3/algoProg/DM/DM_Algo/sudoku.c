@@ -173,8 +173,6 @@ void afficherSudoku(T_sudoku s)
   }
 }
 
-
-
 /* Implementation des regles */
 
 //  Implementation R1
@@ -236,19 +234,17 @@ int retireCandidatColonne(T_sudoku *ps, int indDeComparaison)
   int modif = 0;
   int valeurARetirer = ps->grille[indDeComparaison].val;
   int indElementColonne;
-  int idVal;
+  int idValARetirer;
 
-  for (size_t x = 0; x < 9; x++)
+  for (indElementColonne = coordValeur.colonne; indElementColonne <= 72 + coordValeur.colonne; indElementColonne += 9)
   {
-    indElementColonne = 9 * x + coordValeur.colonne;
-
     if (indElementColonne != indDeComparaison && ps->grille[indDeComparaison].val != 0)
     {
-      idVal = rechercherValeur(valeurARetirer, ps->grille[indElementColonne]);
+      idValARetirer = rechercherValeur(valeurARetirer, ps->grille[indElementColonne]);
 
-      if (idVal < ps->grille[indElementColonne].n_candidats)
+      if (idValARetirer < ps->grille[indElementColonne].n_candidats)
       {
-        supprimerValeur(idVal, &ps->grille[indElementColonne]);
+        supprimerValeur(idValARetirer, &ps->grille[indElementColonne]);
         modif = 1;
       }
     }
@@ -304,27 +300,107 @@ int R1_sudoku(T_sudoku *ps)
     //  Si R1 a été appliqué
     if (R1_case(&ps->grille[id]))
     {
-      verifSiModification = retireCandidatLigne(ps, id) 
-          + retireCandidatGroupement(ps, id) 
-          + retireCandidatColonne(ps, id);
+      verifSiModification = retireCandidatLigne(ps, id) + retireCandidatGroupement(ps, id) + retireCandidatColonne(ps, id);
     }
   }
-  if (verifSiModification != 0) return 1; 
+  if (verifSiModification != 0)
+    return 1;
   return verifSiModification;
 }
 
-
 //  Implementation R2
 
-/**
+/** Ajoute une valeur dans le tableau des candidats
+ * @param val la valeur a ajouter dasn le tableau des candidats
+ * @param tCase pointeur sur la case
+ */
+
+void ajoutValeurACase(int val, T_case *tCase)
+{
+  tCase->candidats[tCase->n_candidats] = val;
+  (tCase->n_candidats) ++;
+}
+
+/** Mets a jours les n_candidats et candidats de la case
+ * correspondant a l'indice passée en parametre, en fonction
+ * des valeurs des cases des groupements
  * @param indCase indice de la case sur laquelle on applique R2
  * @param ps poiteur sur un sudoku
  * @return 1 si la regle a ete appliqué, 0 sinon
  */
-/*
 int R2_case(int indCase, T_sudoku *ps)
 {
-  //  return 1 si au moins 1 candid retiré de la case
+  //  Ligne : construction du tableau depuis les elements de la ligne
+  int verifSiModification = 0;
+  if (ps->grille[indCase].val == 0)
+  {
+
+    T_coordonnees coordCase = obtenirCoords(indCase);
+    int indValeur;
+    int val;
+
+    //  parcours la ligne de indCase(9*coordCase.ligne à ...+9)
+    for (int x = (9 * coordCase.ligne); x < ((9 * coordCase.ligne) + 9); x++)
+    {
+      // x: indice de la case de la ligne
+      val = ps->grille[x].val;
+      if (indCase != x && val != 0)
+      {
+        indValeur = rechercherValeur(val, ps->grille[indCase]);
+        if (ps->grille[indCase].n_candidats > indValeur)
+        {
+          //  ajoutValeurACase(val, &tableauTemporaire);
+          supprimerValeur(indValeur, &ps->grille[indCase]);
+          verifSiModification = 1;
+        }
+      }
+    }
+
+    //  Colonne : construction du tableau depuis les elements de la colonne
+
+    for (int indElementColonne = coordCase.colonne; indElementColonne <= 72 + coordCase.colonne; indElementColonne += 9)
+    {
+      // indElementColonne: indice de la case de la colonne
+      val = ps->grille[indElementColonne].val;
+      if (indCase != indElementColonne && val != 0)
+      {
+        indValeur = rechercherValeur(val, ps->grille[indCase]);
+        if (ps->grille[indCase].n_candidats > indValeur)
+        {
+          //  ajoutValeurACase(val, &tableauTemporaire);
+          supprimerValeur(indValeur, &ps->grille[indCase]);
+          verifSiModification = 1;
+        }
+      }
+    }
+
+    // Groupement : construction du tableau depuis les elements du groupement
+    T_coordonnees coordDebutRegion = debutRegion(indiceRegion(coordCase));
+    T_coordonnees coordValeur;
+    int indElementGroupement;
+    for (int x = coordDebutRegion.ligne; x < (coordDebutRegion.ligne + 3); x++)
+    {
+      for (int y = coordDebutRegion.colonne; y < (coordDebutRegion.colonne + 3); y++)
+      {
+        coordValeur.ligne = x;
+        coordValeur.colonne = y;
+        indElementGroupement = obtenirIndice(coordValeur);
+        val = ps->grille[indElementGroupement].val;
+
+        if (indCase != indElementGroupement && val != 0)
+        {
+          indValeur = rechercherValeur(val, ps->grille[indCase]);
+          if (ps->grille[indCase].n_candidats > indValeur)
+          {
+            //  ajoutValeurACase(val, &tableauTemporaire);
+            supprimerValeur(indValeur, &ps->grille[indCase]);
+            verifSiModification = 1;
+          }
+        }
+      }
+    }
+  }
+  return verifSiModification;
 }
 
 /** Applique R2 sur toutes les cases du sudoku,
@@ -332,7 +408,6 @@ int R2_case(int indCase, T_sudoku *ps)
  * @param ps pointeur sur un sudoku
  * @return renvoie 1 si une modification a eu lieu, 0 sinon
 */
-/*
 int R2_sudoku(T_sudoku *ps)
 {
   int verifSiModification = 0;
@@ -345,4 +420,3 @@ int R2_sudoku(T_sudoku *ps)
   }
   return verifSiModification;
 }
-*/
