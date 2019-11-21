@@ -150,7 +150,7 @@ void supprimerValeur(int ival, T_case *pc)
     pc->candidats[i] = pc->candidats[i + 1];
   }
 
-  pc->n_candidats--;
+  pc->n_candidats --;
   for (int i = pc->n_candidats; i < 9 - pc->n_candidats; i++)
   {
     pc->candidats[i] = 0;
@@ -179,15 +179,15 @@ void afficherSudoku(T_sudoku s)
 
 int retireCandidatGroupement(T_sudoku *ps, int indDeComparaison)
 {
-  T_coordonnees coordDebutRegion = debutRegion(indiceRegion(obtenirCoords(indDeComparaison)));
+  T_coordonnees coord_debut_region = debutRegion(indiceRegion(obtenirCoords(indDeComparaison)));
   T_coordonnees coordValeur;
   int modif = 0;
   int valeurARetirer = ps->grille[indDeComparaison].val;
   int idVal;
   int idValARetirer;
-  for (int x = coordDebutRegion.ligne; x < coordDebutRegion.ligne + 3; x++)
+  for (int x = coord_debut_region.ligne; x < coord_debut_region.ligne + 3; x++)
   {
-    for (int y = coordDebutRegion.colonne; y < coordDebutRegion.colonne + 3; y++)
+    for (int y = coord_debut_region.colonne; y < coord_debut_region.colonne + 3; y++)
     {
       coordValeur.ligne = x;
       coordValeur.colonne = y;
@@ -233,18 +233,18 @@ int retireCandidatColonne(T_sudoku *ps, int indDeComparaison)
   T_coordonnees coordValeur = obtenirCoords(indDeComparaison);
   int modif = 0;
   int valeurARetirer = ps->grille[indDeComparaison].val;
-  int indElementColonne;
+  int ind_ele_colonne;
   int idValARetirer;
 
-  for (indElementColonne = coordValeur.colonne; indElementColonne <= 72 + coordValeur.colonne; indElementColonne += 9)
+  for (ind_ele_colonne = coordValeur.colonne; ind_ele_colonne <= 72 + coordValeur.colonne; ind_ele_colonne += 9)
   {
-    if (indElementColonne != indDeComparaison && ps->grille[indDeComparaison].val != 0)
+    if (ind_ele_colonne != indDeComparaison && ps->grille[indDeComparaison].val != 0)
     {
-      idValARetirer = rechercherValeur(valeurARetirer, ps->grille[indElementColonne]);
+      idValARetirer = rechercherValeur(valeurARetirer, ps->grille[ind_ele_colonne]);
 
-      if (idValARetirer < ps->grille[indElementColonne].n_candidats)
+      if (idValARetirer < ps->grille[ind_ele_colonne].n_candidats)
       {
-        supprimerValeur(idValARetirer, &ps->grille[indElementColonne]);
+        supprimerValeur(idValARetirer, &ps->grille[ind_ele_colonne]);
         modif = 1;
       }
     }
@@ -310,16 +310,6 @@ int R1_sudoku(T_sudoku *ps)
 
 //  Implementation R2
 
-/** Ajoute une valeur dans le tableau des candidats
- * @param val la valeur a ajouter dasn le tableau des candidats
- * @param tCase pointeur sur la case
- */
-
-void ajoutValeurACase(int val, T_case *tCase)
-{
-  tCase->candidats[tCase->n_candidats] = val;
-  (tCase->n_candidats) ++;
-}
 
 /** Mets a jours les n_candidats et candidats de la case
  * correspondant a l'indice passée en parametre, en fonction
@@ -336,7 +326,7 @@ int R2_case(int indCase, T_sudoku *ps)
   {
 
     T_coordonnees coordCase = obtenirCoords(indCase);
-    int indValeur;
+    int ind_valeur;
     int val;
 
     //  parcours la ligne de indCase(9*coordCase.ligne à ...+9)
@@ -346,11 +336,11 @@ int R2_case(int indCase, T_sudoku *ps)
       val = ps->grille[x].val;
       if (indCase != x && val != 0)
       {
-        indValeur = rechercherValeur(val, ps->grille[indCase]);
-        if (ps->grille[indCase].n_candidats > indValeur)
+        ind_valeur = rechercherValeur(val, ps->grille[indCase]);
+        if (ps->grille[indCase].n_candidats > ind_valeur)
         {
           //  ajoutValeurACase(val, &tableauTemporaire);
-          supprimerValeur(indValeur, &ps->grille[indCase]);
+          supprimerValeur(ind_valeur, &ps->grille[indCase]);
           verifSiModification = 1;
         }
       }
@@ -358,29 +348,29 @@ int R2_case(int indCase, T_sudoku *ps)
 
     //  Colonne : construction du tableau depuis les elements de la colonne
 
-    for (int indElementColonne = coordCase.colonne; indElementColonne <= 72 + coordCase.colonne; indElementColonne += 9)
+    for (int ind_ele_colonne = coordCase.colonne; ind_ele_colonne <= 72 + coordCase.colonne; ind_ele_colonne += 9)
     {
-      // indElementColonne: indice de la case de la colonne
-      val = ps->grille[indElementColonne].val;
-      if (indCase != indElementColonne && val != 0)
+      // ind_ele_colonne: indice de la case de la colonne
+      val = ps->grille[ind_ele_colonne].val;
+      if (indCase != ind_ele_colonne && val != 0)
       {
-        indValeur = rechercherValeur(val, ps->grille[indCase]);
-        if (ps->grille[indCase].n_candidats > indValeur)
+        ind_valeur = rechercherValeur(val, ps->grille[indCase]);
+        if (ps->grille[indCase].n_candidats > ind_valeur)
         {
           //  ajoutValeurACase(val, &tableauTemporaire);
-          supprimerValeur(indValeur, &ps->grille[indCase]);
+          supprimerValeur(ind_valeur, &ps->grille[indCase]);
           verifSiModification = 1;
         }
       }
     }
 
     // Groupement : construction du tableau depuis les elements du groupement
-    T_coordonnees coordDebutRegion = debutRegion(indiceRegion(coordCase));
+    T_coordonnees coord_debut_region = debutRegion(indiceRegion(coordCase));
     T_coordonnees coordValeur;
     int indElementGroupement;
-    for (int x = coordDebutRegion.ligne; x < (coordDebutRegion.ligne + 3); x++)
+    for (int x = coord_debut_region.ligne; x < (coord_debut_region.ligne + 3); x++)
     {
-      for (int y = coordDebutRegion.colonne; y < (coordDebutRegion.colonne + 3); y++)
+      for (int y = coord_debut_region.colonne; y < (coord_debut_region.colonne + 3); y++)
       {
         coordValeur.ligne = x;
         coordValeur.colonne = y;
@@ -389,11 +379,11 @@ int R2_case(int indCase, T_sudoku *ps)
 
         if (indCase != indElementGroupement && val != 0)
         {
-          indValeur = rechercherValeur(val, ps->grille[indCase]);
-          if (ps->grille[indCase].n_candidats > indValeur)
+          ind_valeur = rechercherValeur(val, ps->grille[indCase]);
+          if (ps->grille[indCase].n_candidats > ind_valeur)
           {
             //  ajoutValeurACase(val, &tableauTemporaire);
-            supprimerValeur(indValeur, &ps->grille[indCase]);
+            supprimerValeur(ind_valeur, &ps->grille[indCase]);
             verifSiModification = 1;
           }
         }
@@ -402,7 +392,6 @@ int R2_case(int indCase, T_sudoku *ps)
   }
   return verifSiModification;
 }
-
 /** Applique R2 sur toutes les cases du sudoku,
  * renvoie 1 si une modification a eu lieu, 0 sinon
  * @param ps pointeur sur un sudoku
@@ -420,3 +409,4 @@ int R2_sudoku(T_sudoku *ps)
   }
   return verifSiModification;
 }
+
