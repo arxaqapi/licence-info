@@ -149,7 +149,7 @@ void supprimerValeur(int ival, T_case *pc)
     pc->candidats[i] = pc->candidats[i + 1];
   }
 
-  pc->n_candidats--;
+  pc->n_candidats --;
   for (int i = pc->n_candidats; i < 9 - pc->n_candidats; i++)
   {
     pc->candidats[i] = 0;
@@ -178,109 +178,92 @@ void afficherSudoku(T_sudoku s)
 
 int retireCandidatGroupement(T_sudoku *ps, int indDeComparaison)
 {
-  int verifSiModification = 0;
-  int valeurASupprimer = ps->grille[indDeComparaison].val;
-  int indValeurASupprimer;
-  int indDansGroupement;
-  T_coordonnees coordDebutRegion = debutRegion(indiceRegion(obtenirCoords(indDeComparaison)));
-  //  T_coordonnees coordValeur;
-  //  T_coordonnees coordCase = obtenirCoords(indDeComparaison);
-
-  for (int x = coordDebutRegion.ligne; x < coordDebutRegion.ligne + 3; x++)
+  T_coordonnees coord_debut_region = debutRegion(indiceRegion(obtenirCoords(indDeComparaison)));
+  T_coordonnees coordValeur;
+  int modif = 0;
+  int valeurARetirer = ps->grille[indDeComparaison].val;
+  int idVal;
+  int idValARetirer;
+  for (int x = coord_debut_region.ligne; x < coord_debut_region.ligne + 3; x++)
   {
-    for (int y = coordDebutRegion.colonne; y < coordDebutRegion.colonne + 3; y++)
+    for (int y = coord_debut_region.colonne; y < coord_debut_region.colonne + 3; y++)
     {
-      T_coordonnees coordValeur = {x, y};
-      indDansGroupement = obtenirIndice(coordValeur);
-      // on verifie que la case est = 0
-      if (ps->grille[indDansGroupement].val == 0 && indDansGroupement != indDeComparaison)
+      coordValeur.ligne = x;
+      coordValeur.colonne = y;
+      idVal = obtenirIndice(coordValeur);
+      if (idVal != indDeComparaison && ps->grille[idVal].val == 0)
       {
-        // on cherche la valeur a supprimer dans le tableau de candidats de indDansGroupement
-        indValeurASupprimer = rechercherValeur(valeurASupprimer, ps->grille[indDansGroupement]);
-        if (indValeurASupprimer < ps->grille[indDansGroupement].n_candidats)
+        idValARetirer = rechercherValeur(valeurARetirer, ps->grille[idVal]);
+        if (idValARetirer < ps->grille[idVal].n_candidats)
         {
-          supprimerValeur(indValeurASupprimer, &ps->grille[indDansGroupement]);
-          verifSiModification = 1;
+          supprimerValeur(idValARetirer, &ps->grille[idVal]);
+          modif = 1;
         }
       }
     }
   }
-  if (verifSiModification)
-  {
-    return 1;
-  }
-  return 0;
+  return modif;
 }
 
 int retireCandidatLigne(T_sudoku *ps, int indDeComparaison)
 {
-  int verifSiModification = 0;
-  int valeurASupprimer = ps->grille[indDeComparaison].val;
-  int indValeurASupprimer;
-  T_coordonnees coordCase = obtenirCoords(indDeComparaison);
-
-  for (int indDansLigne = coordCase.ligne * 9; indDansLigne < coordCase.ligne * 9 + 9; indDansLigne++)
+  T_coordonnees coordValeur = obtenirCoords(indDeComparaison);
+  int modif = 0;
+  int valeurARetirer = ps->grille[indDeComparaison].val;
+  int idVal;
+  for (int x = (9 * coordValeur.ligne); x < ((9 * coordValeur.ligne) + 9); x++)
   {
-    // on verifie que la case est = 0
-    if (ps->grille[indDansLigne].val == 0 && indDansLigne != indDeComparaison)
+    if (x != indDeComparaison && ps->grille[x].val == 0)
     {
-      // on cherche la valeur a supprimer dans le tableau de candidats de indDansLigne
-      indValeurASupprimer = rechercherValeur(valeurASupprimer, ps->grille[indDansLigne]);
-      if (indValeurASupprimer < ps->grille[indDansLigne].n_candidats)
+      idVal = rechercherValeur(valeurARetirer, ps->grille[x]);
+
+      if (idVal < ps->grille[x].n_candidats)
       {
-        supprimerValeur(indValeurASupprimer, &ps->grille[indDansLigne]);
-        verifSiModification = 1;
+        supprimerValeur(idVal, &ps->grille[x]);
+        modif = 1;
       }
     }
   }
-  if (verifSiModification)
-  {
-    return 1;
-  }
-  return 0;
+  return modif;
 }
 
 int retireCandidatColonne(T_sudoku *ps, int indDeComparaison)
 {
-  int verifSiModification = 0;
-  int valeurASupprimer = ps->grille[indDeComparaison].val;
-  int indValeurASupprimer;
-  T_coordonnees coordCase = obtenirCoords(indDeComparaison);
+  T_coordonnees coordValeur = obtenirCoords(indDeComparaison);
+  int modif = 0;
+  int valeurARetirer = ps->grille[indDeComparaison].val;
+  int ind_ele_colonne;
+  int idValARetirer;
 
-  for (int indDansColo = coordCase.colonne; indDansColo <= 72 + coordCase.colonne; indDansColo += 9)
+  for (ind_ele_colonne = coordValeur.colonne; ind_ele_colonne <= 72 + coordValeur.colonne; ind_ele_colonne += 9)
   {
-    // on verifie que la case est = 0
-    if (ps->grille[indDansColo].val == 0 && indDansColo != indDeComparaison)
+    if (ind_ele_colonne != indDeComparaison && ps->grille[indDeComparaison].val != 0)
     {
-      // on cherche la valeur a supprimer dans le tableau de candidats de indDansColo
-      indValeurASupprimer = rechercherValeur(valeurASupprimer, ps->grille[indDansColo]);
-      if (indValeurASupprimer < ps->grille[indDansColo].n_candidats)
+      idValARetirer = rechercherValeur(valeurARetirer, ps->grille[ind_ele_colonne]);
+
+      if (idValARetirer < ps->grille[ind_ele_colonne].n_candidats)
       {
-        supprimerValeur(indValeurASupprimer, &ps->grille[indDansColo]);
-        verifSiModification = 1;
+        supprimerValeur(idValARetirer, &ps->grille[ind_ele_colonne]);
+        modif = 1;
       }
     }
   }
-  if (verifSiModification)
-  {
-    return 1;
-  }
-  return 0;
+  return modif;
 }
 
 /**
- * @param idValeur indice de la valeur dans candidats[] qui sera affecter
+ * @param idValeur indice de la valeur qui sera affecter
  * @param pc pointeur sur une case
  */
-void affectationIndiceValeurACase(int idValeur, T_case *pc)
+void affectationValeurACase(int idValeur, T_case *pc)
 {
   if (pc->candidats[idValeur] != 0)
   {
-
+    /* code */
     // n_candidats => 0
     // tt cases de candidiats du tableau doivent être mises a 0
     pc->val = pc->candidats[idValeur];
-    for (int i = 0; i < 9 /*pc->n_candidats*/; i++)
+    for (int i = 0; i < pc->n_candidats; i++)
     {
       pc->candidats[i] = 0;
     }
@@ -296,7 +279,7 @@ int R1_case(T_case *pc)
 {
   if (pc->n_candidats == 1)
   {
-    affectationIndiceValeurACase(0, pc);
+    affectationValeurACase(0, pc);
     //pc->val = pc->candidats[0];
     //supprimerValeur(0, pc);
     return 1;
@@ -316,19 +299,16 @@ int R1_sudoku(T_sudoku *ps)
     //  Si R1 a été appliqué
     if (R1_case(&ps->grille[id]))
     {
-      verifSiModification += retireCandidatLigne(ps, id);
-      verifSiModification += retireCandidatColonne(ps, id);
-      verifSiModification += retireCandidatGroupement(ps, id);
+      verifSiModification = retireCandidatLigne(ps, id) + retireCandidatGroupement(ps, id) + retireCandidatColonne(ps, id);
     }
   }
-  if (verifSiModification)
-  {
+  if (verifSiModification != 0)
     return 1;
-  }
-  return 0;
+  return verifSiModification;
 }
 
 //  Implementation R2
+
 
 /** Mets a jours les n_candidats et candidats de la case
  * correspondant a l'indice passée en parametre, en fonction
@@ -428,3 +408,4 @@ int R2_sudoku(T_sudoku *ps)
   }
   return verifSiModification;
 }
+

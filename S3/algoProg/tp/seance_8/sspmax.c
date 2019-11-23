@@ -89,8 +89,8 @@ int f3(tab t, int taille, int *i_deb, int *i_fin)
 {
     int res = t[0];
     int max = t[0];
-
     int recuperation_i_deb = 0;
+
     for (int deb = 1; deb < taille; deb++)
     {
         if (res > 0)
