@@ -434,7 +434,6 @@ int R2_sudoku(T_sudoku *ps)
 
 int rechercheSiCandidatUniqueDansLigne(int valCand, T_coordonnees coordCaseP, T_sudoku *ps)
 {
-  int verif_si_valCand_dans_cand_ligne = 0;
   int indice_case_reference = obtenirIndice(coordCaseP);
   int ind_val_dans_cand;
   for (int id_dans_ligne = (9 * coordCaseP.ligne); id_dans_ligne < ((9 * coordCaseP.ligne) + 9); id_dans_ligne++)
@@ -455,18 +454,49 @@ int rechercheSiCandidatUniqueDansLigne(int valCand, T_coordonnees coordCaseP, T_
 
 int rechercheSiCandidatUniqueDansColonne(int valCand, T_coordonnees coordCaseP, T_sudoku *ps)
 {
-  int verifSiModification = 0;
+  int indice_case_reference = obtenirIndice(coordCaseP);
+  int ind_val_dans_cand;
   for (int ind_ele_colo = coordCaseP.colonne; ind_ele_colo <= 72 + coordCaseP.colonne; ind_ele_colo += 9)
   {
+    // si différent de indCase de référence
+    if (ind_ele_colo != indice_case_reference && ps->grille[ind_ele_colo].val == 0)
+    {
+      int ind_val_dans_cand = rechercherValeur(ind_ele_colo, ps->grille[ind_ele_colo]);
+      if (ind_val_dans_cand < ps->grille[ind_ele_colo].n_candidats)
+      {
+        //  si le cand est dans les cand de la colonne, on renvoie 1
+        return 1;
+      }
+    }
   }
-  return verifSiModification;
+  return 0;
 }
 
 int rechercheSiCandidatUniqueDansGroupement(int valCand, T_coordonnees coordCaseP, T_sudoku *ps)
 {
-  int verifSiModification = 0;
-
-  return verifSiModification;
+  int indice_case_reference = obtenirIndice(coordCaseP);
+  T_coordonnees coord_debut_region = debutRegion(indiceRegion(coordCaseP));
+  T_coordonnees coordValeur;
+  int indElementGroupement;
+  for (int x = coord_debut_region.ligne; x < (coord_debut_region.ligne + 3); x++)
+  {
+    for (int y = coord_debut_region.colonne; y < (coord_debut_region.colonne + 3); y++)
+    {
+      coordValeur.ligne = x;
+      coordValeur.colonne = y;
+      indElementGroupement = obtenirIndice(coordValeur);
+      if (indElementGroupement != indice_case_reference && ps->grille[indElementGroupement].val == 0)
+      {
+        int ind_val_dans_cand = rechercherValeur(indElementGroupement, ps->grille[indElementGroupement]);
+        if (ind_val_dans_cand < ps->grille[indElementGroupement].n_candidats)
+        {
+          //  si le cand est dans les cand de la ligne, on renvoie 1
+          return 1;
+        }
+      }
+    }
+  }
+  return 0;
 }
 
 /** Applique R3 sur la case
@@ -489,27 +519,22 @@ int R3_case(int indCase, T_sudoku *ps)
     {
       // si pas dans les candidats de la ligne, on affecte
       affectationIndiceValeurACase(indCase, &ps->grille[indCase]);
-      verifSiModification = 1;
+      return 1;
     }
     // Colonne
     else if (!rechercheSiCandidatUniqueDansColonne(valArechercher, coordCase, ps))
     {
       // si pas dans les candidats de la colonne, on affecte
       affectationIndiceValeurACase(indCase, &ps->grille[indCase]);
-      verifSiModification = 1;
+      return 1;
     }
     // groupement
     else if (!rechercheSiCandidatUniqueDansGroupement(valArechercher, coordCase, ps))
     {
       // si pas dans les candidats du groupememt, on affecte
       affectationIndiceValeurACase(indCase, &ps->grille[indCase]);
-      verifSiModification = 1;
+      return 1;
     }
-  }
-
-  if (verifSiModification)
-  {
-    return 1;
   }
   return 0;
 }
@@ -529,8 +554,14 @@ int R3_sudoku(T_sudoku *ps)
     {
       //    del lig : del colo : del grpmt
       //  val a suppr =   ps->grille[i].val
-      verifSiModification = 1;
+      verifSiModification += retireCandidatLigne(ps, i);
+      verifSiModification += retireCandidatColonne(ps, i);
+      verifSiModification += retireCandidatGroupement(ps, i);
     }
   }
-  return verifSiModification;
+  if (verifSiModification)
+  {
+    return 1;
+  }
+  return 0;
 }
