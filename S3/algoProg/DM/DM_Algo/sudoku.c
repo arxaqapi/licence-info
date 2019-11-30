@@ -4,8 +4,7 @@
 
 /* Implanter les fonctions de sudoku.h ici */
 
-/**
- * Retourne les coordonnees de la case a
+/** Retourne les coordonnees de la case a
  * partir de son indice dans le sudoku
  * @param indice indice dans le tableau de 81 cases
  * @return Coordonnees de la case
@@ -41,8 +40,7 @@ T_coordonnees debutRegion(int indiceRegion)
   return coordPremiereCaseRegion;
 }
 
-/**
- * Retourne l'indice de la region a laquelle
+/** Retourne l'indice de la region a laquelle
  * appartient la case ayant ces coordonnees
  * @param coords coordonnes de la case
  * @return indice de la region
@@ -172,9 +170,34 @@ void afficherSudoku(T_sudoku s)
   }
 }
 
+/* Fonctions personnelles */
+
+/** Affecte une valeur a une case, en mettant le nombre de candidats 
+ * et les candidats de cette case a 0
+ * @param idValeur indice de la valeur dans candidats[] qui sera affecter
+ * @param pc pointeur sur une case
+ */
+void affectationIndiceValeurACase(int idValeur, T_case *pc)
+{
+  if (pc->candidats[idValeur] != 0)
+  {
+
+    // n_candidats => 0
+    // tt cases de candidiats du tableau doivent être mises a 0
+    pc->val = pc->candidats[idValeur];
+    // remplacer par supprimer ??
+    for (int i = 0; i < 9 /*pc->n_candidats*/; i++)
+    {
+      pc->candidats[i] = 0;
+    }
+    pc->n_candidats = 0;
+  }
+}
+
+
 /* Implementation des regles */
 
-/*******  R1  *******/
+//==================  R1  ==================//
 
 int retireCandidatGroupement(T_sudoku *ps, int indDeComparaison)
 {
@@ -183,8 +206,6 @@ int retireCandidatGroupement(T_sudoku *ps, int indDeComparaison)
   int indValeurASupprimer;
   int indDansGroupement;
   T_coordonnees coordDebutRegion = debutRegion(indiceRegion(obtenirCoords(indDeComparaison)));
-  //  T_coordonnees coordValeur;
-  //  T_coordonnees coordCase = obtenirCoords(indDeComparaison);
 
   for (int x = coordDebutRegion.ligne; x < coordDebutRegion.ligne + 3; x++)
   {
@@ -268,38 +289,16 @@ int retireCandidatColonne(T_sudoku *ps, int indDeComparaison)
   return 0;
 }
 
-/**
- * @param idValeur indice de la valeur dans candidats[] qui sera affecter
- * @param pc pointeur sur une case
- */
-void affectationIndiceValeurACase(int idValeur, T_case *pc)
-{
-  if (pc->candidats[idValeur] != 0)
-  {
 
-    // n_candidats => 0
-    // tt cases de candidiats du tableau doivent être mises a 0
-    pc->val = pc->candidats[idValeur];
-    // remplacer par supprimer ??
-    for (int i = 0; i < 9 /*pc->n_candidats*/; i++)
-    {
-      pc->candidats[i] = 0;
-    }
-    pc->n_candidats = 0;
-  }
-}
-
-/** Afficher un sudoku: 9 lignes de 9 entiers
- * separes par des tabulations (\t)
+/** Applique R1 sur la case 
  * @param pc un pointeur sur une case
+ * @return 1 si une modification a eu lieu
  */
 int R1_case(T_case *pc)
 {
   if (pc->n_candidats == 1)
   {
     affectationIndiceValeurACase(0, pc);
-    //pc->val = pc->candidats[0];
-    //supprimerValeur(0, pc);
     return 1;
   }
   return 0;
@@ -329,7 +328,7 @@ int R1_sudoku(T_sudoku *ps)
   return 0;
 }
 
-/*******  R2  *******/
+//==================  R2  ==================//
 
 /** Mets a jours les n_candidats et candidats de la case
  * correspondant a l'indice passée en parametre, en fonction
@@ -430,18 +429,28 @@ int R2_sudoku(T_sudoku *ps)
   return verifSiModification;
 }
 
-/*******  R3  *******/
+//==================  R3  ==================//
 
-int rechercheSiCandidatUniqueDansLigne(int valCand, T_coordonnees coordCaseP, T_sudoku *ps)
+/** Pour une valeur donnée et une cases,
+ * recherche si cette valeur est dans les candidats 
+ * des cases de la ligne
+ * @param valCand valeur a rechercher dans les cases de la ligne
+ * @param indice_case_reference indice de la case de référence
+ * @param ps pointeur sur le sudoku
+ * @return 1 s'il existe valCand dans les cases de la ligne,
+ * 0 sinon
+ */
+int rechercheSiCandidatUniqueDansLigne(int valCand, int indice_case_reference, T_sudoku *ps)
 {
-  int indice_case_reference = obtenirIndice(coordCaseP);
+  T_coordonnees coordCaseP = obtenirCoords(indice_case_reference);
+
   int ind_val_dans_cand;
   for (int id_dans_ligne = (9 * coordCaseP.ligne); id_dans_ligne < ((9 * coordCaseP.ligne) + 9); id_dans_ligne++)
   {
     // si différent de indCase de référence
     if (id_dans_ligne != indice_case_reference && ps->grille[id_dans_ligne].val == 0)
     {
-      int ind_val_dans_cand = rechercherValeur(id_dans_ligne, ps->grille[id_dans_ligne]);
+      ind_val_dans_cand = rechercherValeur(valCand, ps->grille[id_dans_ligne]);
       if (ind_val_dans_cand < ps->grille[id_dans_ligne].n_candidats)
       {
         //  si le cand est dans les cand de la ligne, on renvoie 1
@@ -452,16 +461,26 @@ int rechercheSiCandidatUniqueDansLigne(int valCand, T_coordonnees coordCaseP, T_
   return 0;
 }
 
-int rechercheSiCandidatUniqueDansColonne(int valCand, T_coordonnees coordCaseP, T_sudoku *ps)
+/** Pour une valeur donnée et une cases,
+ * recherche si cette valeur est dans les candidats 
+ * des cases de la colonne
+ * @param valCand valeur a rechercher dans les cases de la colonne
+ * @param indice_case_reference indice de la case de référence
+ * @param ps pointeur sur le sudoku
+ * @return 1 s'il existe valCand dans les cases de la colonne,
+ * 0 sinon
+ */
+int rechercheSiCandidatUniqueDansColonne(int valCand, int indice_case_reference, T_sudoku *ps)
 {
-  int indice_case_reference = obtenirIndice(coordCaseP);
+  T_coordonnees coordCaseP = obtenirCoords(indice_case_reference);
+
   int ind_val_dans_cand;
   for (int ind_ele_colo = coordCaseP.colonne; ind_ele_colo <= 72 + coordCaseP.colonne; ind_ele_colo += 9)
   {
     // si différent de indCase de référence
     if (ind_ele_colo != indice_case_reference && ps->grille[ind_ele_colo].val == 0)
     {
-      int ind_val_dans_cand = rechercherValeur(ind_ele_colo, ps->grille[ind_ele_colo]);
+      ind_val_dans_cand = rechercherValeur(valCand, ps->grille[ind_ele_colo]);
       if (ind_val_dans_cand < ps->grille[ind_ele_colo].n_candidats)
       {
         //  si le cand est dans les cand de la colonne, on renvoie 1
@@ -472,10 +491,18 @@ int rechercheSiCandidatUniqueDansColonne(int valCand, T_coordonnees coordCaseP, 
   return 0;
 }
 
-int rechercheSiCandidatUniqueDansGroupement(int valCand, T_coordonnees coordCaseP, T_sudoku *ps)
+/** Pour une valeur donnée et une case,
+ * recherche si cette valeur est dans les candidats 
+ * des cases de le groupement
+ * @param valCand valeur a rechercher dans les cases du groupement
+ * @param indice_case_reference indice de la case de référence
+ * @param ps pointeur sur le sudoku
+ * @return 1 s'il existe valCand dans les cases du groupement,
+ * 0 sinon
+ */
+int rechercheSiCandidatUniqueDansGroupement(int valCand, int indice_case_reference, T_sudoku *ps)
 {
-  int indice_case_reference = obtenirIndice(coordCaseP);
-  T_coordonnees coord_debut_region = debutRegion(indiceRegion(coordCaseP));
+  T_coordonnees coord_debut_region = debutRegion(indiceRegion(obtenirCoords(indice_case_reference)));
   T_coordonnees coordValeur;
   int indElementGroupement;
   for (int x = coord_debut_region.ligne; x < (coord_debut_region.ligne + 3); x++)
@@ -487,7 +514,7 @@ int rechercheSiCandidatUniqueDansGroupement(int valCand, T_coordonnees coordCase
       indElementGroupement = obtenirIndice(coordValeur);
       if (indElementGroupement != indice_case_reference && ps->grille[indElementGroupement].val == 0)
       {
-        int ind_val_dans_cand = rechercherValeur(indElementGroupement, ps->grille[indElementGroupement]);
+        int ind_val_dans_cand = rechercherValeur(valCand, ps->grille[indElementGroupement]);
         if (ind_val_dans_cand < ps->grille[indElementGroupement].n_candidats)
         {
           //  si le cand est dans les cand de la ligne, on renvoie 1
@@ -506,33 +533,37 @@ int rechercheSiCandidatUniqueDansGroupement(int valCand, T_coordonnees coordCase
  */
 int R3_case(int indCase, T_sudoku *ps)
 {
-  int verifSiModification = 0;
+  // On ne prend en compte uniquement les cases dant la valeur est nulles
+  if (ps->grille[indCase].val != 0)
+  {
+    return 0;
+  }
   int valArechercher;
   //  indice de chaque candidats de la case indCase
   for (int ind_candidat = 0; ind_candidat < ps->grille[indCase].n_candidats; ind_candidat++)
   {
     //  valeur a rechercher dans les cases de chaque ligne, colonne, grpmt
     valArechercher = ps->grille[indCase].candidats[ind_candidat];
-    T_coordonnees coordCase = obtenirCoords(indCase);
+    //        T_coordonnees coordCase = obtenirCoords(indCase);
     //   Ligne
-    if (!rechercheSiCandidatUniqueDansLigne(valArechercher, coordCase, ps))
+    if (!rechercheSiCandidatUniqueDansLigne(valArechercher, indCase, ps))
     {
       // si pas dans les candidats de la ligne, on affecte
-      affectationIndiceValeurACase(indCase, &ps->grille[indCase]);
+      affectationIndiceValeurACase(ind_candidat, &ps->grille[indCase]);
       return 1;
     }
     // Colonne
-    else if (!rechercheSiCandidatUniqueDansColonne(valArechercher, coordCase, ps))
+    else if (!rechercheSiCandidatUniqueDansColonne(valArechercher, indCase, ps))
     {
       // si pas dans les candidats de la colonne, on affecte
-      affectationIndiceValeurACase(indCase, &ps->grille[indCase]);
+      affectationIndiceValeurACase(ind_candidat, &ps->grille[indCase]);
       return 1;
     }
     // groupement
-    else if (!rechercheSiCandidatUniqueDansGroupement(valArechercher, coordCase, ps))
+    else if (!rechercheSiCandidatUniqueDansGroupement(valArechercher, indCase, ps))
     {
       // si pas dans les candidats du groupememt, on affecte
-      affectationIndiceValeurACase(indCase, &ps->grille[indCase]);
+      affectationIndiceValeurACase(ind_candidat, &ps->grille[indCase]);
       return 1;
     }
   }
@@ -547,13 +578,11 @@ int R3_case(int indCase, T_sudoku *ps)
 int R3_sudoku(T_sudoku *ps)
 {
   int verifSiModification = 0;
-  // SI R3 appliqué, supprime partout (ligne colonne grpmet)
+  // SI R3 appliqué, supprime partout (ligne, colonne, groupement)
   for (int i = 0; i < 81; i++)
   {
     if (R3_case(i, ps))
     {
-      //    del lig : del colo : del grpmt
-      //  val a suppr =   ps->grille[i].val
       verifSiModification += retireCandidatLigne(ps, i);
       verifSiModification += retireCandidatColonne(ps, i);
       verifSiModification += retireCandidatGroupement(ps, i);
