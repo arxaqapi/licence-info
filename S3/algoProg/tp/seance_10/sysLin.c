@@ -139,6 +139,26 @@ void matrice_resolue(float s[NLIG][NCOL], int nb_lig, int nb_col, int L_piv[NCOL
     int col = 0; //indice de la colonne courante
     *nb_piv = 0; //initialisation du nombre de pivots
     //On s'arrete des qu'on a traite la derniere ligne ou colonne
+    while (lig < 0 && col < 0)
+    {
+        int pivot;
+        for (; lig < nb_lig; lig ++)
+        {
+            
+        }
+        if (pivot == 0)
+        {
+            col ++;
+        } else
+        {
+            permuter(s, nb_lig, nb_col, lig, /*lig_du_pivot*/);
+        }
+        
+        
+        
+    }
+
+    /* code */
 
     //A completer
 }
