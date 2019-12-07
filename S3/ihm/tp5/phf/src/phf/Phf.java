@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package phf;
+import CardsLayout.StaticLayout;
 
 /**
  *
@@ -11,11 +12,12 @@ package phf;
  */
 public class Phf {
 
-    /**
+    /** Rend la page visible
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        StaticLayout site = new StaticLayout();
+        site.setVisible(true);
     }
     
 }
