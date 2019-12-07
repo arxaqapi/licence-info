@@ -45,7 +45,7 @@ T_coordonnees debutRegion(int indiceRegion)
  * @param coords coordonnes de la case
  * @return indice de la region
  */
-int indiceRegion(T_coordonnees coords)
+int indiceRegion(T_coordonnees coords)ligne
 {
   return 3 * (coords.ligne / 3) + (coords.colonne / 3);
 }
@@ -156,10 +156,7 @@ void supprimerValeur(int ival, T_case *pc)
 
 /** Afficher un sudoku: 9 lignes de 9 entiers
  * separes par des tabulations (\t)
- * @param s Le sudoku a afficher
- */
-void afficherSudoku(T_sudoku s)
-{
+ * @param s Le sudoku a afficherligne
   for (int i = 1; i <= 81; i++)
   {
     printf("%d\t", s.grille[i - 1].val);
