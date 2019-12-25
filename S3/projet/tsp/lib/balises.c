@@ -4,7 +4,7 @@
 
 void print_help()
 {
-    FILE* help_file = fopen("../res/help.txt", "r");
+    FILE* help_file = fopen("./res/help.txt", "r");
     char buffer[MAXBUF] = "";
     if (help_file != NULL)
     {
@@ -12,11 +12,10 @@ void print_help()
         {
             printf("%s", buffer);
         }
-        printf("\n ***OK, FICHIER LU");
         fclose(help_file);
     } else
     {
-        printf("Erreur d'ouverture du fichier help.txt");
+        printf("Erreur d'ouverture du fichier help.txt\n");
     }
 };
 

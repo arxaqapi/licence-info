@@ -1,7 +1,7 @@
 /// \author Tarek Kunze
 
-#include "balises.h"
 #include <stdio.h>
+#include "balises.h"
 
 
 int main(int nb_args, char *args[]) {
