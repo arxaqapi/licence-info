@@ -13,20 +13,7 @@
 #define TAILLENOM 32  // les noms sont limités à 32 caractères
 #define MAXBUF 256    // taille du buffer de lecture des fichiers
 #define NIL -1        // indique l'échec dans une fonction
-#define NB_BALISES 12 // nombre max de balises de la ligne de commabde
-// liste des codes pour les balises
-#define BAL_F 0     // -f
-#define BAL_T 1     // -t
-#define BAL_V 2     // -v
-#define BAL_O 3     // -o
-#define BAL_PPV 4   //-ppv
-#define BAL_BF 5    // -bf
-#define BAL_BFM 6   // -bfm
-#define BAL_RW 7    // -rw
-#define BAL_2OPT 8  // -2opt
-#define BAL_GA 9    // -ga
-#define BAL_H 10    //-h
-#define BAL_ZERO 11 // -nz no zéro
+
 
 // SD pour lire le fichier d'instance TSPLIB
 typedef struct instance_s
@@ -70,9 +57,9 @@ void dump_matrice_dist(instance_t instance);
 void print_solution(char *methode, instance_t instance, tour_t t, double longueur, double tps);
 
 
-// Balises
-void print_help();
-void analyse_balises(int argc, char **argv, int tab_arg[NB_BALISES]);
+// Balises OK
+//  void print_help();
+//  void analyse_balises(int argc, char **argv, int tab_arg[NB_BALISES]);
 
 // Lecture fichier tsplib
 bool prefix(char *motif, char *buf);
