@@ -10,10 +10,9 @@
 #include <math.h>
 #include <assert.h>
 
-#define TAILLENOM 32  // les noms sont limités à 32 caractères
-#define MAXBUF 256    // taille du buffer de lecture des fichiers
-#define NIL -1        // indique l'échec dans une fonction
-
+#define TAILLENOM 32 // les noms sont limités à 32 caractères
+#define MAXBUF 256   // taille du buffer de lecture des fichiers
+#define NIL -1       // indique l'échec dans une fonction
 
 // SD pour lire le fichier d'instance TSPLIB
 typedef struct instance_s
@@ -55,7 +54,6 @@ bool villes_adjacentes(tour_t tournee, int ind1, int ind2);
 void dump_instance(instance_t instance);
 void dump_matrice_dist(instance_t instance);
 void print_solution(char *methode, instance_t instance, tour_t t, double longueur, double tps);
-
 
 // Balises OK
 //  void print_help();
@@ -102,6 +100,5 @@ int **creer_mat_int(int nbRows, int nbCol);
 double **creer_mat_dist(int dimension);
 void swap(int *tab, int ind1, int ind2);
 void renverse_tab(int *tab, int prem, int der);
-
 
 #endif

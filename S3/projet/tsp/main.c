@@ -6,32 +6,21 @@
 #include <stdio.h>
 #include "balises.h"
 #include "tspstat.h"
-
+#include "lecture_fichier_tsplib.h"
 
 int main(int argc, char *argv[]) {
-    //  char chemin_fichier_tsp[TAILLENOM];
-    /*
-    if (argc < 3)
-    {
-        printf("Vous devez au moins entrez le nom du fichier tsp avec -f\n");
-        return NIL;
-    } else if (!strcmp(argv[1], "-f"))
-    {
-        printf("Chemin fichier entré: %s\n", args[2]);
-    } else {
-        printf("uncaugth error\n");
-    }
-    */
+    char chemin_fichier_tsp[TAILLENOM];
 
 
     // FINAL
     int tab_balises[NB_BALISES];
     
-    analyse_balises(argc, argv, tab_balises);
-    for (int i = 0; i < NB_BALISES; i++)
-    {
-        printf("tab_balises: id = %d | ele = %d\n", i, tab_balises[i]);
-    }
+    //      analyse_balises(argc, argv, tab_balises);
     
+    instance_t inst;
+    int test;
+    //      test = lecture_fichier("./res/att10.tsp", &inst);
+    test = lecture_fichier(argv[2], &inst);
+
     return 0;
 }
