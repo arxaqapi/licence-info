@@ -22,7 +22,7 @@ typedef struct instance_s
   int dimension;        // nombre de sommets dans l'instance
   char EDGE_TYPE[TAILLENOM];
   double length;    // longueur de la tournée (calcul)
-  int **tabCoord;   // tableau des coordonnées (x,y,marque=0 pas vu, n° ordre)
+  long **tabCoord;   // tableau des coordonnées (x,y,marque=0 pas vu, n° ordre)
   double **matDist; // demie matrice des distances euclidiennes (calcul)
   int *tabTour;     // tableau des villes formant la tournée (dans l'ordre) (calcul)
 } instance_t;

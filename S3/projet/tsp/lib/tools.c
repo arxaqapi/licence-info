@@ -7,7 +7,27 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <math.h>
-#include "tspstat.h"
+#include "tools.h"
+
+
+
+
+
+
+long **create_long_mat(int nbRows, int nbCol)
+{
+    long **tab = (long **)malloc(nbRows * sizeof(long *));
+    for (int i = 0; i < nbRows; i++)
+        tab[i] = (long *)malloc(nbCol * sizeof(long));
+    return tab;
+}
+
+
+
+
+
+
+
 
 void erreur(char *message)
 {
