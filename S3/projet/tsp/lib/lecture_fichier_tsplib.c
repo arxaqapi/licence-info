@@ -48,20 +48,52 @@ int lecture_fichier(char *filename, instance_t *instance)
     {
         while (fgets(buffer, MAXBUF, tsp_prob_file) != NULL)
         {
-            c++;
-            if (c > 5 && dim < instance->dimension)
+            char field_type[TAILLENOM];
+            char field_value[TAILLENOM];
+
+            get_first_word(buffer, field_type);
+
+            if (prefix(field_type, "NAME"))
+            {
+                // get field value
+                get_field_value(buffer, field_value);
+                // fill struct with it
+                strcpy(instance->name, field_value);
+            }
+            // else if (prefix(field_type, "COMMENT"))
+            // {
+            //     // get field value
+            //     get_field_value(buffer, field_value);
+            //     // fill struct with it
+            // }
+            else if (prefix(field_type, "TYPE"))
+            {
+                // get field value
+                get_field_value(buffer, field_value);
+                // fill struct with it
+                strcpy(instance->type, field_value);
+            }
+            else if (prefix(field_type, "DIMENSION"))
+            {
+                // get field value
+                get_field_value(buffer, field_value);
+                // fill struct with it
+                instance->dimension = atoi(field_value);
+            }
+            else if (prefix(field_type, "EDGE_WEIGHT_TYPE"))
+            {
+                // get field value
+                get_field_value(buffer, field_value);
+                // fill struct with it
+                strcpy(instance->EDGE_TYPE, field_value);
+            }
+            else if (prefix(field_type, "NODE_COORD_SECTION"))
             {
                 instance->tabCoord = create_long_mat(instance->dimension, 2);
                 for (int i = 0; i < instance->dimension; i++)
                 {
                     fscanf(tsp_prob_file, "%d %ld %ld ", &poubelle, &instance->tabCoord[i][0], &instance->tabCoord[i][1]);
                 }
-                fclose(tsp_prob_file);
-                dim++;
-            }
-            else
-            {
-                analyse_ligne(buffer, instance);
             }
         }
         fclose(tsp_prob_file);
@@ -71,6 +103,7 @@ int lecture_fichier(char *filename, instance_t *instance)
         printf("Error reading input file\n");
         return NIL;
     }
+    // //  Debug only
     // for (int i = 0; i < instance->dimension; i++)
     // {
     //     printf("i : %d | x : %ld| y : %ld|\n", i+1, instance->tabCoord[i][0], instance->tabCoord[i][1]);
@@ -78,53 +111,3 @@ int lecture_fichier(char *filename, instance_t *instance)
 
     return 0;
 }
-
-void analyse_ligne(char *ligne, instance_t *instance)
-{
-    /// \brief Prend une ligne, la découpe et teste a qui ca correspond
-    /// \brief (remplace un espace avec un \0)
-
-    char field_type[TAILLENOM];
-    char field_value[MAXBUF];
-
-    get_first_word(ligne, field_type);
-
-    if (prefix(field_type, "NAME"))
-    {
-        // get field value
-        get_field_value(ligne, field_value);
-        // fill struct with it
-        strcpy(instance->name, field_value);
-    }
-    else if (prefix(field_type, "COMMENT"))
-    {
-        // get field value
-        get_field_value(ligne, field_value);
-        // fill struct with it
-    }
-    else if (prefix(field_type, "TYPE"))
-    {
-        // get field value
-        get_field_value(ligne, field_value);
-        // fill struct with it
-        strcpy(instance->type, field_value);
-    }
-    else if (prefix(field_type, "DIMENSION"))
-    {
-        // get field value
-        get_field_value(ligne, field_value);
-        // fill struct with it
-        //strcpy(instance->dimension, field_value);
-        instance->dimension = atoi(field_value);
-    }
-    else if (prefix(field_type, "EDGE_WEIGHT_TYPE"))
-    {
-        // get field value
-        get_field_value(ligne, field_value);
-        // fill struct with it
-        strcpy(instance->EDGE_TYPE, field_value);
-    }
-}
-// instance = le problème
-
-// tour = le resultat

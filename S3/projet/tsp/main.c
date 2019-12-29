@@ -24,3 +24,8 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+
+
+// instance = le problème
+
+// tour = le resultat
