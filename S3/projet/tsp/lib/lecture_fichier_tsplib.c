@@ -1,3 +1,8 @@
+/// \file lecture_fichier_tsplib.c
+/// \author Tarek Kunze
+/// \date december 2019
+/// \brief lecture des fichiers .tsp
+
 #include "lecture_fichier_tsplib.h"
 
 bool prefix(char *motif, char *buf)

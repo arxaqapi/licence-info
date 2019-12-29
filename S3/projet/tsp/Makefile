@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall
+CFLAGS = -Wall -Wextra -Wpedantic
 EXEC = tsp_exec
 
 INCDIR = includes/
@@ -21,7 +21,7 @@ all : $(EXEC)
 
 $(EXEC) : libraries
 	@echo "$(LCYANCOL)Linking all objects files together$(ENDCOL)"
-	@$(CC) $(CFLAGS) $(OFILES) -o $@ -I./$(INCDIR) \
+	@$(CC) $(CFLAGS) $(OFILES) -o $@ -I./$(INCDIR) -lm\
 
 libraries : $(CFILES)
 	@echo "$(LCYANCOL)Compile all source files$(ENDCOL)"

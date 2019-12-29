@@ -1,3 +1,8 @@
+/// \file balises.c
+/// \author Tarek Kunze
+/// \date december 2019
+/// \brief retrieving user input
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "balises.h"

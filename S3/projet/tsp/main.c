@@ -7,6 +7,7 @@
 #include "balises.h"
 #include "tspstat.h"
 #include "lecture_fichier_tsplib.h"
+#include "bruteforce.h"
 
 int main(int argc, char *argv[]) {
     char chemin_fichier_tsp[TAILLENOM];
@@ -20,8 +21,9 @@ int main(int argc, char *argv[]) {
     instance_t inst;
     int test;
     //      test = lecture_fichier("./res/att10.tsp", &inst);
-    test = lecture_fichier(argv[2], &inst);
+    test = lecture_fichier(argv[recherche_chaine(argc, argv, "-f") + 1], &inst);
 
+    printf("Distance : %f\n", instance_distance(&inst));
     return 0;
 }
 

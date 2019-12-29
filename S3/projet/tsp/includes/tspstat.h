@@ -45,7 +45,6 @@ extern bool sans_zero;    // avec ou sans zéro
 
 // prototypes des sp en vrac à classer
 void dump_tour(tour_t tour);
-bool next_permutation(int *tab, int dim);
 double swap_2opt(instance_t instance, tour_t *tournee, int ind1, int ind2);
 double improve_2opt_syst(instance_t instance, tour_t *tournee, int ind1);
 double all_2opt(instance_t instance, tour_t *tournee);
@@ -60,8 +59,8 @@ void print_solution(char *methode, instance_t instance, tour_t t, double longueu
 //  void analyse_balises(int argc, char **argv, int tab_arg[NB_BALISES]);
 
 // Lecture fichier tsplib
-bool prefix(char *motif, char *buf);
-int lecture_fichier(char *filename, instance_t *instance);
+// bool prefix(char *motif, char *buf);
+// int lecture_fichier(char *filename, instance_t *instance);
 
 // Brute Force
 double brute_force_tsp(instance_t instance, tour_t *tournee, tour_t *pire, bool use_mat);
