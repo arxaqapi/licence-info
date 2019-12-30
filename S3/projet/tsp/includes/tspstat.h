@@ -33,7 +33,7 @@ typedef struct tour_s
   char name[TAILLENOM]; // nom de l'instance
   int dimension;        // nombre de sommets dans l'instance
   double length;        // longueur du tour (calculée ou lue)
-  int *tour;            // liste des noeuds de la tournée lus dans le fichier tour
+  int *tour;            // liste des noeuds de la tournée
 } tour_t;
 
 // variables externes
