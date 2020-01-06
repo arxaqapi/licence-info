@@ -8,26 +8,36 @@
 #include <stdlib.h>
 #include <math.h>
 #include "tools.h"
-
-
-
-
-
+#include "tspstat.h"
 
 long **create_long_mat(int nbRows, int nbCol)
 {
-    long **tab = (long **)malloc(nbRows * sizeof(long *));
+    long **mat = malloc(nbRows * sizeof(long *));
+    if (mat == NULL)
+    {
+        printf("Problème d'allocation create_long_mat !");
+        exit(1);
+    }
+    int j;
     for (int i = 0; i < nbRows; i++)
-        tab[i] = (long *)malloc(nbCol * sizeof(long));
-    return tab;
+    {
+        mat[i] = malloc(nbCol * sizeof(long));
+        if (mat[i] == NULL)
+        {
+            printf("Problème d'allocation create_long_mat !");
+            exit(1);
+        }
+    }
+    return mat;
 }
 
-
-
-
-
-
-
+void copy_array(int *array_source, int *array_destination, int dimension)
+{
+    for (int i = 0; i < dimension; i++)
+    {
+        array_destination[i] = array_source[i];
+    }
+}
 
 void erreur(char *message)
 {

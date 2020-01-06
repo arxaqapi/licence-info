@@ -6,16 +6,11 @@
 #include <math.h>
 #include "bruteforce.h"
 
-void init_tour_bf(tour_t *tour_a_init, instance_t instance)
-{
-    strcpy(tour_a_init->name, instance.name);
-    tour_a_init->dimension = instance.dimension;
-    tour_a_init->tour = creer_tab_int(tour_a_init->dimension);
-    for (int i = 0; i < instance.dimension; i++)
-    {
-        tour_a_init->tour[i] = i + 1;
-    }
-}
+//
+ // 0 Ne BOUGE PAS
+ //
+ /////////
+
 
 double array_distance(int *node_array, instance_t reference_instance)
 {
@@ -23,7 +18,16 @@ double array_distance(int *node_array, instance_t reference_instance)
     double distance = 0;
     for (int i = 0; i < taille; i++)
     {
-        distance += euclidean_distance(reference_instance.tabCoord[node_array[i]][0], reference_instance.tabCoord[node_array[i]][1], reference_instance.tabCoord[node_array[i] + 1][0], reference_instance.tabCoord[node_array[i] + 1][1]);
+        // printf("indice i: %d | indice in node_array: %d\n", i, node_array[i]);
+        // printf("long: %ld\n", reference_instance.tabCoord[node_array[i]][0]);
+    }
+    
+    for (int i = 0; i < taille - 1; i++)
+    {
+
+        distance += euclidean_distance(reference_instance.tabCoord[node_array[i]][0], reference_instance.tabCoord[node_array[i]][1],
+                                       reference_instance.tabCoord[node_array[i + 1]][0], reference_instance.tabCoord[node_array[i + 1]][1]);
+        // printf("i %d\n", i);
     }
     return distance;
 }
@@ -40,22 +44,36 @@ double instance_distance(instance_t *instance)
 
 double euclidean_distance(long x1, long y1, long x2, long y2)
 {
-    return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+    return sqrt((double)((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)));
 }
 
-double brute_force_tsp(instance_t instance, tour_t *best_tour, tour_t *worst_tour, bool use_mat)
+void init_array(int *array, int dimension)
+{
+    for (int i = 0; i < dimension; i++)
+    {
+        array[i] = i;
+    }
+}
+double brute_force_tsp(instance_t *instance, bool use_mat)
 {
     /// \brief considère toute les permutations de la tournée initiale et garde la plus courte
     /// \brief et la pire, le point n°1 est fixe
     /// \param [in] instance : pour les points et coordonées
-    /// \param [out] tournee : la meuilleure tournee
-    /// \param [out] pire : la pire tournee
     /// \param [in] use_mat : flag pour indiquer si on veut utiliser la matrices des distances
 
-    // init tour
-    tour_t bf_tour;
-    bf_tour.tour = creer_tab_int(bf_tour.dimension);
-    init_tour_bf(&bf_tour, instance);
+    //  Variables
+    int dimension = instance->dimension;
+
+    int best_nodes[dimension];          // best arr
+    int worst_nodes[dimension];         // worst arr
+    int current_nodes[dimension]; // tour en cour
+    init_array(best_nodes, dimension);
+    init_array(worst_nodes, dimension);
+    init_array(current_nodes, dimension);
+
+    double current_distance = array_distance(current_nodes, *instance);;
+    double best_distance = current_distance;
+    double worst_distance = current_distance;
 
     if (use_mat)
     {
@@ -67,26 +85,29 @@ double brute_force_tsp(instance_t instance, tour_t *best_tour, tour_t *worst_tou
         do
         {
             // calcul de la longeur du nvx segments
-            // mise a jour de bf_tour
-            bf_tour.length = array_distance(bf_tour.tour, instance);
+            current_distance = array_distance(current_nodes, *instance);
+
             // maj de >+ et >-
-            if (bf_tour.length > worst_tour->length)
+            if (current_distance <= best_distance)
             {
-                for (int i = 0; i < bf_tour.dimension; i++)
-                {
-                    worst_tour->tour[i] = bf_tour.tour[i];
-                }
+                copy_array(current_nodes, best_nodes, dimension);
+                best_distance = current_distance;
             }
-            else if (bf_tour.length < best_tour->length)
+            if (current_distance > worst_distance)
             {
-                for (int i = 0; i < bf_tour.dimension; i++)
-                {
-                    best_tour->tour[i] = bf_tour.tour[i];
-                }
+                copy_array(current_nodes, worst_nodes, dimension);
+                worst_distance = current_distance;
             }
-        } while (next_permutation(bf_tour.tour, bf_tour.dimension));
+            // length a recalc * 2 || Pas besoin !
+        } while (next_permutation(current_nodes, dimension));
     }
-    return best_tour->length;
+    printf("best array : [");
+    for (int i = 0; i < dimension; i++)
+    {
+        printf("%d,", best_nodes[i]);
+    }
+    printf("]\n");
+    return best_distance;
 }
 
 bool next_permutation(int *array, int dim)

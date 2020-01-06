@@ -83,7 +83,8 @@ int lecture_fichier(char *filename, instance_t *instance)
                 // get field value
                 get_field_value(buffer, field_value);
                 // fill struct with it
-                instance->dimension = atoi(field_value);
+                instance->dimension = atoi(field_value) + 1;
+                // Add point 0, 0
             }
             else if (prefix(field_type, "EDGE_WEIGHT_TYPE"))
             {
@@ -95,9 +96,11 @@ int lecture_fichier(char *filename, instance_t *instance)
             else if (prefix(field_type, "NODE_COORD_SECTION"))
             {
                 instance->tabCoord = create_long_mat(instance->dimension, 2);
-                for (int i = 0; i < instance->dimension; i++)
+                instance->tabCoord[0][0] = 0;
+                instance->tabCoord[0][1] = 0;
+                for (int i = 1; i < instance->dimension; i++)
                 {
-                    fscanf(tsp_prob_file, "%d %ld %ld ", &poubelle, &instance->tabCoord[i][0], &instance->tabCoord[i][1]);
+                    fscanf(tsp_prob_file, "%d %ld %ld", &poubelle, &instance->tabCoord[i][0], &instance->tabCoord[i][1]);
                 }
             }
         }
@@ -108,11 +111,11 @@ int lecture_fichier(char *filename, instance_t *instance)
         printf("Error reading input file\n");
         return NIL;
     }
-    // //  Debug only
-    // for (int i = 0; i < instance->dimension; i++)
-    // {
-    //     printf("i : %d | x : %ld| y : %ld|\n", i+1, instance->tabCoord[i][0], instance->tabCoord[i][1]);
-    // }
+    //  Debug only
+    for (int i = 0; i < instance->dimension; i++)
+    {
+        printf("i : %d | x : %ld| y : %ld|\n", i, instance->tabCoord[i][0], instance->tabCoord[i][1]);
+    }
 
     return 0;
 }

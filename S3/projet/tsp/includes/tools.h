@@ -3,7 +3,7 @@
 
 
 long **create_long_mat(int nbRows, int nbCol);
-
+void copy_array(int* array_source, int* array_destination, int dimension);
 
 void erreur(char *message);
 int random_node(int min, int max);

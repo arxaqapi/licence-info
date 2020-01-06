@@ -63,8 +63,8 @@ void print_solution(char *methode, instance_t instance, tour_t t, double longueu
 // int lecture_fichier(char *filename, instance_t *instance);
 
 // Brute Force
-double brute_force_tsp(instance_t instance, tour_t *tournee, tour_t *pire, bool use_mat);
-bool nextPermutation(int *array, int dim);
+// double brute_force_tsp(instance_t instance, tour_t *tournee, tour_t *pire, bool use_mat);
+// bool nextPermutation(int *array, int dim);
 
 // Random Walk
 double init_tour_random(instance_t instance, int ville_depart, tour_t *tournee);
