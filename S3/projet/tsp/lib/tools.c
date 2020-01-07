@@ -39,6 +39,59 @@ void copy_array(int *array_source, int *array_destination, int dimension)
     }
 }
 
+void init_array(int *array, int dimension)
+{
+    for (int i = 0; i < dimension; i++)
+    {
+        array[i] = i;
+    }
+}
+
+double array_distance(int *node_array, instance_t reference_instance)
+{
+    int taille = reference_instance.dimension;
+    double distance = 0;
+    for (int i = 0; i < taille; i++)
+    {
+        // printf("indice i: %d | indice in node_array: %d\n", i, node_array[i]);
+        // printf("long: %ld\n", reference_instance.tabCoord[node_array[i]][0]);
+    }
+
+    for (int i = 0; i < taille - 1; i++)
+    {
+
+        distance += euclidean_distance(reference_instance.tabCoord[node_array[i]][0], reference_instance.tabCoord[node_array[i]][1],
+                                       reference_instance.tabCoord[node_array[i + 1]][0], reference_instance.tabCoord[node_array[i + 1]][1]);
+        // printf("i %d\n", i);
+     }
+    distance += euclidean_distance(reference_instance.tabCoord[node_array[0]][0], reference_instance.tabCoord[node_array[0]][1],
+                                   reference_instance.tabCoord[node_array[taille - 1]][0], reference_instance.tabCoord[node_array[taille - 1]][1]);
+    return distance;
+}
+
+double instance_distance(instance_t *instance)
+{
+    instance->length = 0;
+    for (int i = 0; i < instance->dimension - 1; i++)
+    {
+        instance->length += euclidean_distance(instance->tabCoord[i][0], instance->tabCoord[i][1], instance->tabCoord[i + 1][0], instance->tabCoord[i + 1][1]);
+    }
+    instance->length += euclidean_distance(instance->tabCoord[0][0], instance->tabCoord[0][1], instance->tabCoord[instance->dimension - 1][0], instance->tabCoord[instance->dimension - 1][1]);
+
+    return instance->length;
+}
+
+double euclidean_distance(long x1, long y1, long x2, long y2)
+{
+    return sqrt((double)((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)));
+}
+
+
+
+
+
+////////////////
+
 void erreur(char *message)
 {
     /// \brief imprime à l'écran un message d'erreur (chaîne de caractères)
