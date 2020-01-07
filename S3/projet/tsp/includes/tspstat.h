@@ -66,11 +66,11 @@ void print_solution(char *methode, instance_t instance, tour_t t, double longueu
 // double brute_force_tsp(instance_t instance, tour_t *tournee, tour_t *pire, bool use_mat);
 // bool nextPermutation(int *array, int dim);
 
+// Plus Proche Voisin
+// double init_tour_ppv(instance_t instance, int depart, tour_t *tournee);
+
 // Random Walk
 double init_tour_random(instance_t instance, int ville_depart, tour_t *tournee);
-
-// Plus Proche Voisin
-double init_tour_ppv(instance_t instance, int depart, tour_t *tournee);
 
 // GA
 /// NOT HERE
