@@ -7,10 +7,9 @@
 #include "bruteforce.h"
 
 //
- // 0 Ne BOUGE PAS
- //
- /////////
-
+// 0 Ne BOUGE PAS
+//
+/////////
 
 double array_distance(int *node_array, instance_t reference_instance)
 {
@@ -21,16 +20,16 @@ double array_distance(int *node_array, instance_t reference_instance)
         // printf("indice i: %d | indice in node_array: %d\n", i, node_array[i]);
         // printf("long: %ld\n", reference_instance.tabCoord[node_array[i]][0]);
     }
-    
+
     for (int i = 0; i < taille - 1; i++)
     {
 
         distance += euclidean_distance(reference_instance.tabCoord[node_array[i]][0], reference_instance.tabCoord[node_array[i]][1],
                                        reference_instance.tabCoord[node_array[i + 1]][0], reference_instance.tabCoord[node_array[i + 1]][1]);
         // printf("i %d\n", i);
-    }
+     }
     distance += euclidean_distance(reference_instance.tabCoord[node_array[0]][0], reference_instance.tabCoord[node_array[0]][1],
-                                       reference_instance.tabCoord[node_array[taille]][0], reference_instance.tabCoord[node_array[taille]][1]);
+                                   reference_instance.tabCoord[node_array[taille - 1]][0], reference_instance.tabCoord[node_array[taille - 1]][1]);
     return distance;
 }
 
@@ -66,14 +65,15 @@ double brute_force_tsp(instance_t *instance, bool use_mat)
     //  Variables
     int dimension = instance->dimension;
 
-    int best_nodes[dimension];          // best arr
-    int worst_nodes[dimension];         // worst arr
+    int best_nodes[dimension];    // best arr
+    int worst_nodes[dimension];   // worst arr
     int current_nodes[dimension]; // tour en cour
     init_array(best_nodes, dimension);
     init_array(worst_nodes, dimension);
     init_array(current_nodes, dimension);
 
-    double current_distance = array_distance(current_nodes, *instance);;
+    double current_distance = array_distance(current_nodes, *instance);
+    ;
     double best_distance = current_distance;
     double worst_distance = current_distance;
 
@@ -101,7 +101,7 @@ double brute_force_tsp(instance_t *instance, bool use_mat)
                 worst_distance = current_distance;
             }
             // length a recalc * 2 || Pas besoin !
-        } while (next_permutation(current_nodes, dimension));
+        } while (next_permutation(current_nodes + 1, dimension));
     }
     printf("best array : [");
     for (int i = 0; i < dimension; i++)
@@ -119,6 +119,7 @@ bool next_permutation(int *array, int dim)
     /// \brief whether a next permutation existed. (Returns false when the
     /// \brief argument is already the last possible permutation.)
     // Find non-increasing suffix
+    dim--;
     if (dim == 0)
     {
         return false;
