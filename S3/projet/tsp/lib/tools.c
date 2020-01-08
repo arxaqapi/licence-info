@@ -86,7 +86,17 @@ double euclidean_distance(long x1, long y1, long x2, long y2)
     return sqrt((double)((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)));
 }
 
-
+int is_in_array(int nb, int *array, int dimension)
+{
+    for (int i = 0; i < dimension; i++)
+    {
+        if (array[i] == nb)
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
 
 
 

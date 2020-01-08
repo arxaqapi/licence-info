@@ -1,19 +1,6 @@
 #include "ppv.h"
 
 
-int is_in_array(int nb, int *array, int dimension)
-{
-    for (int i = 0; i < dimension; i++)
-    {
-        if (array[i] == nb)
-        {
-            return 1;
-        }
-    }
-    return 0;
-}
-
-
 
 int next_v(instance_t *instance, int *nodes, int zeiger)
 {

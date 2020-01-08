@@ -112,10 +112,10 @@ int lecture_fichier(char *filename, instance_t *instance)
         return NIL;
     }
     //  Debug only
-    for (int i = 0; i < instance->dimension; i++)
-    {
-        printf("i : %d | x : %ld| y : %ld|\n", i, instance->tabCoord[i][0], instance->tabCoord[i][1]);
-    }
+    // for (int i = 0; i < instance->dimension; i++)
+    // {
+    //     printf("i : %d | x : %ld| y : %ld|\n", i, instance->tabCoord[i][0], instance->tabCoord[i][1]);
+    // }
 
     return 0;
 }
