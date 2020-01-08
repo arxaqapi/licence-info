@@ -3,6 +3,7 @@
 
 #include "tspstat.h"
 #include "tools.h"
+#include "display.h"
 
 #define NB_BANIERES 8
 

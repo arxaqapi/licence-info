@@ -46,13 +46,16 @@ int lecture_fichier(char *filename, instance_t *instance)
     int c = 0;
     int dim = 0;
     char buffer[MAXBUF] = "";
+    int n_lignes = 0;
 
     int poubelle;
 
     if (tsp_prob_file != NULL)
     {
+        printf("J'ouvre le fichier : %s\n", filename);
         while (fgets(buffer, MAXBUF, tsp_prob_file) != NULL)
         {
+            n_lignes++;
             char field_type[TAILLENOM];
             char field_value[TAILLENOM];
 
@@ -65,12 +68,14 @@ int lecture_fichier(char *filename, instance_t *instance)
                 // fill struct with it
                 strcpy(instance->name, field_value);
             }
-            // else if (prefix(field_type, "COMMENT"))
-            // {
-            //     // get field value
-            //     get_field_value(buffer, field_value);
-            //     // fill struct with it
-            // }
+            else if (prefix(field_type, "COMMENT"))
+            {
+                //     // get field value
+                get_field_value(buffer, field_value);
+                //     // fill struct with it
+                strcpy(instance->comment, field_value);
+                printf("Commentaire : %s\n", instance->comment);
+            }
             else if (prefix(field_type, "TYPE"))
             {
                 // get field value
@@ -100,8 +105,14 @@ int lecture_fichier(char *filename, instance_t *instance)
                 instance->tabCoord[0][1] = 0;
                 for (int i = 1; i < instance->dimension; i++)
                 {
+                    n_lignes++;
                     fscanf(tsp_prob_file, "%d %ld %ld", &poubelle, &instance->tabCoord[i][0], &instance->tabCoord[i][1]);
                 }
+            }
+            else if (prefix(field_type, "EOF"))
+            {
+                printf("EOF\n");
+                fclose(tsp_prob_file);
             }
         }
         fclose(tsp_prob_file);
@@ -111,11 +122,11 @@ int lecture_fichier(char *filename, instance_t *instance)
         printf("Error reading input file\n");
         return NIL;
     }
-    //  Debug only
-    // for (int i = 0; i < instance->dimension; i++)
-    // {
-    //     printf("i : %d | x : %ld| y : %ld|\n", i, instance->tabCoord[i][0], instance->tabCoord[i][1]);
-    // }
+
+    printf("%d lignes lues\n", n_lignes - 1);
+
+    // print csv instance
+    instance_to_csv(instance);
 
     return 0;
 }

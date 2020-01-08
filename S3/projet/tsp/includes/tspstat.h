@@ -18,6 +18,7 @@
 typedef struct instance_s
 {
   char name[TAILLENOM]; // nom de l'instance
+  char comment[TAILLENOM];
   char type[TAILLENOM]; // type de l'instance
   int dimension;        // nombre de sommets dans l'instance
   char EDGE_TYPE[TAILLENOM];
