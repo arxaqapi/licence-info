@@ -8,6 +8,13 @@
 #include "balises.h"
 #include "tspstat.h"
 
+void anhiliation_bal(int ind_bal, int *bal_arr)
+{
+    bal_arr[ind_bal] = NIL;
+}
+
+
+
 void print_help(void)
 {
     /// \brief Affiche à l'écran le fichier d'aide de la sélection des balises

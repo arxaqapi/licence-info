@@ -14,3 +14,25 @@ void instance_to_csv(instance_t *instance)
     }
     printf("\n");
 }
+
+
+void print_methode(bool al_an, char *m_name, double final_length, double time, int *final_nodes, int dimension)
+{
+    if (!al_an)
+    {
+        printf("Méthode ; longueur ; Temps CPU (sec) ; Tour\n");
+        al_an = true;
+    }
+    printf("%s ; %.2f ; %.2f ; ", m_name, final_length, time);
+    
+    printf("[");
+    for (int i = 0; i < dimension; i++)
+    {
+        printf("%d", final_nodes[i]);
+        if (i < dimension - 1)
+        {
+            printf(",");
+        }
+    }
+    printf("]\n");
+}

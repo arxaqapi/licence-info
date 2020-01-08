@@ -6,11 +6,6 @@
 #include <math.h>
 #include "bruteforce.h"
 
-//
-// 0 Ne BOUGE PAS
-//
-/////////
-
 double brute_force_tsp(instance_t *instance, bool use_mat)
 {
     /// \brief considère toute les permutations de la tournée initiale et garde la plus courte

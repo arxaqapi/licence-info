@@ -9,7 +9,6 @@
 #include <math.h>
 #include "tools.h"
 
-
 long **create_long_mat(int nbRows, int nbCol)
 {
     long **mat = malloc(nbRows * sizeof(long *));
@@ -63,7 +62,7 @@ double array_distance(int *node_array, instance_t reference_instance)
         distance += euclidean_distance(reference_instance.tabCoord[node_array[i]][0], reference_instance.tabCoord[node_array[i]][1],
                                        reference_instance.tabCoord[node_array[i + 1]][0], reference_instance.tabCoord[node_array[i + 1]][1]);
         // printf("i %d\n", i);
-     }
+    }
     distance += euclidean_distance(reference_instance.tabCoord[node_array[0]][0], reference_instance.tabCoord[node_array[0]][1],
                                    reference_instance.tabCoord[node_array[taille - 1]][0], reference_instance.tabCoord[node_array[taille - 1]][1]);
     return distance;
@@ -97,8 +96,6 @@ int is_in_array(int nb, int *array, int dimension)
     }
     return 0;
 }
-
-
 
 ////////////////
 
