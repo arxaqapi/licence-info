@@ -12,6 +12,7 @@
 #include "ppv.h"
 #include "random_walk.h"
 #include "tools.h"
+#include "2opt.h"
 
 int main(int argc, char *argv[])
 {
@@ -19,6 +20,7 @@ int main(int argc, char *argv[])
 
     bool file_opened = false;
     int balises[NB_BALISES];
+    int *nodes;
 
     instance_t inst;
     double meuilleureDistance;
@@ -32,6 +34,7 @@ int main(int argc, char *argv[])
         {
             if (lecture_fichier(argv[balises[BAL_F] + 1], &inst) != NIL)
                 file_opened = true;
+                nodes = creer_tab_int(inst.dimension);
         }
         else if (file_opened && balises[BAL_BF] != NIL)
         {
@@ -63,8 +66,10 @@ int main(int argc, char *argv[])
         }
         else if (file_opened && balises[BAL_PPV] != NIL)
         {
-            meuilleureDistance = ppv(&inst);
+            meuilleureDistance = ppv(&inst, nodes);
             printf("----------- PPV -----------\n ppv = %f\n", meuilleureDistance);
+            meuilleureDistance = two_opt(nodes, inst);
+            printf("----------- 2OPT -----------\n 2OPT = %f\n", meuilleureDistance);
 
             anhiliation_bal(BAL_PPV, balises);
         }
@@ -80,9 +85,6 @@ int main(int argc, char *argv[])
             print_help();
             anhiliation_bal(BAL_H, balises);
         }
-        
-        
-        
 
         i++;
     }

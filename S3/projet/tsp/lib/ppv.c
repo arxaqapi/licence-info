@@ -23,7 +23,7 @@ int next_v(instance_t *instance, int *nodes, int zeiger)
 }
 
 
-double ppv(instance_t *inst)
+double ppv(instance_t *inst, int *nodes)
 {
     int dimension = inst->dimension;
     int current_nodes[dimension];
@@ -37,6 +37,8 @@ double ppv(instance_t *inst)
     }
 
     current_distance = array_distance(current_nodes, *inst);
+
+    copy_array(current_nodes, nodes, inst->dimension);
 
     return current_distance;
 }
