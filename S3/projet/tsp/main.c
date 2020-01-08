@@ -8,6 +8,8 @@
 #include "tspstat.h"
 #include "lecture_fichier_tsplib.h"
 #include "bruteforce.h"
+#include "ppv.h"
+
 
 int main(int argc, char *argv[])
 {
@@ -23,13 +25,19 @@ int main(int argc, char *argv[])
     //      test = lecture_fichier("./res/att10.tsp", &inst);
     if (lecture_fichier(argv[recherche_chaine(argc, argv, "-f") + 1], &inst) != NIL)
     {
-        printf("%d\n", inst.dimension);
+        if (inst.dimension <= 11)
+        {
+            printf("%d\n", inst.dimension);
         printf("x : %ld| y : %ld|\n", inst.tabCoord[0][0], inst.tabCoord[0][1]);
         printf("\n---- OK ----\n");
         meuilleureDistance = brute_force_tsp(&inst, false);
-        printf("?\n");
-
         printf("BF Distance : %f\n", meuilleureDistance);
+        }
+        
+
+
+        meuilleureDistance = ppv(&inst);
+        printf("----------- PPV -----------\n ppv = %f\n", meuilleureDistance);
     }
 
     return 0;

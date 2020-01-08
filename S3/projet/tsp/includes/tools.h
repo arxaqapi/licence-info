@@ -1,6 +1,7 @@
 #ifndef TOOLS_H
 #define TOOLS_H
 
+#include "tspstat.h"
 
 long **create_long_mat(int nbRows, int nbCol);
 void copy_array(int* array_source, int* array_destination, int dimension);

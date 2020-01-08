@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "tools.h"
-#include "tspstat.h"
+
 
 long **create_long_mat(int nbRows, int nbCol)
 {
