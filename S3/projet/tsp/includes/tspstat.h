@@ -46,7 +46,7 @@ extern bool sans_zero;    // avec ou sans zéro
 
 // prototypes des sp en vrac à classer
 void dump_tour(tour_t tour);
-double swap_2opt(instance_t instance, tour_t *tournee, int ind1, int ind2);
+// double swap_2opt(instance_t instance, tour_t *tournee, int ind1, int ind2);
 double improve_2opt_syst(instance_t instance, tour_t *tournee, int ind1);
 double all_2opt(instance_t instance, tour_t *tournee);
 void verify_dist(instance_t instance);

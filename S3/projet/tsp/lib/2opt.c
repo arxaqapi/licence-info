@@ -7,26 +7,17 @@ bool does_it_cross(int *nodes, int n_1, int n_2, instance_t instance, bool cycli
     {
         back_to_basics = 0;
     }
-    
-    if (euclidean_distance(instance.tabCoord[nodes[n_1]][0], instance.tabCoord[nodes[n_1]][1]
-    , instance.tabCoord[nodes[n_1+1]][0], instance.tabCoord[nodes[n_1+1]][1])
-    +
-    euclidean_distance(instance.tabCoord[nodes[n_2]][0], instance.tabCoord[nodes[n_2]][1]
-    , instance.tabCoord[nodes[back_to_basics]][0], instance.tabCoord[nodes[back_to_basics]][1])
-    >
-    euclidean_distance(instance.tabCoord[nodes[n_1]][0], instance.tabCoord[nodes[n_1]][1]
-    , instance.tabCoord[nodes[n_2]][0], instance.tabCoord[nodes[n_2]][1])
-    +
-    euclidean_distance(instance.tabCoord[nodes[n_1+1]][0], instance.tabCoord[nodes[n_1+1]][1]
-    , instance.tabCoord[nodes[back_to_basics]][0], instance.tabCoord[nodes[back_to_basics]][1])
-    )
+
+    if (euclidean_distance(instance.tabCoord[nodes[n_1]][0], instance.tabCoord[nodes[n_1]][1], instance.tabCoord[nodes[n_1 + 1]][0], instance.tabCoord[nodes[n_1 + 1]][1]) +
+            euclidean_distance(instance.tabCoord[nodes[n_2]][0], instance.tabCoord[nodes[n_2]][1], instance.tabCoord[nodes[back_to_basics]][0], instance.tabCoord[nodes[back_to_basics]][1]) >
+        euclidean_distance(instance.tabCoord[nodes[n_1]][0], instance.tabCoord[nodes[n_1]][1], instance.tabCoord[nodes[n_2]][0], instance.tabCoord[nodes[n_2]][1]) +
+            euclidean_distance(instance.tabCoord[nodes[n_1 + 1]][0], instance.tabCoord[nodes[n_1 + 1]][1], instance.tabCoord[nodes[back_to_basics]][0], instance.tabCoord[nodes[back_to_basics]][1]))
     {
         return true;
     }
-    
+
     return false;
 }
-
 
 double two_opt(int *nodes, instance_t instance)
 {
@@ -41,24 +32,26 @@ double two_opt(int *nodes, instance_t instance)
         upgrade = false;
         while (i < dimension)
         {
-            /*j = i + 1;*/
-            while (j != i-1 && j != i && j != i+1 && j < dimension)
+            j = i + 1;
+            //j != i - 1 && j != i && j != i + 1 && 
+            while (j < dimension)
             {
                 if (j == dimension - 1)
                 {
                     temp_bool = does_it_cross(nodes, i, j, instance, true);
-                } else
+                }
+                else
                 {
                     temp_bool = does_it_cross(nodes, i, j, instance, false);
                 }
                 if (temp_bool)
                 {
-                    swap(nodes, i+1, j);
+                    swap_2opt(nodes, i + 1, j);
                     upgrade = true;
                 }
                 j++;
             }
-            i ++;
+            i++;
         }
     }
 

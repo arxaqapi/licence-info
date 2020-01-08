@@ -97,6 +97,24 @@ int is_in_array(int nb, int *array, int dimension)
     return 0;
 }
 
+void swap_2opt(int *tab, int ind1, int ind2)
+/// \brief inverse le contenu des cases ind1 et ind2 dans tab
+/// \param[in,out] tab : le tableau
+/// \param[in] ind1 : premier indice
+/// \param[in] ind2 : deuxième indice
+/// \post *tab[ind1]=*TAB[ind2] && *tab[ind2]=*TAB[ind1]
+{
+    int temp;
+    while (ind1 < ind2)
+    {
+        temp = tab[ind1];
+        tab[ind1] = tab[ind2];
+        tab[ind2] = temp;
+        ind1++;
+        ind2--;
+    }
+}
+
 ////////////////
 
 void erreur(char *message)
