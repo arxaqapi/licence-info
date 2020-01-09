@@ -37,4 +37,4 @@ cleanup:
 .PHONY: clean
 clean:
 	@echo "$(GREENCOL)Cleaning base directory$(ENDCOL)"
-	@rm -f $(EXEC) *.o
+	@rm -f $(EXEC) *.o *.csv

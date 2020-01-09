@@ -30,11 +30,15 @@ long **create_long_mat(int nbRows, int nbCol)
     return mat;
 }
 
+
+
 void copy_array(int *array_source, int *array_destination, int dimension)
 {
+    printf("copy un max");
     for (int i = 0; i < dimension; i++)
     {
         array_destination[i] = array_source[i];
+        printf("copy un max: %d \n", i);
     }
 }
 
@@ -115,7 +119,56 @@ void swap_2opt(int *tab, int ind1, int ind2)
     }
 }
 
-////////////////
+bool compare_slices(int *array_1, int start_1, int end_1, int *array_2, int start_2, int end_2, int dimension)
+{
+    bool equal = false;
+    while (array_1[start_1] == array_2[start_2] && start_1 <= end_1 && start_2 <= end_2)
+    {
+        equal = true;
+        start_1++;
+        start_2++;
+    }
+    return equal;
+}
+
+int *rev_array(int *array, int d, int f)
+{
+    /// \brief reverse le contenu du tableau entre les indices prem et der
+    /// \param[in,out] array : le tableau à modifier
+    /// \param[in] d : indice de début
+    /// \param[in] der : indice de fin
+    int ind;
+    int dim = d - f + 1;
+
+    for (ind = 0; ind < dim / 2; ind++)
+    {
+        swap(array, d + ind, f - ind);
+    }
+    return array;
+}
+
+int *create_array_int(int dimension)
+{
+    int *ar = malloc(dimension * sizeof(long *));
+    if (ar == NULL)
+    {
+        printf("Problème d'allocation create_array_int !");
+        exit(1);
+    }
+    
+    return ar;
+
+}
+
+
+
+
+
+
+
+/******************* ***********************/
+/******************* ***********************/
+/******************* ***********************/
 
 void erreur(char *message)
 {
@@ -126,48 +179,8 @@ void erreur(char *message)
     exit(1);
 }
 
-int random_node(int min, int max)
-{
-    /// \brief crée un nombre aléatoire entre min et max
-    /// \returns le nombre
-    return (rand() % (max - min)) + min;
-}
 
-int *creer_tab_int(int dim)
-{
-    /// \brief crée un tableau dynamique d'entiers de dim cases
-    /// \param[in] dim : la dimension du tableau voulu
-    /// \returns adresse du tableau
-    return (int *)malloc(dim * sizeof(int));
-}
 
-char *creer_tab_char(int dim)
-{
-    /// \brief crée un tableau dynamique de char de dim cases
-    return (char *)malloc(dim * sizeof(char));
-}
-
-void affiche_tab_int(int *tab, int dim, FILE *logfp)
-{
-    fprintf(logfp, "[");
-    for (int i = 0; i < dim - 1; i++)
-        fprintf(logfp, "%d,", tab[i]);
-    fprintf(logfp, "%d]\n", tab[dim - 1]);
-}
-
-void affiche_tab_char_hex(char *tab, int dim, FILE *logfp)
-{
-    for (int i = 0; i < dim; i++)
-        fprintf(logfp, "%x", tab[i]);
-    fprintf(logfp, "\n");
-}
-
-void affiche_tab_char(char *tab, int dim, FILE *logfp)
-{
-    for (int i = 0; i < dim; i++)
-        fprintf(logfp, "%c", tab[i]);
-    fprintf(logfp, "\n");
-}
 
 int **creer_mat_int(int nbRows, int nbCol)
 {
@@ -199,17 +212,4 @@ void swap(int *tab, int ind1, int ind2)
     temp = tab[ind1];
     tab[ind1] = tab[ind2];
     tab[ind2] = temp;
-}
-
-void renverse_tab(int *tab, int prem, int der)
-{
-    /// \brief reverse le contenu du tableau entre les indices prem et der
-    /// \param[in,out] tab : le tableau à modifier
-    /// \param[in] prem : indice de début
-    /// \param[in] der : indice de fin
-    int ind;
-    int dim = der - prem + 1;
-
-    for (ind = 0; ind < dim / 2; ind++)
-        swap(tab, prem + ind, der - ind);
 }

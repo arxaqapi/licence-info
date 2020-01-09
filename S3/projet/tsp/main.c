@@ -13,37 +13,70 @@
 #include "random_walk.h"
 #include "tools.h"
 #include "2opt.h"
+#include "display.h"
+#include "ga.h"
 
 int main(int argc, char *argv[])
 {
     srand(time(NULL));
 
     bool file_opened = false;
+    bool csv_written = false;
     int balises[NB_BALISES];
     int *nodes;
+    int n_lignes = 0;
 
     instance_t inst;
     double meuilleureDistance;
 
+    clock_t start;
+    clock_t end;
+    double duration;
+
     analyse_balises(argc, argv, balises);
+    // for (int i = 0; i < NB_BALISES; i++)
+    // {
+    //     printf("B = %d\n", balises[i]);
+    // }
+
     int i = 0;
 
     while (i < NB_BALISES)
     {
-        if (balises[BAL_F] != NIL && !file_opened)
+        if (!file_opened && balises[BAL_F] != NIL)
         {
-            if (lecture_fichier(argv[balises[BAL_F] + 1], &inst) != NIL)
+            if (lecture_fichier(argv[balises[BAL_F] + 1], &inst, &n_lignes) != NIL)
+            {
                 file_opened = true;
-                nodes = creer_tab_int(inst.dimension);
+                nodes = create_array_int(inst.dimension);
+
+                print_entete(&inst, argv[balises[BAL_F] + 1], n_lignes);
+                print_instance_csv(&inst);
+            }
+            else
+            {
+                printf("Erreur lecture du fichier de -f\n");
+                return NIL;
+            }
+            anhiliation_bal(BAL_F, balises);
+        }
+        else if (file_opened && balises[BAL_O] != NIL)
+        {
+
+            to_csv_file(argv[balises[BAL_O] + 1], inst);
+            // csv_written = true;
+
+            anhiliation_bal(BAL_O, balises);
         }
         else if (file_opened && balises[BAL_BF] != NIL)
         {
             if (inst.dimension <= 11)
             {
-                //  bf ...
-                printf("\n---- OK ----\n");
-                meuilleureDistance = brute_force_tsp(&inst, false);
-                printf("BF Distance : %f\n", meuilleureDistance);
+                start = clock();
+                meuilleureDistance = brute_force_tsp(&inst, false, nodes);
+                end = clock();
+                duration = (double)(end - start) / CLOCKS_PER_SEC;
+                print_methode(false, "Bruteforce", meuilleureDistance, duration, nodes, inst.dimension);
             }
             else
             {
@@ -75,7 +108,7 @@ int main(int argc, char *argv[])
         }
         else if (file_opened && balises[BAL_RW] != NIL)
         {
-            meuilleureDistance = random_walk(&inst);
+            meuilleureDistance = random_walk(&inst, nodes);
             printf("----------- random -----------\n random = %f\n", meuilleureDistance);
 
             anhiliation_bal(BAL_RW, balises);
@@ -88,6 +121,8 @@ int main(int argc, char *argv[])
 
         i++;
     }
+
+    //meuilleureDistance = ga(inst, 0.1, 1, 1);
 
     return 0;
 }

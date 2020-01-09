@@ -11,18 +11,14 @@ double instance_distance(instance_t *instance);
 double euclidean_distance(long x1, long y1, long x2, long y2);
 int is_in_array(int nb, int *array, int dimension);
 void swap_2opt(int *tab, int ind1, int ind2);
+bool compare_slices(int *array_1, int start_1, int end_1, int *array_2, int start_2, int end_2, int dimension);
+int *rev_array(int *array, int d, int f);
+int *create_array_int(int dimension);
+
 
 
 void erreur(char *message);
-int random_node(int min, int max);
-int *creer_tab_int(int dim);
-char *creer_tab_char(int dim);
-void affiche_tab_int(int *tab, int dim, FILE *logfp);
-void affiche_tab_char_hex(char *tab, int dim, FILE *logfp);
-void affiche_tab_char(char *tab, int dim, FILE *logfp);
-int **creer_mat_int(int nbRows, int nbCol);
 double **creer_mat_dist(int dimension);
 void swap(int *tab, int ind1, int ind2);/// \brief inverse le contenu des cases ind1 et ind2 dans tab
-void renverse_tab(int *tab, int prem, int der);
 
 #endif

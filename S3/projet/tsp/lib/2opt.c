@@ -33,7 +33,7 @@ double two_opt(int *nodes, instance_t instance)
         while (i < dimension)
         {
             j = i + 1;
-            //j != i - 1 && j != i && j != i + 1 && 
+            //j != i - 1 && j != i && j != i + 1 && j < dimension
             while (j < dimension)
             {
                 if (j == dimension - 1)

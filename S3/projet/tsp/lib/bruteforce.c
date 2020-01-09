@@ -6,7 +6,7 @@
 #include <math.h>
 #include "bruteforce.h"
 
-double brute_force_tsp(instance_t *instance, bool use_mat)
+double brute_force_tsp(instance_t *instance, bool use_mat, int *nodes)
 {
     /// \brief considère toute les permutations de la tournée initiale et garde la plus courte
     /// \brief et la pire, le point n°1 est fixe
@@ -18,12 +18,12 @@ double brute_force_tsp(instance_t *instance, bool use_mat)
 
     int best_nodes[dimension];    // best arr
     int worst_nodes[dimension];   // worst arr
-    int current_nodes[dimension]; // tour en cour
+    //int current_nodes[dimension]; // tour en cour
     init_array(best_nodes, dimension);
     init_array(worst_nodes, dimension);
-    init_array(current_nodes, dimension);
+    init_array(nodes, dimension);
 
-    double current_distance = array_distance(current_nodes, *instance);
+    double current_distance = array_distance(nodes, *instance);
     
     double best_distance = current_distance;
     double worst_distance = current_distance;
@@ -34,32 +34,27 @@ double brute_force_tsp(instance_t *instance, bool use_mat)
     }
     else
     {
-        printf("Bf normal\n");
         do
         {
             // calcul de la longeur du nvx segments
-            current_distance = array_distance(current_nodes, *instance);
+            current_distance = array_distance(nodes, *instance);
 
             // maj de >+ et >-
             if (current_distance <= best_distance)
             {
-                copy_array(current_nodes, best_nodes, dimension);
+                copy_array(nodes, best_nodes, dimension);
                 best_distance = current_distance;
             }
             if (current_distance > worst_distance)
             {
-                copy_array(current_nodes, worst_nodes, dimension);
+                copy_array(nodes, worst_nodes, dimension);
                 worst_distance = current_distance;
             }
             // length a recalc * 2 || Pas besoin !
-        } while (next_permutation(current_nodes + 1, dimension));
+        } while (next_permutation(nodes + 1, dimension));
     }
-    printf("best array : [");
-    for (int i = 0; i < dimension; i++)
-    {
-        printf("%d,", best_nodes[i]);
-    }
-    printf("]\n");
+
+    copy_array(best_nodes, nodes, dimension);
     return best_distance;
 }
 

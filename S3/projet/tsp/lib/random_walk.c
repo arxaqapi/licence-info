@@ -9,26 +9,25 @@ int next_random(instance_t *instance, int *nodes, int zeiger)
     do
     {
         random_node = rand()%instance->dimension;
-    } while (is_in_array(random_node, nodes, instance->dimension) && random_node != nodes[zeiger]);
+    } while (is_in_array(random_node, nodes, instance->dimension) && random_node/* == nodes[zeiger]*/);
     
     return random_node;
 }
 
-double random_walk(instance_t *inst)
+double random_walk(instance_t *inst, int *nodes)
 {
     int dimension = inst->dimension;
-    int current_nodes[dimension];
+    nodes = create_array_int(dimension);
     
     double current_distance;
 
-    current_nodes[0] = 0;
+    nodes[0] = 0;
     for (int i = 0; i < dimension - 1; i++)
     {
-        current_nodes[i + 1] = next_random(inst, current_nodes, i);        
+        nodes[i + 1] = next_random(inst, nodes, i);        
     }
 
-    current_distance = array_distance(current_nodes, *inst);
+    current_distance = array_distance(nodes, *inst);
     
-
     return current_distance;
 }

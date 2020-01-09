@@ -5,7 +5,7 @@
 #include "tools.h"
 
 int next_random(instance_t *instance, int *nodes, int zeiger);
-double random_walk(instance_t *inst);
+double random_walk(instance_t *inst, int *nodes);
 
 
 #endif

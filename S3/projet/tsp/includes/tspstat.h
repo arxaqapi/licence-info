@@ -29,13 +29,7 @@ typedef struct instance_s
 } instance_t;
 
 // SD pour lire le fichier "tour" de TSPLIB
-typedef struct tour_s
-{
-  char name[TAILLENOM]; // nom de l'instance
-  int dimension;        // nombre de sommets dans l'instance
-  double length;        // longueur du tour (calculée ou lue)
-  int *tour;            // liste des noeuds de la tournée
-} tour_t;
+
 
 // variables externes
 // permet d'éviter de se trainer les mêmes paramètres dans les sous-programmes
@@ -44,16 +38,16 @@ extern FILE *resfile;     // fichier de résultats (CSV)
 extern bool verbose_mode; // mode bavard
 extern bool sans_zero;    // avec ou sans zéro
 
-// prototypes des sp en vrac à classer
-void dump_tour(tour_t tour);
-// double swap_2opt(instance_t instance, tour_t *tournee, int ind1, int ind2);
-double improve_2opt_syst(instance_t instance, tour_t *tournee, int ind1);
-double all_2opt(instance_t instance, tour_t *tournee);
-void verify_dist(instance_t instance);
-bool villes_adjacentes(tour_t tournee, int ind1, int ind2);
-void dump_instance(instance_t instance);
-void dump_matrice_dist(instance_t instance);
-void print_solution(char *methode, instance_t instance, tour_t t, double longueur, double tps);
+// // prototypes des sp en vrac à classer
+// void dump_tour(tour_t tour);
+// // double swap_2opt(instance_t instance, tour_t *tournee, int ind1, int ind2);
+// double improve_2opt_syst(instance_t instance, tour_t *tournee, int ind1);
+// double all_2opt(instance_t instance, tour_t *tournee);
+// void verify_dist(instance_t instance);
+// bool villes_adjacentes(tour_t tournee, int ind1, int ind2);
+// void dump_instance(instance_t instance);
+// void dump_matrice_dist(instance_t instance);
+// void print_solution(char *methode, instance_t instance, tour_t t, double longueur, double tps);
 
 // Balises OK
 //  void print_help();
@@ -77,28 +71,28 @@ void print_solution(char *methode, instance_t instance, tour_t t, double longueu
 /// NOT HERE
 
 // TSP Toold, fct° annexe
-void init_instance(instance_t *instance);
-void init_tour(tour_t *tour);
-double dist_euclidienne(instance_t instance, int v1, int v2);
-double dist_mat(instance_t instance, int node1, int node2);
-void compute_dist(instance_t *instance);
-void hard_copy_tour(tour_t *t1, tour_t t2);
-double tour_length(instance_t instance, int *tabTour, bool sans_zero);
-double tour_length_mat(instance_t instance, int *tabTour);
-bool node_in_tour(int node, tour_t tour);
-void add_tail(int som, tour_t *tournee);
+// void init_instance(instance_t *instance);
+// void init_tour(tour_t *tour);
+// double dist_euclidienne(instance_t instance, int v1, int v2);
+// double dist_mat(instance_t instance, int node1, int node2);
+// void compute_dist(instance_t *instance);
+// void hard_copy_tour(tour_t *t1, tour_t t2);
+// double tour_length(instance_t instance, int *tabTour, bool sans_zero);
+// double tour_length_mat(instance_t instance, int *tabTour);
+// bool node_in_tour(int node, tour_t tour);
+// void add_tail(int som, tour_t *tournee);
 
 // tools, Fonction diverses
-void erreur(char *message);        // affiche me message et fait un exit
-int random_node(int min, int max); // donne un nb aléatoire entre min et max
-int *creer_tab_int(int dim);
+// void erreur(char *message);        // affiche me message et fait un exit
+// int random_node(int min, int max); // donne un nb aléatoire entre min et max
+// int *creer_tab_int(int dim);
 //
-void affiche_tab_int(int *tab, int dim, FILE *logfp);
-void affiche_tab_char_hex(char *tab, int dim, FILE *logfp);
-void affiche_tab_char(char *tab, int dim, FILE *logfp);
-int **creer_mat_int(int nbRows, int nbCol);
-double **creer_mat_dist(int dimension);
-void swap(int *tab, int ind1, int ind2);
-void renverse_tab(int *tab, int prem, int der);
+// void affiche_tab_int(int *tab, int dim, FILE *logfp);
+// void affiche_tab_char_hex(char *tab, int dim, FILE *logfp);
+// void affiche_tab_char(char *tab, int dim, FILE *logfp);
+// int **creer_mat_int(int nbRows, int nbCol);
+// double **creer_mat_dist(int dimension);
+// void swap(int *tab, int ind1, int ind2);
+// void renverse_tab(int *tab, int prem, int der);
 
 #endif
