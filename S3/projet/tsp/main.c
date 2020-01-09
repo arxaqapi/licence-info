@@ -21,10 +21,16 @@ int main(int argc, char *argv[])
     srand(time(NULL));
 
     bool file_opened = false;
-    bool csv_written = false;
+    bool m_written = false;
+    bool b_rw = false;
+    bool b_ppv = false;
     int balises[NB_BALISES];
+
+
     int *nodes;
-    int n_lignes = 0;
+    int *ppv_nodes;
+    int *rw_nodes;
+
 
     instance_t inst;
     double meuilleureDistance;
@@ -45,12 +51,14 @@ int main(int argc, char *argv[])
     {
         if (!file_opened && balises[BAL_F] != NIL)
         {
-            if (lecture_fichier(argv[balises[BAL_F] + 1], &inst, &n_lignes) != NIL)
+            if (lecture_fichier(argv[balises[BAL_F] + 1], &inst) != NIL)
             {
                 file_opened = true;
                 nodes = create_array_int(inst.dimension);
+                ppv_nodes = create_array_int(inst.dimension);
+                rw_nodes = create_array_int(inst.dimension);
 
-                print_entete(&inst, argv[balises[BAL_F] + 1], n_lignes);
+                print_entete(&inst, argv[balises[BAL_F] + 1]);
                 print_instance_csv(&inst);
             }
             else
@@ -76,7 +84,8 @@ int main(int argc, char *argv[])
                 meuilleureDistance = brute_force_tsp(&inst, false, nodes);
                 end = clock();
                 duration = (double)(end - start) / CLOCKS_PER_SEC;
-                print_methode(false, "Bruteforce", meuilleureDistance, duration, nodes, inst.dimension);
+                print_methode(&m_written, "Bruteforce", meuilleureDistance, duration, nodes, inst.dimension);
+                free(nodes);
             }
             else
             {
@@ -99,19 +108,54 @@ int main(int argc, char *argv[])
         }
         else if (file_opened && balises[BAL_PPV] != NIL)
         {
-            meuilleureDistance = ppv(&inst, nodes);
-            printf("----------- PPV -----------\n ppv = %f\n", meuilleureDistance);
-            meuilleureDistance = two_opt(nodes, inst);
-            printf("----------- 2OPT -----------\n 2OPT = %f\n", meuilleureDistance);
+            start = clock();
+            meuilleureDistance = ppv(&inst, ppv_nodes);
+            end = clock();
+            duration = (double)(end - start) / CLOCKS_PER_SEC;
+            print_methode(&m_written, "PPV", meuilleureDistance, duration, ppv_nodes, inst.dimension);
 
+                // free(ppv_nodes);
+            b_ppv = true;
             anhiliation_bal(BAL_PPV, balises);
         }
         else if (file_opened && balises[BAL_RW] != NIL)
         {
-            meuilleureDistance = random_walk(&inst, nodes);
-            printf("----------- random -----------\n random = %f\n", meuilleureDistance);
+            start = clock();
+            meuilleureDistance = random_walk(&inst, rw_nodes);
+            end = clock();
+            duration = (double)(end - start) / CLOCKS_PER_SEC;
+            print_methode(&m_written, "Random walk", meuilleureDistance, duration, rw_nodes, inst.dimension);
+                // free(rw_nodes);
 
+            b_rw = true;
             anhiliation_bal(BAL_RW, balises);
+        }
+        else if (file_opened && balises[BAL_2OPT] != NIL)
+        {
+            printf("balises 2opt\n");
+            if (balises[BAL_PPV] != NIL || b_ppv)
+            {
+                start = clock();
+                meuilleureDistance = two_opt(ppv_nodes, inst);
+                end = clock();
+                duration = (double)(end - start) / CLOCKS_PER_SEC;
+                print_methode(&m_written, "2OPT ppv", meuilleureDistance, duration, ppv_nodes, inst.dimension);
+                // free(ppv_nodes);
+                b_ppv = false;
+
+            }
+            if (balises[BAL_RW] != NIL || b_rw)
+            {
+                printf("c ici\n");
+                start = clock();
+                meuilleureDistance = two_opt(rw_nodes, inst);
+                end = clock();
+                duration = (double)(end - start) / CLOCKS_PER_SEC;
+                print_methode(&m_written, "2OPT random walk", meuilleureDistance, duration, rw_nodes, inst.dimension);
+                // free(rw_nodes);
+                b_rw = false;
+            }
+            anhiliation_bal(BAL_2OPT, balises);        
         }
         else if (file_opened && balises[BAL_H] != NIL)
         {
@@ -122,7 +166,7 @@ int main(int argc, char *argv[])
         i++;
     }
 
-    //meuilleureDistance = ga(inst, 0.1, 1, 1);
+    // meuilleureDistance = ga(inst, 0.1, 1, 1);
 
     return 0;
 }

@@ -40,7 +40,7 @@ void get_field_value(char *line, char *field_value)
     field_value[j] = '\0';
 }
 
-int lecture_fichier(char *filename, instance_t *instance, int* n_lignes)
+int lecture_fichier(char *filename, instance_t *instance)
 {
     FILE *tsp_prob_file = fopen(filename, "r");
     int c = 0;
@@ -53,7 +53,6 @@ int lecture_fichier(char *filename, instance_t *instance, int* n_lignes)
     {
         while (fgets(buffer, MAXBUF, tsp_prob_file) != NULL)
         {
-            *(n_lignes)++;
             char field_type[TAILLENOM];
             char field_value[TAILLENOM];
 
@@ -102,7 +101,6 @@ int lecture_fichier(char *filename, instance_t *instance, int* n_lignes)
                 instance->tabCoord[0][1] = 0;
                 for (int i = 1; i < instance->dimension; i++)
                 {
-                    *(n_lignes)++;
                     fscanf(tsp_prob_file, "%d %ld %ld", &poubelle, &instance->tabCoord[i][0], &instance->tabCoord[i][1]);
                 }
             }

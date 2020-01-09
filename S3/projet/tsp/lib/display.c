@@ -29,7 +29,7 @@ void print_entete(instance_t *instance, char *filename)
 {
     printf("J'ouvre le fichier : %s\n", filename);
     printf("Commentaire : %s\n", instance->comment);
-    printf("%d lignes lues\n", instance->dimension + 7);
+    printf("%d lignes lues\n", instance->dimension + 6);
     printf("EOF\n");
 }
 
@@ -47,12 +47,12 @@ void print_instance_csv(instance_t *instance)
     printf("\n");
 }
 
-void print_methode(bool al_an, char *m_name, double final_length, double time, int *final_nodes, int dimension)
+void print_methode(bool *al_an, char *m_name, double final_length, double time, int *final_nodes, int dimension)
 {
-    if (!al_an)
+    if (!*(al_an))
     {
         printf("Méthode ; longueur ; Temps CPU (sec) ; Tour\n");
-        al_an = true;
+        *al_an = true;
     }
     printf("%s ; %.2f ; %.2f ; ", m_name, final_length, time);
 

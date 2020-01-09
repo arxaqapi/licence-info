@@ -26,19 +26,17 @@ int next_v(instance_t *instance, int *nodes, int zeiger)
 double ppv(instance_t *inst, int *nodes)
 {
     int dimension = inst->dimension;
-    int current_nodes[dimension];
     double current_distance = 0;
 
-    current_nodes[0] = 0;
+    nodes[0] = 0;
 
     for (int i = 0; i < dimension - 1; i++)
     {
-        current_nodes[i + 1] = next_v(inst, current_nodes, i);        
+        nodes[i + 1] = next_v(inst, nodes, i);        
     }
 
-    current_distance = array_distance(current_nodes, *inst);
+    current_distance = array_distance(nodes, *inst);
 
-    copy_array(current_nodes, nodes, inst->dimension);
 
     return current_distance;
 }

@@ -34,11 +34,9 @@ long **create_long_mat(int nbRows, int nbCol)
 
 void copy_array(int *array_source, int *array_destination, int dimension)
 {
-    printf("copy un max");
     for (int i = 0; i < dimension; i++)
     {
         array_destination[i] = array_source[i];
-        printf("copy un max: %d \n", i);
     }
 }
 

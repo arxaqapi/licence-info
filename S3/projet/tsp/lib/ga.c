@@ -51,7 +51,7 @@ void edge_destruction(tour_t *t_parent1, tour_t *t_parent2, tour_t *tfille, int 
 
     for (int i = 0; i < sub_tour.dimension; i++)
     {
-        printf("Alors : deb = %d || fin = %d", sub_tour.tabIndices[i].deb, sub_tour.tabIndices[i].deb);
+        printf("Alors : deb = %d || fin = %d\n", sub_tour.tabIndices[i].deb, sub_tour.tabIndices[i].fin);
     }
     
 }
@@ -95,6 +95,7 @@ double ga(instance_t instance, float taux_mut, int n_individus, int n_generation
     printf("in the geeeen\n");
     for (int i = 0; i < n_individus_b; i++)
     {
+        pool.array[i].nodes = create_array_int(dimension);
         pool.array[i].length = random_walk(&instance, pool.array[i].nodes);
     }
     printf("je sors?\n");
@@ -140,7 +141,6 @@ double ga(instance_t instance, float taux_mut, int n_individus, int n_generation
     until: fixed nb de géné OU stabilité atteinte
     */
 
-    // free(pool.array);
 
     return current_distance;
 }

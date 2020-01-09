@@ -17,7 +17,6 @@ int next_random(instance_t *instance, int *nodes, int zeiger)
 double random_walk(instance_t *inst, int *nodes)
 {
     int dimension = inst->dimension;
-    nodes = create_array_int(dimension);
     
     double current_distance;
 
