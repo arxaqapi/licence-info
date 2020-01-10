@@ -1,17 +1,32 @@
+/// \file ga.c
+/// \author Tarek Kunze
+/// \date december 2019
+/// \brief implementation de l'algo génétique
+
 #include "ga.h"
 
 tour_t *create_array_tour(int dimension)
 {
+    /// \brief crée un tableau de tour_t
+    /// \param[in] dimension : dimension du tableau de retour
+    /// \return pointeur sur array de tour_t
     return malloc(dimension * sizeof(tour_t));
 }
 
 indices_t *create_array_indices(int dimension)
 {
+    /// \brief crée un tableau d' indices_t
+    /// \param[in] dimension : dimension du tableau de retour
+    /// \return pointeur sur array de indices_t
     return malloc(dimension * sizeof(indices_t));
 }
 
 void two_random_numbers(int *a, int *b, int dimension)
 {
+    /// \brief crée 2 nombre aléatoire différent
+    /// \param[in, out] a : pointeur sur entier
+    /// \param[in, out] b : pointeur sur entier
+    /// \param[in] dimension : valeur max des nombres aléatoires
     do
     {
         *a = rand() % dimension;
@@ -21,6 +36,11 @@ void two_random_numbers(int *a, int *b, int dimension)
 
 void edge_destruction(tour_t *t_parent1, tour_t *t_parent2, tour_t *tfille, int dimension)
 {
+    /// \brief deconstruit le tableau initial en pls sous segments
+    /// \param[in] t_parent1 : tableau parent1
+    /// \param[in] t_parent2 : tableau parent2
+    /// \param[in] tfille : tableau fille
+    /// \param[in] dimension : dimension du tableau
     copy_array(t_parent1->nodes, tfille->nodes, dimension);
     printf("into the destructor\n");
     sub_tour_t sub_tour;
@@ -42,7 +62,7 @@ void edge_destruction(tour_t *t_parent1, tour_t *t_parent2, tour_t *tfille, int 
             {
                 sub_tour.tabIndices[i].deb = i;
                 sub_tour.tabIndices[i].fin = i;
-                sub_tour.dimension ++;
+                sub_tour.dimension++;
             }
             j++;
         }
@@ -53,20 +73,32 @@ void edge_destruction(tour_t *t_parent1, tour_t *t_parent2, tour_t *tfille, int 
     {
         printf("Alors : deb = %d || fin = %d\n", sub_tour.tabIndices[i].deb, sub_tour.tabIndices[i].fin);
     }
-    
 }
 
 void mutation()
 {
+    /// \brief execute l'algo de mutation
 }
 
 void dpx(int *t_parent1, int *t_parent2, int *tfille, int *tfille_fin, int dimension)
 {
+    /// \brief execute l'algo DPX
+    /// \param[in] t_parent1 : tableau parent1
+    /// \param[in] t_parent2 : tableau parent2
+    /// \param[in] tfille : tableau fille
+    /// \param[in] tfille_fin: tableau fille_fin
+    /// \param[in] dimension : dimension du tableau
     // edge_destruction(t_parent1, t_parent2, tfille, tfille_fin, dimension);
 }
 
 double ga(instance_t instance, float taux_mut, int n_individus, int n_generations)
 {
+    /// \brief execute l'algo genetique
+    /// \param[in] instance : instance du problème
+    /// \param[in] taux_mut : taux de mutation
+    /// \param[in] n_individus : nombre d'individu
+    /// \param[in] n_generations : nombre de générations
+    /// \return longeur du problème trouvé
     double current_distance;
     int dimension = instance.dimension;
 
@@ -88,8 +120,6 @@ double ga(instance_t instance, float taux_mut, int n_individus, int n_generation
     int i_par_1;
     int i_par_2;
 
-    
-
     // create initial population N indiv randomly initialized
     // n_individus * random_walk();
     printf("in the geeeen\n");
@@ -99,12 +129,10 @@ double ga(instance_t instance, float taux_mut, int n_individus, int n_generation
         pool.array[i].length = random_walk(&instance, pool.array[i].nodes);
     }
     printf("je sors?\n");
-    
 
     two_random_numbers(&i_par_1, &i_par_2, n_individus_b);
     printf("rand ok\n");
     edge_destruction(&pool.array[i_par_1], &pool.array[i_par_2], &fille, dimension);
-
 
     // do
     // {
@@ -129,18 +157,6 @@ double ga(instance_t instance, float taux_mut, int n_individus, int n_generation
     //     }
     //     n_generations_b--;
     // } while (n_generations_b > 0);
-
-    /*
-    repeat
-    while (nb croisement voulu non atteint)
-        select randomly 2 indiv
-        faire croisement qui donne tournée fille (dpx)
-        avec une prob p, faire muter la tournée fille (2 arete non consécutive et de faire une 2opt)
-        remplacer une indiv de la pop par la fille (au hasard ou le moins performant)
-    end
-    until: fixed nb de géné OU stabilité atteinte
-    */
-
 
     return current_distance;
 }

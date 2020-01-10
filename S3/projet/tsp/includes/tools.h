@@ -7,7 +7,6 @@ long **create_long_mat(int nbRows, int nbCol);
 void copy_array(int* array_source, int* array_destination, int dimension);
 void init_array(int *array, int dimension);
 double array_distance(int *node_array, instance_t reference_instance);
-double instance_distance(instance_t *instance);
 double euclidean_distance(long x1, long y1, long x2, long y2);
 int is_in_array(int nb, int *array, int dimension);
 void swap_2opt(int *tab, int ind1, int ind2);

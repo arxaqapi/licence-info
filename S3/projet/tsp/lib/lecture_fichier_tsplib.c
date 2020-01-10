@@ -5,15 +5,19 @@
 
 #include "lecture_fichier_tsplib.h"
 
-
 bool prefix(char *motif, char *buf)
 {
+    /// \brief teste si le motif = le buffer avec strcmp()
+    /// \param[in, out] motif : motif
+    /// \param[in, out] buf : buffer
     return !strcmp(motif, buf);
 }
 
 void get_first_word(char *line, char *first_word)
 {
-
+    /// \brief récupère le 1er mot d'une ligne
+    /// \param[in] line : ligne
+    /// \param[in, out] first_word : poiteur sur le tableau contenant le mot
     int i = 0;
     while (line[i] != ' ' && line[i] != '\n')
     {
@@ -25,6 +29,9 @@ void get_first_word(char *line, char *first_word)
 
 void get_field_value(char *line, char *field_value)
 {
+    /// \brief récupère la valeur d'un champ
+    /// \param[in] line : ligne
+    /// \param[in, out] field_value : poiteur sur le tableau contenant le champ
     int i = 0;
     while (line[i] != ':')
     {
@@ -43,6 +50,10 @@ void get_field_value(char *line, char *field_value)
 
 int lecture_fichier(char *filename, instance_t *instance)
 {
+    /// \brief lis le fichier de nom filename
+    /// \param[in] filename : nom du fichier a lire
+    /// \param[in, out] instance : isntance du problème
+    /// \return 1 si fichier bien lu 0 sinon
     FILE *tsp_prob_file = fopen(filename, "r");
     int c = 0;
     int dim = 0;
@@ -134,7 +145,6 @@ int lecture_fichier(char *filename, instance_t *instance)
         printf("Error reading input file\n");
         return NIL;
     }
-
 
     return 0;
 }

@@ -1,6 +1,6 @@
 /// \file tools.c
-/// \author Vincent Dugat
-/// \date summer 2019
+/// \author Tarek Kunze
+/// \date december 2019
 /// \brief fonctions diverses
 
 #include <stdio.h>
@@ -11,6 +11,10 @@
 
 long **create_long_mat(int nbRows, int nbCol)
 {
+    /// \brief crée une matrice de long
+    /// \param[in] nbRows : nombre de ligne
+    /// \param[in] nbColtance : nombre de colonne
+    /// \return un pointeur de pointeur sur tableau de long
     long **mat = malloc(nbRows * sizeof(long *));
     if (mat == NULL)
     {
@@ -30,10 +34,12 @@ long **create_long_mat(int nbRows, int nbCol)
     return mat;
 }
 
-
-
 void copy_array(int *array_source, int *array_destination, int dimension)
 {
+    /// \brief copy une array dans une seconde array de même dimension
+    /// \param[in] array_source : nombre de ligne
+    /// \param[in] array_destination : nombre de colonne
+    /// \param[in] dimension : dimension du tableau
     for (int i = 0; i < dimension; i++)
     {
         array_destination[i] = array_source[i];
@@ -42,6 +48,9 @@ void copy_array(int *array_source, int *array_destination, int dimension)
 
 void init_array(int *array, int dimension)
 {
+    /// \brief initialise une array avec les bon noud de départs
+    /// \param[in, out] array : le tableau
+    /// \param[in] dimension : dimension du tableau
     for (int i = 0; i < dimension; i++)
     {
         array[i] = i;
@@ -50,6 +59,10 @@ void init_array(int *array, int dimension)
 
 double array_distance(int *node_array, instance_t reference_instance)
 {
+    /// \brief calcule la distance cyclique d'un tableau de noeud
+    /// \param[in] node_array : tableau de noeud
+    /// \param[in] reference_instance : instance du problème
+    /// \return la distance du problème
     int taille = reference_instance.dimension;
     double distance = 0;
     for (int i = 0; i < taille; i++)
@@ -70,25 +83,25 @@ double array_distance(int *node_array, instance_t reference_instance)
     return distance;
 }
 
-double instance_distance(instance_t *instance)
-{
-    instance->length = 0;
-    for (int i = 0; i < instance->dimension - 1; i++)
-    {
-        instance->length += euclidean_distance(instance->tabCoord[i][0], instance->tabCoord[i][1], instance->tabCoord[i + 1][0], instance->tabCoord[i + 1][1]);
-    }
-    instance->length += euclidean_distance(instance->tabCoord[0][0], instance->tabCoord[0][1], instance->tabCoord[instance->dimension - 1][0], instance->tabCoord[instance->dimension - 1][1]);
-
-    return instance->length;
-}
 
 double euclidean_distance(long x1, long y1, long x2, long y2)
 {
+    /// \brief calcule la distance euclidienne entre 2 points de coord x, y
+    /// \param[in] x1 : x1
+    /// \param[in] x2 : x2
+    /// \param[in] y1 : y1
+    /// \param[in] y2 : y2
+    /// \return la distance
     return sqrt((double)((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)));
 }
 
 int is_in_array(int nb, int *array, int dimension)
 {
+    /// \brief regarde si un nombre existe dans un tableau
+    /// \param[in] nb : nombre a chercher dans le tableau
+    /// \param[in] array : tableau de noeud
+    /// \param[in] dimension : dimension du tableau
+    /// \return 1 si dans le tableau, 0 si non
     for (int i = 0; i < dimension; i++)
     {
         if (array[i] == nb)
@@ -100,7 +113,7 @@ int is_in_array(int nb, int *array, int dimension)
 }
 
 void swap_2opt(int *tab, int ind1, int ind2)
-/// \brief inverse le contenu des cases ind1 et ind2 dans tab
+/// \brief inverse le contenu de ind1 jusqu'a ind2
 /// \param[in,out] tab : le tableau
 /// \param[in] ind1 : premier indice
 /// \param[in] ind2 : deuxième indice
@@ -119,6 +132,15 @@ void swap_2opt(int *tab, int ind1, int ind2)
 
 bool compare_slices(int *array_1, int start_1, int end_1, int *array_2, int start_2, int end_2, int dimension)
 {
+    /// \brief compare 2 tableau entre des bornes définies
+    /// \param[in] array_1 : 1er tableau
+    /// \param[in] start_1 : début 1er tab
+    /// \param[in] end_1 : fin 1er tab
+    /// \param[in] array_2 : 2eme tableau
+    /// \param[in] start_2 : début 2eme tab
+    /// \param[in] end_2 : fin 2eme tab
+    /// \param[in] dimension : dimension du tableau
+    /// \return true si tab 1 == tab 2
     bool equal = false;
     while (array_1[start_1] == array_2[start_2] && start_1 <= end_1 && start_2 <= end_2)
     {
@@ -131,10 +153,11 @@ bool compare_slices(int *array_1, int start_1, int end_1, int *array_2, int star
 
 int *rev_array(int *array, int d, int f)
 {
-    /// \brief reverse le contenu du tableau entre les indices prem et der
-    /// \param[in,out] array : le tableau à modifier
+    /// \brief reverse le contenu du tableau entre les indices d et f
+    /// \param[in] array : le tableau à modifier
     /// \param[in] d : indice de début
-    /// \param[in] der : indice de fin
+    /// \param[in] f : indice de fin
+    /// \return pointeur sur le tableau modifié
     int ind;
     int dim = d - f + 1;
 
@@ -147,22 +170,18 @@ int *rev_array(int *array, int d, int f)
 
 int *create_array_int(int dimension)
 {
+    /// \brief crée une liste d'entier de facon sûre
+    /// \param[in] dimension : dimension du tableau
+    /// \return pointeur sur tableau
     int *ar = malloc(dimension * sizeof(long *));
     if (ar == NULL)
     {
         printf("Problème d'allocation create_array_int !");
         exit(1);
     }
-    
+
     return ar;
-
 }
-
-
-
-
-
-
 
 /******************* ***********************/
 /******************* ***********************/
@@ -176,9 +195,6 @@ void erreur(char *message)
     printf("*** ERREUR : %s ***\n", message);
     exit(1);
 }
-
-
-
 
 int **creer_mat_int(int nbRows, int nbCol)
 {

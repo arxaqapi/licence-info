@@ -1,7 +1,16 @@
+/// \file display.c
+/// \author Tarek Kunze
+/// \date december 2019
+/// \brief affichage a l'ecran
+
 #include "display.h"
 
 int to_csv_file(char *filename, instance_t instance)
 {
+    /// \brief écrit les résultats dans un fichiers
+    /// \param[in] filename : nom du fichier
+    /// \param[in] inst : instance du problème
+    /// \return si le fichier a bien été créer
     FILE *csv_file;
     csv_file = fopen(filename, "w");
     if (csv_file != NULL)
@@ -34,6 +43,9 @@ int to_csv_file(char *filename, instance_t instance)
 
 void print_entete(instance_t *instance, char *filename)
 {
+    /// \brief affiche l'en tete
+    /// \param[in] inst : instance du problème
+    /// \param[in] filename : nom du fichier
     printf("J'ouvre le fichier : %s\n", filename);
     printf("Commentaire : %s\n", instance->comment);
     printf("%d lignes lues\n", instance->dimension + 6);
@@ -42,7 +54,8 @@ void print_entete(instance_t *instance, char *filename)
 
 void print_instance_csv(instance_t *instance)
 {
-
+    /// \brief affiche les resultats sous forme csv
+    /// \param[in] inst : instance du problème
     printf("\n*** Instance ***\n");
     printf("Nom de l'instance ; %s\n", instance->name);
     printf("Nombre de villes (avec (0,0)) ; %d\n", instance->dimension);
@@ -64,6 +77,13 @@ void print_instance_csv(instance_t *instance)
 
 void print_methode(bool *al_an, char *m_name, double final_length, double time, int *final_nodes, int dimension)
 {
+    /// \brief écrit les résultats de la methode a l'écran en format csv
+    /// \param[in] al_an : si cette chaine de caractére a déjà été affiché
+    /// \param[in] m_name : nom de la méthode
+    /// \param[in] final_length : longeur finale de la méthode
+    /// \param[in] time : temps qu'a pris la fonction a s'exécuter
+    /// \param[in] final_nodes : tableau des noeuds
+    /// \param[in] dimension : dimension du tableau de noeuds
 
     if (!*(al_an))
     {

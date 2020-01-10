@@ -12,19 +12,20 @@ double brute_force_tsp(instance_t *instance, bool use_mat, int *nodes)
     /// \brief et la pire, le point n°1 est fixe
     /// \param [in] instance : pour les points et coordonées
     /// \param [in] use_mat : flag pour indiquer si on veut utiliser la matrices des distances
+    /// \param [in] nodes : tableau des noeuds
 
     //  Variables
     int dimension = instance->dimension;
 
-    int best_nodes[dimension];    // best arr
-    int worst_nodes[dimension];   // worst arr
+    int best_nodes[dimension];  // best arr
+    int worst_nodes[dimension]; // worst arr
     //int current_nodes[dimension]; // tour en cour
     init_array(best_nodes, dimension);
     init_array(worst_nodes, dimension);
     init_array(nodes, dimension);
 
     double current_distance = array_distance(nodes, *instance);
-    
+
     double best_distance = current_distance;
     double worst_distance = current_distance;
 
@@ -64,6 +65,8 @@ bool next_permutation(int *array, int dim)
     /// \brief array of integers in place, returning a Boolean to indicate
     /// \brief whether a next permutation existed. (Returns false when the
     /// \brief argument is already the last possible permutation.)
+    /// \param [in] array : tableau des noeuds
+    /// \param [in] dim : dimension du tableau
     // Find non-increasing suffix
     dim--;
     if (dim == 0)

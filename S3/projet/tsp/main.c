@@ -170,6 +170,11 @@ int main(int argc, char *argv[])
             }
             anhiliation_bal(BAL_2OPT, balises);
         }
+        else if (file_opened && balises[BAL_GA] != NIL)
+        {
+            printf("Implementation de l'algo génétique non terminée\n");
+            anhiliation_bal(BAL_GA, balises);
+        }
         else if (file_opened && balises[BAL_H] != NIL)
         {
             print_help();

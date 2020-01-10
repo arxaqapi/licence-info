@@ -1,7 +1,20 @@
+/// \file 2opt.c
+/// \author Tarek Kunze
+/// \date december 2019
+/// \brief implementation de l'algo de 2-OPT
+
 #include "2opt.h"
 
 bool onSegment(int p, int q, int r, instance_t inst, int *nodes)
 {
+    /// \brief renvoie si un point est sur un segment
+    /// \param[in] p : un point
+    /// \param[in] q : un point
+    /// \param[in] r : un point
+    /// \param[in] inst : instance du problème
+    /// \param[in] nodes : tableau des noeuds
+    /// \return si 1 le point q est sur le segment pr
+
     if (inst.tabCoord[nodes[q]][0] <= max(inst.tabCoord[nodes[p]][0], inst.tabCoord[nodes[r]][0]) && inst.tabCoord[nodes[q]][0] >= min(inst.tabCoord[nodes[p]][0], inst.tabCoord[nodes[r]][0]) &&
         inst.tabCoord[nodes[q]][1] <= max(inst.tabCoord[nodes[p]][1], inst.tabCoord[nodes[r]][1]) && inst.tabCoord[nodes[q]][1] >= min(inst.tabCoord[nodes[p]][1], inst.tabCoord[nodes[r]][1]))
         return true;
@@ -11,6 +24,13 @@ bool onSegment(int p, int q, int r, instance_t inst, int *nodes)
 
 long orientation(int p, int q, int r, instance_t inst, int *nodes)
 {
+    /// \brief Cherche une chaine dans le tableau argv
+    /// \param[in] p : un point
+    /// \param[in] q : un point
+    /// \param[in] r : un point
+    /// \param[in] inst : instance du problème
+    /// \param[in] nodes : tableau des noeuds
+    /// \return si 0 si qpr collinéaire, 1 si l'ordre des noeuds est horaire et 2 si antihoraire
     long val = (inst.tabCoord[nodes[q]][1] - inst.tabCoord[nodes[p]][1]) * (inst.tabCoord[nodes[r]][0] - inst.tabCoord[nodes[q]][0]) -
                (inst.tabCoord[nodes[q]][0] - inst.tabCoord[nodes[p]][0]) * (inst.tabCoord[nodes[r]][1] - inst.tabCoord[nodes[q]][1]);
 
@@ -22,6 +42,14 @@ long orientation(int p, int q, int r, instance_t inst, int *nodes)
 
 bool do_intersect(int p1, int q1, int p2, int q2, instance_t instance, int *nodes)
 {
+    /// \brief Cherche une chaine dans le tableau argv
+    /// \param[in] p1 : un point
+    /// \param[in] q1 : un point
+    /// \param[in] p2 : un point
+    /// \param[in] q2 : un point
+    /// \param[in] inst : instance du problème
+    /// \param[in] nodes : tableau des noeuds
+    /// \return true si les segment p1q1 et p2q2 se croisent
     int o1 = orientation(p1, q1, p2, instance, nodes);
     int o2 = orientation(p1, q1, q2, instance, nodes);
     int o3 = orientation(p2, q2, p1, instance, nodes);
@@ -53,6 +81,10 @@ bool do_intersect(int p1, int q1, int p2, int q2, instance_t instance, int *node
 
 double two_opt(int *nodes, instance_t instance)
 {
+    /// \brief effectue la 2 optimisation sur une instance du problème déjà initialisé
+    /// \param[in] nodes : tableau des noeuds
+    /// \param[in, out] inst : instance du problème
+    /// \return la longueur du nouveaux agencements de noeuds
     int dimension = instance.dimension;
 
     double distance;
