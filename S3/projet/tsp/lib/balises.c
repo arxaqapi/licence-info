@@ -8,6 +8,18 @@
 #include "balises.h"
 #include "tspstat.h"
 
+
+void init_balises(int *balises)
+{
+    for (int i = 0; i < NB_BALISES; i++)
+    {
+        balises[i] = NIL;
+    }    
+}
+
+
+
+
 void anhiliation_bal(int ind_bal, int *bal_arr)
 {
     bal_arr[ind_bal] = NIL;
@@ -33,7 +45,7 @@ void print_help(void)
     {
         printf("Erreur d'ouverture du fichier help.txt\n");
     }
-};
+}
 
 int recherche_chaine(int argc, char **argv, char *ch)
 {
@@ -63,8 +75,8 @@ void analyse_balises(int argc, char **argv, int tab_arg[NB_BALISES])
     /// \param[in] **argv : listes des arguments
     /// \param[in, out] tab_arg : Le tableau contenant l'indice des balises utilisés dans argv
 
-    for (int i = 1; i < argc; i++)
-    {
+    // for (int i = 1; i < argc; i++)
+    // {
         tab_arg[0] = recherche_chaine(argc, argv, "-f");
         tab_arg[1] = recherche_chaine(argc, argv, "-t");
         tab_arg[2] = recherche_chaine(argc, argv, "-v");
@@ -77,5 +89,5 @@ void analyse_balises(int argc, char **argv, int tab_arg[NB_BALISES])
         tab_arg[9] = recherche_chaine(argc, argv, "-ga");
         tab_arg[10] = recherche_chaine(argc, argv, "-h");
         tab_arg[11] = recherche_chaine(argc, argv, "-nz");
-    }
+    // }
 }

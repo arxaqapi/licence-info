@@ -5,6 +5,7 @@
 
 #include "lecture_fichier_tsplib.h"
 
+
 bool prefix(char *motif, char *buf)
 {
     return !strcmp(motif, buf);
@@ -84,7 +85,12 @@ int lecture_fichier(char *filename, instance_t *instance)
                 // get field value
                 get_field_value(buffer, field_value);
                 // fill struct with it
-                instance->dimension = atoi(field_value) + 1;
+                instance->dimension = atoi(field_value);
+                if (!sans_zero)
+                {
+                    instance->dimension += 1;
+                }
+
                 // Add point 0, 0
             }
             else if (prefix(field_type, "EDGE_WEIGHT_TYPE"))
@@ -97,11 +103,23 @@ int lecture_fichier(char *filename, instance_t *instance)
             else if (prefix(field_type, "NODE_COORD_SECTION"))
             {
                 instance->tabCoord = create_long_mat(instance->dimension, 2);
-                instance->tabCoord[0][0] = 0;
-                instance->tabCoord[0][1] = 0;
-                for (int i = 1; i < instance->dimension; i++)
+                if (!sans_zero)
                 {
-                    fscanf(tsp_prob_file, "%d %ld %ld", &poubelle, &instance->tabCoord[i][0], &instance->tabCoord[i][1]);
+                    instance->tabCoord[0][0] = 0;
+                    instance->tabCoord[0][1] = 0;
+                    for (int i = 1; i < instance->dimension; i++)
+                    {
+                        fscanf(tsp_prob_file, "%d %ld %ld", &poubelle, &instance->tabCoord[i][0], &instance->tabCoord[i][1]);
+                    }
+                    fclose(tsp_prob_file);
+                }
+                if (sans_zero)
+                {
+                    for (int i = 0; i < instance->dimension; i++)
+                    {
+                        fscanf(tsp_prob_file, "%d %ld %ld", &poubelle, &instance->tabCoord[i][0], &instance->tabCoord[i][1]);
+                    }
+                    fclose(tsp_prob_file);
                 }
             }
             else if (prefix(field_type, "EOF"))
@@ -117,11 +135,6 @@ int lecture_fichier(char *filename, instance_t *instance)
         return NIL;
     }
 
-
-    // print csv instance
-    
-    // print_entete(instance, filename, n_lignes)
-    // instance_to_csv(instance, filename);
 
     return 0;
 }

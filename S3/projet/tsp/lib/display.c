@@ -13,7 +13,14 @@ int to_csv_file(char *filename, instance_t instance)
         fprintf(csv_file, "%s\n", "Point ; Abscisse ; Ordonnée");
         for (int i = 0; i < instance.dimension; i++)
         {
-            fprintf(csv_file, "%6d ; %6ld ; %6ld\n", i, instance.tabCoord[i][0], instance.tabCoord[i][1]);
+            if (sans_zero)
+            {
+                fprintf(csv_file, "%6d ; %6ld ; %6ld\n", i + 1, instance.tabCoord[i][0], instance.tabCoord[i][1]);
+            }
+            else
+            {
+                fprintf(csv_file, "%6d ; %6ld ; %6ld\n", i, instance.tabCoord[i][0], instance.tabCoord[i][1]);
+            }
         }
     }
     else
@@ -35,6 +42,7 @@ void print_entete(instance_t *instance, char *filename)
 
 void print_instance_csv(instance_t *instance)
 {
+
     printf("\n*** Instance ***\n");
     printf("Nom de l'instance ; %s\n", instance->name);
     printf("Nombre de villes (avec (0,0)) ; %d\n", instance->dimension);
@@ -42,13 +50,21 @@ void print_instance_csv(instance_t *instance)
     printf("Point ; Abscisse ; Ordonnée\n");
     for (int i = 0; i < instance->dimension; i++)
     {
-        printf("%6d ; %6ld ; %6ld\n", i, instance->tabCoord[i][0], instance->tabCoord[i][1]);
+        if (sans_zero)
+        {
+            printf("%6d ; %6ld ; %6ld\n", i + 1, instance->tabCoord[i][0], instance->tabCoord[i][1]);
+        }
+        else
+        {
+            printf("%6d ; %6ld ; %6ld\n", i, instance->tabCoord[i][0], instance->tabCoord[i][1]);
+        }
     }
     printf("\n");
 }
 
 void print_methode(bool *al_an, char *m_name, double final_length, double time, int *final_nodes, int dimension)
 {
+
     if (!*(al_an))
     {
         printf("Méthode ; longueur ; Temps CPU (sec) ; Tour\n");
@@ -59,7 +75,14 @@ void print_methode(bool *al_an, char *m_name, double final_length, double time, 
     printf("[");
     for (int i = 0; i < dimension; i++)
     {
-        printf("%d", final_nodes[i]);
+        if (sans_zero)
+        {
+            printf("%d", final_nodes[i] + 1);
+        }
+        else
+        {
+            printf("%d", final_nodes[i]);
+        }
         if (i < dimension - 1)
         {
             printf(",");

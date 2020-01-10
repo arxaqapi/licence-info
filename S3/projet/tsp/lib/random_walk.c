@@ -9,7 +9,7 @@ int next_random(instance_t *instance, int *nodes, int zeiger)
     do
     {
         random_node = rand()%instance->dimension;
-    } while (is_in_array(random_node, nodes, instance->dimension) && random_node/* == nodes[zeiger]*/);
+    } while (is_in_array(random_node, nodes, instance->dimension) || random_node == nodes[zeiger]);
     
     return random_node;
 }
@@ -25,6 +25,11 @@ double random_walk(instance_t *inst, int *nodes)
     {
         nodes[i + 1] = next_random(inst, nodes, i);        
     }
+    if (is_array_random(nodes, dimension))
+    {
+        printf("[TEST] - Array is Random\n");
+    }
+    
 
     current_distance = array_distance(nodes, *inst);
     

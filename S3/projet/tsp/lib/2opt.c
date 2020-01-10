@@ -1,20 +1,52 @@
 #include "2opt.h"
 
-bool does_it_cross(int *nodes, int n_1, int n_2, instance_t instance, bool cyclic)
+bool onSegment(int p, int q, int r, instance_t inst, int *nodes)
 {
-    int back_to_basics = n_2 + 1;
-    if (cyclic)
-    {
-        back_to_basics = 0;
-    }
-
-    if (euclidean_distance(instance.tabCoord[nodes[n_1]][0], instance.tabCoord[nodes[n_1]][1], instance.tabCoord[nodes[n_1 + 1]][0], instance.tabCoord[nodes[n_1 + 1]][1]) +
-            euclidean_distance(instance.tabCoord[nodes[n_2]][0], instance.tabCoord[nodes[n_2]][1], instance.tabCoord[nodes[back_to_basics]][0], instance.tabCoord[nodes[back_to_basics]][1]) >
-        euclidean_distance(instance.tabCoord[nodes[n_1]][0], instance.tabCoord[nodes[n_1]][1], instance.tabCoord[nodes[n_2]][0], instance.tabCoord[nodes[n_2]][1]) +
-            euclidean_distance(instance.tabCoord[nodes[n_1 + 1]][0], instance.tabCoord[nodes[n_1 + 1]][1], instance.tabCoord[nodes[back_to_basics]][0], instance.tabCoord[nodes[back_to_basics]][1]))
-    {
+    if (inst.tabCoord[nodes[q]][0] <= max(inst.tabCoord[nodes[p]][0], inst.tabCoord[nodes[r]][0]) && inst.tabCoord[nodes[q]][0] >= min(inst.tabCoord[nodes[p]][0], inst.tabCoord[nodes[r]][0]) &&
+        inst.tabCoord[nodes[q]][1] <= max(inst.tabCoord[nodes[p]][1], inst.tabCoord[nodes[r]][1]) && inst.tabCoord[nodes[q]][1] >= min(inst.tabCoord[nodes[p]][1], inst.tabCoord[nodes[r]][1]))
         return true;
-    }
+
+    return false;
+}
+
+long orientation(int p, int q, int r, instance_t inst, int *nodes)
+{
+    long val = (inst.tabCoord[nodes[q]][1] - inst.tabCoord[nodes[p]][1]) * (inst.tabCoord[nodes[r]][0] - inst.tabCoord[nodes[q]][0]) -
+               (inst.tabCoord[nodes[q]][0] - inst.tabCoord[nodes[p]][0]) * (inst.tabCoord[nodes[r]][1] - inst.tabCoord[nodes[q]][1]);
+
+    if (val == 0)
+        return 0; // colinear
+
+    return (val > 0) ? 1 : 2; // clock or counterclock wise
+}
+
+bool do_intersect(int p1, int q1, int p2, int q2, instance_t instance, int *nodes)
+{
+    int o1 = orientation(p1, q1, p2, instance, nodes);
+    int o2 = orientation(p1, q1, q2, instance, nodes);
+    int o3 = orientation(p2, q2, p1, instance, nodes);
+    int o4 = orientation(p2, q2, q1, instance, nodes);
+
+    // General case
+    if (o1 != o2 && o3 != o4)
+        return true;
+
+    // Special Cases
+    // p1, q1 and p2 are colinear and p2 lies on segment p1q1
+    if (o1 == 0 && onSegment(p1, p2, q1, instance, nodes))
+        return true;
+
+    // p1, q1 and q2 are colinear and q2 lies on segment p1q1
+    if (o2 == 0 && onSegment(p1, q2, q1, instance, nodes))
+        return true;
+
+    // p2, q2 and p1 are colinear and p1 lies on segment p2q2
+    if (o3 == 0 && onSegment(p2, p1, q2, instance, nodes))
+        return true;
+
+    // p2, q2 and q1 are colinear and q1 lies on segment p2q2
+    if (o4 == 0 && onSegment(p2, q1, q2, instance, nodes))
+        return true;
 
     return false;
 }
@@ -22,36 +54,28 @@ bool does_it_cross(int *nodes, int n_1, int n_2, instance_t instance, bool cycli
 double two_opt(int *nodes, instance_t instance)
 {
     int dimension = instance.dimension;
-    bool upgrade = true;
-    bool temp_bool;
 
-    int i = 0;
-    int j = i;
-    while (upgrade)
+    double distance;
+    double new_distance;
+
+    for (int x = 0; x < dimension - 1; x++)
     {
-        upgrade = false;
-        while (i < dimension)
+        for (int y = x + 2; y < dimension - 1; y++)
         {
-            j = i + 1;
-            //j != i - 1 && j != i && j != i + 1 && j < dimension
-            while (j < dimension)
+            if (do_intersect(x, x + 1, y, y + 1, instance, nodes))
             {
-                if (j == dimension - 1)
+
+                distance = array_distance(nodes, instance);
+
+                swap_2opt(nodes, x + 1, y);
+
+                new_distance = array_distance(nodes, instance);
+
+                if (new_distance > distance)
                 {
-                    temp_bool = does_it_cross(nodes, i, j, instance, true);
+                    swap_2opt(nodes, x + 1, y);
                 }
-                else
-                {
-                    temp_bool = does_it_cross(nodes, i, j, instance, false);
-                }
-                if (temp_bool)
-                {
-                    swap_2opt(nodes, i + 1, j);
-                    upgrade = true;
-                }
-                j++;
             }
-            i++;
         }
     }
 

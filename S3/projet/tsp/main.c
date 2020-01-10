@@ -16,6 +16,9 @@
 #include "display.h"
 #include "ga.h"
 
+// extern bool sans_zero;
+bool sans_zero = false;
+
 int main(int argc, char *argv[])
 {
     srand(time(NULL));
@@ -24,13 +27,16 @@ int main(int argc, char *argv[])
     bool m_written = false;
     bool b_rw = false;
     bool b_ppv = false;
+
+    
+    
     int balises[NB_BALISES];
 
+    init_balises(balises);
 
     int *nodes;
     int *ppv_nodes;
     int *rw_nodes;
-
 
     instance_t inst;
     double meuilleureDistance;
@@ -45,10 +51,20 @@ int main(int argc, char *argv[])
     //     printf("B = %d\n", balises[i]);
     // }
 
+    if (argc <= 1)
+    {
+        printf("Erreur, paramètres manquant, utiliser l'option -h pour afficher l'aide\n");
+        return 1;
+    }
+
     int i = 0;
 
     while (i < NB_BALISES)
     {
+        if (balises[BAL_ZERO] != NIL)
+        {
+            sans_zero = true;
+        }
         if (!file_opened && balises[BAL_F] != NIL)
         {
             if (lecture_fichier(argv[balises[BAL_F] + 1], &inst) != NIL)
@@ -114,7 +130,7 @@ int main(int argc, char *argv[])
             duration = (double)(end - start) / CLOCKS_PER_SEC;
             print_methode(&m_written, "PPV", meuilleureDistance, duration, ppv_nodes, inst.dimension);
 
-                // free(ppv_nodes);
+            // free(ppv_nodes);
             b_ppv = true;
             anhiliation_bal(BAL_PPV, balises);
         }
@@ -125,14 +141,13 @@ int main(int argc, char *argv[])
             end = clock();
             duration = (double)(end - start) / CLOCKS_PER_SEC;
             print_methode(&m_written, "Random walk", meuilleureDistance, duration, rw_nodes, inst.dimension);
-                // free(rw_nodes);
+            // free(rw_nodes);
 
             b_rw = true;
             anhiliation_bal(BAL_RW, balises);
         }
         else if (file_opened && balises[BAL_2OPT] != NIL)
         {
-            printf("balises 2opt\n");
             if (balises[BAL_PPV] != NIL || b_ppv)
             {
                 start = clock();
@@ -142,11 +157,9 @@ int main(int argc, char *argv[])
                 print_methode(&m_written, "2OPT ppv", meuilleureDistance, duration, ppv_nodes, inst.dimension);
                 // free(ppv_nodes);
                 b_ppv = false;
-
             }
             if (balises[BAL_RW] != NIL || b_rw)
             {
-                printf("c ici\n");
                 start = clock();
                 meuilleureDistance = two_opt(rw_nodes, inst);
                 end = clock();
@@ -155,7 +168,7 @@ int main(int argc, char *argv[])
                 // free(rw_nodes);
                 b_rw = false;
             }
-            anhiliation_bal(BAL_2OPT, balises);        
+            anhiliation_bal(BAL_2OPT, balises);
         }
         else if (file_opened && balises[BAL_H] != NIL)
         {

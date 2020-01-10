@@ -18,6 +18,8 @@
 #define BAL_H 10    //-h
 #define BAL_ZERO 11 // -nz no zéro
 
+
+void init_balises(int *balises);
 void anhiliation_bal(int ind_bal, int *bal_arr);
 void print_help();
 int recherche_chaine(int argc, char **argv, char *ch);
