@@ -90,6 +90,16 @@ int main(int argc, char *argv[])
             b_o = false;
             // anhiliation_bal(BAL_O, balises);
         }
+        else if (file_opened && balises[BAL_T] != NIL)
+        {
+            printf("Fichier tour non pris en charge (-t)...\n");
+            anhiliation_bal(BAL_T, balises);
+        }
+        else if (file_opened && balises[BAL_V] != NIL)
+        {
+            printf("Mode verbose (-v) non implémenté...\n");
+            anhiliation_bal(BAL_V, balises);
+        }
         else if (file_opened && balises[BAL_BF] != NIL)
         {
             if (inst.dimension <= 11)
@@ -117,7 +127,7 @@ int main(int argc, char *argv[])
         {
             if (inst.dimension <= 11)
             {
-                //  bfm ...
+                printf("BFM non implémenté...\n");
             }
             else
             {
