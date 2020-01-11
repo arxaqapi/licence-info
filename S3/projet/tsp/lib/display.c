@@ -34,10 +34,10 @@ int to_csv_file(char *filename, instance_t instance)
     }
     else
     {
-        printf("Erreur dans la création du fichier: %s", filename);
+        printf("Erreur dans la création du fichier: %s, Le nom du fichier ne dois pas être nul\n", filename);
         return NIL;
     }
-
+    fclose(csv_file);
     return 1;
 }
 
@@ -109,4 +109,54 @@ void print_methode(bool *al_an, char *m_name, double final_length, double time, 
         }
     }
     printf("]\n");
+}
+
+void print_methode_csv_file(bool *al_an, char *m_name, double final_length, double time, int *final_nodes, int dimension, char *filename)
+{
+    /// \brief écrit les résultats de la methode a l'écran en format csv
+    /// \param[in] al_an : si cette chaine de caractére a déjà été affiché
+    /// \param[in] m_name : nom de la méthode
+    /// \param[in] final_length : longeur finale de la méthode
+    /// \param[in] time : temps qu'a pris la fonction a s'exécuter
+    /// \param[in] final_nodes : tableau des noeuds
+    /// \param[in] dimension : dimension du tableau de noeuds
+
+    FILE *csv_file;
+    csv_file = fopen(filename, "a");
+
+
+    if (csv_file != NULL)
+    {
+        if (!*(al_an))
+        {
+            fprintf(csv_file, "\nMéthode ; longueur ; Temps CPU (sec) ; Tour\n");
+            *al_an = true;
+        }
+
+        fprintf(csv_file, "%s ; %.2f ; %.2f ; ", m_name, final_length, time);
+
+        fprintf(csv_file, "[");
+        for (int i = 0; i < dimension; i++)
+        {
+            if (sans_zero)
+            {
+                fprintf(csv_file, "%d", final_nodes[i] + 1);
+            }
+            else
+            {
+                fprintf(csv_file, "%d", final_nodes[i]);
+            }
+            if (i < dimension - 1)
+            {
+                fprintf(csv_file, ",");
+            }
+        }
+        fprintf(csv_file, "]\n");
+    }
+    else
+    {
+        printf("Erreur dans la leture du fichier: %s, Le nom du fichier ne dois pas être nul\n", filename);
+        // return NIL;
+    }
+    fclose(csv_file);
 }
