@@ -31,6 +31,7 @@ int to_csv_file(char *filename, instance_t instance)
                 fprintf(csv_file, "%6d ; %6ld ; %6ld\n", i, instance.tabCoord[i][0], instance.tabCoord[i][1]);
             }
         }
+        fprintf(csv_file, "\n");
     }
     else
     {
@@ -113,23 +114,23 @@ void print_methode(bool *al_an, char *m_name, double final_length, double time, 
 
 void print_methode_csv_file(bool *al_an, char *m_name, double final_length, double time, int *final_nodes, int dimension, char *filename)
 {
-    /// \brief écrit les résultats de la methode a l'écran en format csv
+    /// \brief écrit les résultats de la methode dans le fichier csv
     /// \param[in] al_an : si cette chaine de caractére a déjà été affiché
     /// \param[in] m_name : nom de la méthode
     /// \param[in] final_length : longeur finale de la méthode
     /// \param[in] time : temps qu'a pris la fonction a s'exécuter
     /// \param[in] final_nodes : tableau des noeuds
     /// \param[in] dimension : dimension du tableau de noeuds
+    /// \param[in] filename : nom du fichier csv
 
     FILE *csv_file;
     csv_file = fopen(filename, "a");
-
 
     if (csv_file != NULL)
     {
         if (!*(al_an))
         {
-            fprintf(csv_file, "\nMéthode ; longueur ; Temps CPU (sec) ; Tour\n");
+            fprintf(csv_file, "Méthode ; longueur ; Temps CPU (sec) ; Tour\n");
             *al_an = true;
         }
 
@@ -156,7 +157,134 @@ void print_methode_csv_file(bool *al_an, char *m_name, double final_length, doub
     else
     {
         printf("Erreur dans la leture du fichier: %s, Le nom du fichier ne dois pas être nul\n", filename);
-        // return NIL;
+    }
+    fclose(csv_file);
+}
+
+void print_bf(bool *al_an, double final_length, double time, int *final_nodes, int *worst_nodes, int dimension, instance_t inst)
+{
+    /// \brief écrit les résultats de la methode bruteforce à l'écran
+    /// \param[in] final_length : longeur finale de la méthode
+    /// \param[in] time : temps qu'a pris la fonction a s'exécuter
+    /// \param[in] final_nodes : tableau des noeuds
+    /// \param[in] worst_nodes : tableau des pire noeuds
+    /// \param[in] dimension : dimension du tableau de noeuds
+    /// \param[in] inst : instance de référence
+
+    if (!*(al_an))
+    {
+        printf("Méthode ; longueur ; Temps CPU (sec) ; Tour\n");
+        *al_an = true;
+    }
+
+    printf("Meilleure tournée après le passage de la brute ; %.2f ; %.2f ; ", final_length, time);
+
+    printf("[");
+    for (int i = 0; i < dimension; i++)
+    {
+        if (sans_zero)
+        {
+            printf("%d", final_nodes[i] + 1);
+        }
+        else
+        {
+            printf("%d", final_nodes[i]);
+        }
+        if (i < dimension - 1)
+        {
+            printf(",");
+        }
+    }
+    printf("]\n");
+
+    final_length = array_distance(worst_nodes, inst);
+    printf("Pire tournée ; %.2f ; %.2f ; ", final_length, time);
+
+    printf("[");
+    for (int i = 0; i < dimension; i++)
+    {
+        if (sans_zero)
+        {
+            printf("%d", worst_nodes[i] + 1);
+        }
+        else
+        {
+            printf("%d", worst_nodes[i]);
+        }
+        if (i < dimension - 1)
+        {
+            printf(",");
+        }
+    }
+    printf("]\n");
+}
+
+void print_bf_csv_file(bool *al_an, double final_length, double time, int *final_nodes, int *worst_nodes, int dimension, char *filename, instance_t inst)
+{
+    /// \brief écrit les résultats de la methode bruteforce dans le fichier de nom filename
+    /// \param[in] final_length : longeur finale de la méthode
+    /// \param[in] time : temps qu'a pris la fonction a s'exécuter
+    /// \param[in] final_nodes : tableau des noeuds
+    /// \param[in] worst_nodes : tableau des pire noeuds
+    /// \param[in] dimension : dimension du tableau de noeuds
+    /// \param[in] filename : nom du fichier csv
+    /// \param[in] inst : instance de référence
+
+    FILE *csv_file;
+    csv_file = fopen(filename, "a");
+
+    if (csv_file != NULL)
+    {
+        if (!*(al_an))
+        {
+            fprintf(csv_file, "Méthode ; longueur ; Temps CPU (sec) ; Tour\n");
+            *al_an = true;
+        }
+
+        fprintf(csv_file, "%s ; %.2f ; %.2f ; ", "Meilleure tournée après le passage de la brute", final_length, time);
+
+        fprintf(csv_file, "[");
+        for (int i = 0; i < dimension; i++)
+        {
+            if (sans_zero)
+            {
+                fprintf(csv_file, "%d", final_nodes[i] + 1);
+            }
+            else
+            {
+                fprintf(csv_file, "%d", final_nodes[i]);
+            }
+            if (i < dimension - 1)
+            {
+                fprintf(csv_file, ",");
+            }
+        }
+        fprintf(csv_file, "]\n");
+
+        final_length = array_distance(worst_nodes, inst);
+        fprintf(csv_file, "%s ; %.2f ; %.2f ; ", "Pire tournée", final_length, time);
+
+        fprintf(csv_file, "[");
+        for (int i = 0; i < dimension; i++)
+        {
+            if (sans_zero)
+            {
+                fprintf(csv_file, "%d", worst_nodes[i] + 1);
+            }
+            else
+            {
+                fprintf(csv_file, "%d", worst_nodes[i]);
+            }
+            if (i < dimension - 1)
+            {
+                fprintf(csv_file, ",");
+            }
+        }
+        fprintf(csv_file, "]\n");
+    }
+    else
+    {
+        printf("Erreur dans la leture du fichier: %s, Le nom du fichier ne dois pas être nul\n", filename);
     }
     fclose(csv_file);
 }

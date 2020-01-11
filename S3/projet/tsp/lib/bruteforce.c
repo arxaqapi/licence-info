@@ -6,7 +6,7 @@
 #include <math.h>
 #include "bruteforce.h"
 
-double brute_force_tsp(instance_t *instance, bool use_mat, int *nodes)
+double brute_force_tsp(instance_t *instance, bool use_mat, int *nodes, int *worst_nodes)
 {
     /// \brief considère toute les permutations de la tournée initiale et garde la plus courte
     /// \brief et la pire, le point n°1 est fixe
@@ -18,7 +18,6 @@ double brute_force_tsp(instance_t *instance, bool use_mat, int *nodes)
     int dimension = instance->dimension;
 
     int best_nodes[dimension];  // best arr
-    int worst_nodes[dimension]; // worst arr
     
     init_array(best_nodes, dimension);
     init_array(worst_nodes, dimension);

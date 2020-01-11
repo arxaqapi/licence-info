@@ -83,8 +83,8 @@ Graphe des dépendances par inclusion de bruteforce.c:</div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Fonctions</h2></td></tr>
-<tr class="memitem:a6daebc84a960eacc47aa218c3fb6b3c0"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bruteforce_8c.html#a6daebc84a960eacc47aa218c3fb6b3c0">brute_force_tsp</a> (<a class="el" href="structinstance__s.html">instance_t</a> *instance, bool use_mat, int *nodes)</td></tr>
-<tr class="separator:a6daebc84a960eacc47aa218c3fb6b3c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a585ac92c706d0e86b5d72fb62e7210c2"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bruteforce_8c.html#a585ac92c706d0e86b5d72fb62e7210c2">brute_force_tsp</a> (<a class="el" href="structinstance__s.html">instance_t</a> *instance, bool use_mat, int *nodes, int *worst_nodes)</td></tr>
+<tr class="separator:a585ac92c706d0e86b5d72fb62e7210c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2fd83c582b1fcda2fb310a41248e6741"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bruteforce_8c.html#a2fd83c582b1fcda2fb310a41248e6741">next_permutation</a> (int *array, int dim)</td></tr>
 <tr class="separator:a2fd83c582b1fcda2fb310a41248e6741"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -93,8 +93,8 @@ Fonctions</h2></td></tr>
 <dl class="section author"><dt>Auteur</dt><dd>Tarek Kunze </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>december 2019 </dd></dl>
 </div><h2 class="groupheader">Documentation des fonctions</h2>
-<a id="a6daebc84a960eacc47aa218c3fb6b3c0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6daebc84a960eacc47aa218c3fb6b3c0">&#9670;&nbsp;</a></span>brute_force_tsp()</h2>
+<a id="a585ac92c706d0e86b5d72fb62e7210c2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a585ac92c706d0e86b5d72fb62e7210c2">&#9670;&nbsp;</a></span>brute_force_tsp()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -115,7 +115,13 @@ Fonctions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int *&#160;</td>
-          <td class="paramname"><em>nodes</em>&#160;</td>
+          <td class="paramname"><em>nodes</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>worst_nodes</em>&#160;</td>
         </tr>
         <tr>
           <td></td>

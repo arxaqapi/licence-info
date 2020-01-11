@@ -92,12 +92,161 @@ Fonctions</h2></td></tr>
 <tr class="separator:ad778e48b1433a5211cfaace2c152bdb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a27e8d07e804b234b3689ce2450db4176"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="display_8c.html#a27e8d07e804b234b3689ce2450db4176">print_methode_csv_file</a> (bool *al_an, char *m_name, double final_length, double time, int *final_nodes, int dimension, char *filename)</td></tr>
 <tr class="separator:a27e8d07e804b234b3689ce2450db4176"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47a1e84d306b462e78308e246eb7f5c7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="display_8c.html#a47a1e84d306b462e78308e246eb7f5c7">print_bf</a> (bool *al_an, double final_length, double time, int *final_nodes, int *worst_nodes, int dimension, <a class="el" href="structinstance__s.html">instance_t</a> inst)</td></tr>
+<tr class="separator:a47a1e84d306b462e78308e246eb7f5c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a37c7dc8a4f218104b1a675d22e91386f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="display_8c.html#a37c7dc8a4f218104b1a675d22e91386f">print_bf_csv_file</a> (bool *al_an, double final_length, double time, int *final_nodes, int *worst_nodes, int dimension, char *filename, <a class="el" href="structinstance__s.html">instance_t</a> inst)</td></tr>
+<tr class="separator:a37c7dc8a4f218104b1a675d22e91386f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Description détaillée</h2>
 <div class="textblock"><p>affichage a l'ecran </p>
 <dl class="section author"><dt>Auteur</dt><dd>Tarek Kunze </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>december 2019 </dd></dl>
 </div><h2 class="groupheader">Documentation des fonctions</h2>
+<a id="a47a1e84d306b462e78308e246eb7f5c7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a47a1e84d306b462e78308e246eb7f5c7">&#9670;&nbsp;</a></span>print_bf()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void print_bf </td>
+          <td>(</td>
+          <td class="paramtype">bool *&#160;</td>
+          <td class="paramname"><em>al_an</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>final_length</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>time</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>final_nodes</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>worst_nodes</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>dimension</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structinstance__s.html">instance_t</a>&#160;</td>
+          <td class="paramname"><em>inst</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>écrit les résultats de la methode bruteforce à l'écran </p><dl class="params"><dt>Paramètres</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">final_length</td><td>: longeur finale de la méthode </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">time</td><td>: temps qu'a pris la fonction a s'exécuter </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">final_nodes</td><td>: tableau des noeuds </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">worst_nodes</td><td>: tableau des pire noeuds </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dimension</td><td>: dimension du tableau de noeuds </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">inst</td><td>: instance de référence </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a37c7dc8a4f218104b1a675d22e91386f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a37c7dc8a4f218104b1a675d22e91386f">&#9670;&nbsp;</a></span>print_bf_csv_file()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void print_bf_csv_file </td>
+          <td>(</td>
+          <td class="paramtype">bool *&#160;</td>
+          <td class="paramname"><em>al_an</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>final_length</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>time</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>final_nodes</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>worst_nodes</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>dimension</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>filename</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structinstance__s.html">instance_t</a>&#160;</td>
+          <td class="paramname"><em>inst</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>écrit les résultats de la methode bruteforce dans le fichier de nom filename </p><dl class="params"><dt>Paramètres</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">final_length</td><td>: longeur finale de la méthode </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">time</td><td>: temps qu'a pris la fonction a s'exécuter </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">final_nodes</td><td>: tableau des noeuds </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">worst_nodes</td><td>: tableau des pire noeuds </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dimension</td><td>: dimension du tableau de noeuds </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>: nom du fichier csv </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">inst</td><td>: instance de référence </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a9066067adf630336f8cdcc0727ed38f0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9066067adf630336f8cdcc0727ed38f0">&#9670;&nbsp;</a></span>print_entete()</h2>
 
@@ -275,7 +424,7 @@ Fonctions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>écrit les résultats de la methode a l'écran en format csv </p><dl class="params"><dt>Paramètres</dt><dd>
+<p>écrit les résultats de la methode dans le fichier csv </p><dl class="params"><dt>Paramètres</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">al_an</td><td>: si cette chaine de caractére a déjà été affiché </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">m_name</td><td>: nom de la méthode </td></tr>
@@ -283,6 +432,7 @@ Fonctions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">time</td><td>: temps qu'a pris la fonction a s'exécuter </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">final_nodes</td><td>: tableau des noeuds </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">dimension</td><td>: dimension du tableau de noeuds </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>: nom du fichier csv </td></tr>
   </table>
   </dd>
 </dl>

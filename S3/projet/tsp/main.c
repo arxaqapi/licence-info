@@ -35,6 +35,7 @@ int main(int argc, char *argv[])
     init_balises(balises);
 
     int *nodes;
+    int *worst_nodes;
     int *ppv_nodes;
     int *rw_nodes;
 
@@ -68,6 +69,7 @@ int main(int argc, char *argv[])
             {
                 file_opened = true;
                 nodes = create_array_int(inst.dimension);
+                worst_nodes = create_array_int(inst.dimension);
                 ppv_nodes = create_array_int(inst.dimension);
                 rw_nodes = create_array_int(inst.dimension);
 
@@ -93,14 +95,14 @@ int main(int argc, char *argv[])
             if (inst.dimension <= 11)
             {
                 start = clock();
-                meuilleureDistance = brute_force_tsp(&inst, false, nodes);
+                meuilleureDistance = brute_force_tsp(&inst, false, nodes, worst_nodes);
                 end = clock();
                 duration = (double)(end - start) / CLOCKS_PER_SEC;
-                print_methode(&m_written, "Bruteforce", meuilleureDistance, duration, nodes, inst.dimension);
+                print_bf(&m_written, meuilleureDistance, duration, nodes, worst_nodes, inst.dimension, inst);
                 
                 if (balises[BAL_O] != NIL)
                 {
-                    print_methode_csv_file(&m_written_csv, "Bruteforce", meuilleureDistance, duration, nodes, inst.dimension, argv[balises[BAL_O] + 1]);
+                    print_bf_csv_file(&m_written, meuilleureDistance, duration, nodes, worst_nodes, inst.dimension, argv[balises[BAL_O] + 1], inst);
                 }
 
                 free(nodes);
