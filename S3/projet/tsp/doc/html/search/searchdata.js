@@ -1,18 +1,24 @@
 var indexSectionsWithContent =
 {
-  0: "m",
-  1: "m"
+  0: "2abcdegilmnoprst",
+  1: "ipst",
+  2: "2bdglprt",
+  3: "abcdegilmnoprst"
 };
 
 var indexSectionNames =
 {
   0: "all",
-  1: "files"
+  1: "classes",
+  2: "files",
+  3: "functions"
 };
 
 var indexSectionLabels =
 {
   0: "Tout",
-  1: "Fichiers"
+  1: "Structures de données",
+  2: "Fichiers",
+  3: "Fonctions"
 };
 
