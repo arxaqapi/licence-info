@@ -53,7 +53,7 @@ void edge_destruction(tour_t *t_parent1, tour_t *t_parent2, tour_t *tfille, int 
     {
         while (j < dimension - 1)
         {
-            /*  (i, i+1)      (j, j+1)                  */
+            /*  (i, i+1)      (j, j+1)    */
 
             if (compare_slices(tfille->nodes, i, i + 1, t_parent2->nodes, j, j + 1, dimension) &&
                 compare_slices(tfille->nodes, i, i + 1, rev_array(t_parent2->nodes, j, j + 1), j, j + 1, dimension) &&
@@ -134,29 +134,29 @@ double ga(instance_t instance, float taux_mut, int n_individus, int n_generation
     printf("rand ok\n");
     edge_destruction(&pool.array[i_par_1], &pool.array[i_par_2], &fille, dimension);
 
-    // do
-    // {
+    do
+    {
 
-    //     while (n_croisement <= n_individus_b / 2)
-    //     {
-    //         two_random_numbers(&i_par_1, &i_par_2, dimension);
-    //         // 2 randomly indiv
-    //         // (DPX) faire croisement qui donne tournée fille
+        while (n_croisement <= n_individus_b / 2)
+        {
+            two_random_numbers(&i_par_1, &i_par_2, dimension);
+            // 2 randomly indiv
+            // (DPX) faire croisement qui donne tournée fille
 
-    //         // Faire muter fille avec prob p ()
-    //         // gen nb al 0 99
-    //         random_mut = rand() % 100;
-    //         // random_node = rand()%instance->dimension;
-    //         if (random_mut < (int)(taux_mut_b * 100))
-    //         {
-    //             mutation();
-    //         }
+            // Faire muter fille avec prob p ()
+            // gen nb al 0 99
+            random_mut = rand() % 100;
+            // random_node = rand()%instance->dimension;
+            if (random_mut < (int)(taux_mut_b * 100))
+            {
+                mutation();
+            }
 
-    //         // remplacement indiv de la pop par la fille (hasard ou moins perf (length))
-    //         n_croisement++;
-    //     }
-    //     n_generations_b--;
-    // } while (n_generations_b > 0);
+            // remplacement indiv de la pop par la fille (hasard ou moins perf (length))
+            n_croisement++;
+        }
+        n_generations_b--;
+    } while (n_generations_b > 0);
 
     return current_distance;
 }

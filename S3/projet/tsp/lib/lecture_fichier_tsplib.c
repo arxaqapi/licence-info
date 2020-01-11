@@ -102,7 +102,6 @@ int lecture_fichier(char *filename, instance_t *instance)
                     instance->dimension += 1;
                 }
 
-                // Add point 0, 0
             }
             else if (prefix(field_type, "EDGE_WEIGHT_TYPE"))
             {

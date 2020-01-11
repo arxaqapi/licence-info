@@ -19,7 +19,7 @@ double brute_force_tsp(instance_t *instance, bool use_mat, int *nodes)
 
     int best_nodes[dimension];  // best arr
     int worst_nodes[dimension]; // worst arr
-    //int current_nodes[dimension]; // tour en cour
+    
     init_array(best_nodes, dimension);
     init_array(worst_nodes, dimension);
     init_array(nodes, dimension);
@@ -40,7 +40,6 @@ double brute_force_tsp(instance_t *instance, bool use_mat, int *nodes)
             // calcul de la longeur du nvx segments
             current_distance = array_distance(nodes, *instance);
 
-            // maj de >+ et >-
             if (current_distance <= best_distance)
             {
                 copy_array(nodes, best_nodes, dimension);
@@ -51,7 +50,7 @@ double brute_force_tsp(instance_t *instance, bool use_mat, int *nodes)
                 copy_array(nodes, worst_nodes, dimension);
                 worst_distance = current_distance;
             }
-            // length a recalc * 2 || Pas besoin !
+            
         } while (next_permutation(nodes + 1, dimension));
     }
 

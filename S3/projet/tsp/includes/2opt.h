@@ -10,7 +10,6 @@
 bool onSegment(int p, int q, int r, instance_t inst, int *nodes);
 long orientation(int p, int q, int r, instance_t inst, int *nodes);
 bool do_intersect(int p1, int q1, int p2, int q2, instance_t instance, int *nodes);
-// bool does_it_cross(int *nodes, int n_1, int n_2, instance_t instance, bool cyclic);
 double two_opt(int *nodes, instance_t instance);
 
 #endif

@@ -46,10 +46,7 @@ int main(int argc, char *argv[])
     double duration;
 
     analyse_balises(argc, argv, balises);
-    // for (int i = 0; i < NB_BALISES; i++)
-    // {
-    //     printf("B = %d\n", balises[i]);
-    // }
+    
 
     if (argc <= 1)
     {
@@ -88,7 +85,6 @@ int main(int argc, char *argv[])
         {
 
             to_csv_file(argv[balises[BAL_O] + 1], inst);
-            // csv_written = true;
             b_o = false;
             // anhiliation_bal(BAL_O, balises);
         }
@@ -101,8 +97,7 @@ int main(int argc, char *argv[])
                 end = clock();
                 duration = (double)(end - start) / CLOCKS_PER_SEC;
                 print_methode(&m_written, "Bruteforce", meuilleureDistance, duration, nodes, inst.dimension);
-                // void print_methode_csv_file(bool *al_an, char *m_name, double final_length, double time, int *final_nodes, int dimension, char *filename)
-                // printf("ela? %d\n", balises[BAL_O]);
+                
                 if (balises[BAL_O] != NIL)
                 {
                     print_methode_csv_file(&m_written_csv, "Bruteforce", meuilleureDistance, duration, nodes, inst.dimension, argv[balises[BAL_O] + 1]);
@@ -140,7 +135,6 @@ int main(int argc, char *argv[])
             {
                 print_methode_csv_file(&m_written_csv, "PPV", meuilleureDistance, duration, ppv_nodes, inst.dimension, argv[balises[BAL_O] + 1]);
             }
-            // free(ppv_nodes);
             b_ppv = true;
             anhiliation_bal(BAL_PPV, balises);
         }
@@ -151,7 +145,7 @@ int main(int argc, char *argv[])
             end = clock();
             duration = (double)(end - start) / CLOCKS_PER_SEC;
             print_methode(&m_written, "Random walk", meuilleureDistance, duration, rw_nodes, inst.dimension);
-            // free(rw_nodes);
+
             if (balises[BAL_O] != NIL)
             {
                 print_methode_csv_file(&m_written_csv, "Random walk", meuilleureDistance, duration, rw_nodes, inst.dimension, argv[balises[BAL_O] + 1]);
@@ -168,7 +162,7 @@ int main(int argc, char *argv[])
                 end = clock();
                 duration = (double)(end - start) / CLOCKS_PER_SEC;
                 print_methode(&m_written, "2OPT ppv", meuilleureDistance, duration, ppv_nodes, inst.dimension);
-                // free(ppv_nodes);
+                
                 if (balises[BAL_O] != NIL)
                 {
                     print_methode_csv_file(&m_written_csv, "2OPT ppv", meuilleureDistance, duration, ppv_nodes, inst.dimension, argv[balises[BAL_O] + 1]);
@@ -186,7 +180,7 @@ int main(int argc, char *argv[])
                 {
                     print_methode_csv_file(&m_written_csv, "2OPT random walk", meuilleureDistance, duration, ppv_nodes, inst.dimension, argv[balises[BAL_O] + 1]);
                 }
-                // free(rw_nodes);
+                
                 b_rw = false;
             }
             anhiliation_bal(BAL_2OPT, balises);
