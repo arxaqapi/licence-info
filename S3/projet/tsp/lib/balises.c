@@ -21,7 +21,7 @@ void init_balises(int *balises)
 void anhiliation_bal(int ind_bal, int *bal_arr)
 {
     /// \brief Si une balises est "utilisés" on remplace sa valeur par -1
-    /// \param [in] ind_bal : indice de la balise a supprimer
+    /// \param [in] ind_bal : indice ddde la balise a supprimer
     /// \param[in, out] bal_arr : tableau des balises
     bal_arr[ind_bal] = NIL;
 }
