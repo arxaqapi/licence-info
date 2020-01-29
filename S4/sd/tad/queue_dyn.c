@@ -39,7 +39,6 @@ Queue queue_push(Queue q, int v)
     return q;
 }
 
-// babilon.co@gmail.com
 
 Queue queue_pop(Queue q)
 {
