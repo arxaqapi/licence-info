@@ -5,14 +5,16 @@ typedef struct s_internal_queue
 {
     int value;
     struct s_internal_queue *next;
-} *Internal_queue;
+} * Internal_queue;
 
-struct s_queue {
+struct s_queue
+{
     Internal_queue head;
     Internal_queue tail;
     unsigned int size;
 };
 
+//  cond?(if):else;
 
 Queue queue()
 {
@@ -25,9 +27,37 @@ Queue queue()
 
 Queue queue_push(Queue q, int v)
 {
-    Internal_queue *insert_out = (q->size?&(q->));
-    Internal_queue new = (Internal_queue)malloc(sizeof(struct s_internal_queue));
+    // parceque def d'internal queue est un pointeur
+    // Sinon il aurait fallu un pointeur de pointeur
+    Internal_queue *insert_at = (q->size? &(q->tail->next): q->head);
+    Internal_queue new = (Internal_queue)malloc(sizeof(Internal_queue));
+    new->value = v;
     new->next = NULL;
-    new->next = v;
-    *insert_out = new;
+    insert_at = new;
+    q->tail = new;
+    ++(q->size);    // ???
+    return q;
+}
+
+// babilon.co@gmail.com
+
+Queue queue_pop(Queue q)
+{
+    assert(!queue_empty(q));
+    Internal_queue *old = q->head;
+    q->head = q->head->next;
+    q->size--;
+    free(old);
+    return q;
+}
+
+int queue_top(Queue q)
+{
+    assert(!queue_empty(q));
+    return q->head->value;
+}
+
+bool queue_empty(Queue q)
+{
+    return (q->size == 0);
 }
