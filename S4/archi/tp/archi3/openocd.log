@@ -1,0 +1,24 @@
+Info : clock speed 500 kHz
+Info : JTAG tap: sam7x256.cpu tap/device found: 0x3f0f0f0f (mfg: 0x787 (<unknown>), part: 0xf0f0, ver: 0x3)
+Info : Embedded ICE version 1
+Info : sam7x256.cpu: hardware has 2 breakpoint/watchpoint units
+Info : accepting 'gdb' connection from pipe
+Resetting the board...
+Info : JTAG tap: sam7x256.cpu tap/device found: 0x3f0f0f0f (mfg: 0x787 (<unknown>), part: 0xf0f0, ver: 0x3)
+Warn : srst pulls trst - can not reset into halted mode. Issuing halt after reset.
+target halted in ARM state due to debug-request, current mode: Supervisor
+cpsr: 0x20000013 pc: 0x000001b0
+Warn : NOTE! DCC downloads have not been enabled, defaulting to slow memory writes. Type 'help dcc'.
+Warn : NOTE! Severe performance degradation without fast memory access enabled. Type 'help fast'.
+Info : JTAG tap: sam7x256.cpu tap/device found: 0x3f0f0f0f (mfg: 0x787 (<unknown>), part: 0xf0f0, ver: 0x3)
+Warn : NOTE! DCC downloads have not been enabled, defaulting to slow memory writes. Type 'help dcc'.
+Warn : NOTE! Severe performance degradation without fast memory access enabled. Type 'help fast'.
+core state: ARM
+requesting target halt and executing a soft reset
+target halted in ARM state due to debug-request, current mode: Supervisor
+cpsr: 0x200000d3 pc: 0x00000000
+Halting the board before detach
+Shutting down OpenOCD on detach
+shutdown command invoked
+
+
