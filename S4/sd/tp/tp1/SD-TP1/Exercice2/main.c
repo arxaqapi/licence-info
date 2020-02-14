@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "stack.h"
 
 /** Main function for testing the Stack implementation.
@@ -44,6 +45,9 @@ int main(int argc, char **argv){
 		printf ("Removing element %d\n", top(theStack));
 		theStack = pop(theStack);
 	}
+
+	fclose(input);
+	free(theStack);
 	return 0;
 }
 
