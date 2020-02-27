@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "stack.h"
 
 /** Main function for testing the Stack implementation.
@@ -11,46 +12,64 @@
  *
  * The values will be added to the stack in the order they are read from the file.
  */
-int main(int argc, char **argv){
+
+void close_free(FILE* f, Stack s)
+{
+	fclose(f);	
+	free(s);
+}
+
+
+int main(int argc, char **argv)
+{
 	Stack theStack;
 	FILE *input;
 	int n;
-	
-	if (argc<2) {
-		fprintf(stderr,"usage : %s filename\n", argv[0]);
+
+	if (argc < 2)
+	{
+		fprintf(stderr, "usage : %s filename\n", argv[0]);
+		close_free(input, theStack);
 		return 1;
 	}
-	
+
 	input = fopen(argv[1], "r");
 
-	if ( !input ) {
+	if (!input)
+	{
 		perror(argv[1]);
+
+		close_free(input, theStack);
 		return 1;
 	}
 
 	theStack = stack();
-	fscanf(input,"%d", &n);
+	fscanf(input, "%d", &n);
 
-	//	WTF
 	if (n >= STACK_SIZE)
 	{
 		fprintf(stderr, "Erreur taille Stack\n");
+
+		close_free(input, theStack);
 		return 1;
 	}
-	//	WTF
-	
-	for (int i=0; i<n; ++i) {
+
+	for (int i = 0; i < n; ++i)
+	{
 		int v;
 		fscanf(input, "%d", &v);
 		theStack = push(theStack, v);
 	}
 
-	dump(theStack,stderr);
-	
-	while (!empty(theStack)) {
-		printf ("Removing element %d\n", top(theStack));
+	dump(theStack, stderr);
+
+	while (!empty(theStack))
+	{
+		printf("Removing element %d\n", top(theStack));
 		theStack = pop(theStack);
 	}
+
+	close_free(input, theStack);
+	
 	return 0;
 }
-

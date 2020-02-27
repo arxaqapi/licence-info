@@ -1,6 +1,6 @@
 #include "stack.h"
 #include <assert.h>
-#include <stdlib.h>*
+#include <stdlib.h>
 
 /** Full definition of the s_stack structure */
 struct s_stack {
