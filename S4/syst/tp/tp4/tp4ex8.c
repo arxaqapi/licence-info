@@ -109,10 +109,7 @@ int consultation(char *NomFichier)
             avancer de sizeof(Infos);
             nb_diches ++;
     */
-    while (?)
-    {
-        desc = lseek(desc, , )
-    }
+    fscanf();
     
 
     /* consultation en boucle :
