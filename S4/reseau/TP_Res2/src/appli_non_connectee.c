@@ -30,7 +30,9 @@ void de_application(unsigned char *message, int *taille_msg)
         /* fichier non ouvert, ouverture en lecture */
         char nom_fichier[30];
         conf_fichier_emission(nom_fichier);
+        // REVIEW Find Error
         fichier = fopen(nom_fichier, "r");
+        /* fichier = fopen("lion.jpg", "r"); */
         if (fichier == NULL) {
             perror("[APP] Problème ouverture fichier en lecture !\n");
             exit(1);
@@ -67,7 +69,9 @@ int vers_application(unsigned char *message, int taille_msg)
         /* fichier non ouvert, ouverture en écriture */
         char nom_fichier[30];
         conf_fichier_reception(nom_fichier);
+        // REVIEW Find Error
         fichier = fopen(nom_fichier, "w");
+        /* fichier = fopen("out.x", "w"); */
         if (fichier == NULL) {
             perror("[APP] Problème ouverture fichier en écriture !\n");
             exit(1);

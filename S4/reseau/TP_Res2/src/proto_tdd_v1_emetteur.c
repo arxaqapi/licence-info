@@ -20,6 +20,7 @@ int main(int argc, char *argv[])
     unsigned char message[MAX_INFO]; /* message de l'application */
     int taille_msg;                  /* taille du message */
     paquet_t paquet;                 /* paquet utilisé par le protocole */
+    paquet_t p_controle;             /* paquet de controle */
 
     init_reseau(EMISSION);
 
@@ -49,9 +50,9 @@ int main(int argc, char *argv[])
         {
             vers_reseau(&paquet);
 
-        //recevoir packet_ack
-            de_reseau(&paquet);
-        } while (paquet.type == NACK);
+        //recevoir packet_ack de controle
+            de_reseau(&p_controle);
+        } while (p_controle.type == NACK);
 
         /* lecture des donnees suivantes de la couche application */
         de_application(message, &taille_msg);

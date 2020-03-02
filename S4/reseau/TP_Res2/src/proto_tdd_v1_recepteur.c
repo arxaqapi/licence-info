@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
 {
     unsigned char message[MAX_INFO]; /* message pour l'application */
     paquet_t paquet;                 /* paquet utilisé par le protocole */
+    paquet_t p_controle;             /* paquet de controle */
     int fin = 0;                     /* condition d'arrêt */
 
     init_reseau(RECEPTION);
@@ -40,16 +41,17 @@ int main(int argc, char *argv[])
             {
                 message[i] = paquet.info[i];
             }
-
+            p_controle.type = ACK;
             paquet.type = ACK;
             /* remise des données à la couche application */
             fin = vers_application(message, paquet.lg_info);
         }
         else
         {
-            paquet.type = NACK;
-            vers_reseau(&paquet);
+            p_controle.type = NACK;
         }
+        // envoie du paquet de controle a l'emetteur
+        vers_reseau(&p_controle);
     }
 
     printf("[TRP] Fin execution protocole transport.\n");
