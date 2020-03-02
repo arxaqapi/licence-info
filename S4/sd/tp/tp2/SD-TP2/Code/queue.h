@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-/* Opaque definition iof the type Queue */
+/* Opaque definition of the type Queue */
 typedef struct s_queue Queue;
 typedef Queue *ptrQueue;
 

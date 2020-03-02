@@ -10,18 +10,27 @@
 #include "queue.h"
 #include "stack.h"
 
+void printToken(FILE *f, void *e)
+{
+	fprintf(f, "%s", );
+}
+
+
 void computeExpressions(FILE *input)
 {
 	/* line that is being read */
 	char *line;
 	size_t len = 0;
 	ssize_t read;
+	
+	Queue *q;
 
 	while ((read = getline(&line, &len, input)) != -1)
 	{
 		if (read > 1)
 		{
 			fprintf(stdout, "Input	: %s", line);
+			q = stringToTokenQueue(line);
 			
 			/* fprintf(stdout, "Recepition ligne de lg %zu \n", read); */
 		}
@@ -30,6 +39,67 @@ void computeExpressions(FILE *input)
 	{
 		free(line);
 	}
+}
+
+
+
+bool isSymbol(char c)
+{
+	if (	strcmp(c, '+')
+		|| 	strcmp(c, '-')
+		|| 	strcmp(c, '*')
+		|| 	strcmp(c, '/')
+		|| 	strcmp(c, '^')
+		|| 	strcmp(c, '(')
+		|| 	strcmp(c, ')'))
+	{
+		return true;
+	}
+	return false;
+}
+
+
+/*
+if ' ' || '\n'
+	
+*/
+Queue *stringToTokenQueue(const char *expression)
+{
+	ptrQueue pq;
+	Queue *q = createQueue(q);
+
+	char *curspos = expression;
+	int lg = 0;
+
+	while (!strcmp(curspos, '\0'))
+	{
+		Token *t;
+		if (strcmp(curspos, ' ') && strcmp(curspos, '\n'))
+		{
+			if (lg > 0)
+			{
+				//	tokenize and add to queue
+				t = createTokenFromString(curspos, lg);
+				q = queuePush(q, t);
+			}
+			lg = 0;
+		}
+		else if (isSymbol(*curspos))
+		{
+			//	tokenize and add to queue
+			t = createTokenFromString(curspos, lg);
+			q = queuePush(q, t);
+			lg = 0;
+
+		} else {
+			// the tokenizing is done in the upper part
+			lg ++;
+		}
+
+		curspos++;
+	}
+
+	return q;
 }
 
 /** Main function for testing.
