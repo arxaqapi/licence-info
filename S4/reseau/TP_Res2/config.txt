@@ -3,8 +3,8 @@
 
 # Fichiers pour application
 #---------------------------
-FICHIER_IN fichiers/in.txt
-FICHIER_OUT fichiers/out.txt
+FICHIER_IN ../fichiers/lion.jpg
+FICHIER_OUT ../fichiers/out.jpg
 
 # Initialisation reseau
 #-----------------------

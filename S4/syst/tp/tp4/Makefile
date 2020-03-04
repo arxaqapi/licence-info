@@ -5,4 +5,4 @@ CC = gcc
 # -ansi 
 
 clean:
-	rm ./lol ./tp4ex8
+	rm ./fiches ./tp4ex8

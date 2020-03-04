@@ -52,7 +52,7 @@ void conf_fichier_reception(char * fichier_reception) {
 
     if ( !lecture_fichier_conf(FICHIER_OUT, fichier_reception) )
         /* nom de fichier par défaut... */
-        strcpy(fichier_reception, "out.x");
+        strcpy(fichier_reception, "out.txt");
 }
 
 float conf_proba_perte(int role) {

@@ -15,6 +15,7 @@
 /* Code de retour d'erreur */
 #define ERROR_READING 2
 #define ERROR_CLOSING 3
+#define ERROR_FICHES  4
 
 typedef struct 
 {

@@ -3,7 +3,7 @@
 * TRANSFERT DE DONNEES  v1                                   *
 *                                                            *
 * Transfert de donnée avec détection d'erreur et contrôle de *
-* flux < Stop-and-wait >                                     *
+* flux et reprise sur erreur   < Stop-and-wait >             *
 * T. KUNZE - Univ. de Toulouse III - Paul Sabatier           *
 **************************************************************/
 
@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
         // attendre(); /* optionnel ici car de_reseau() fct bloquante */
         de_reseau(&paquet);
 
-        if (verifier_controle(paquet) == ACK && paquet.type == DATA)
+        if (verifier_controle(paquet) == ACK)
         {
             /* extraction des donnees du paquet recu */
             for (int i = 0; i < paquet.lg_info; i++)
