@@ -26,11 +26,11 @@ int afficherInfoFichier(char *nom_fichier)
     }
     else
     {
-        printf("ERROR");
+        printf("autre");
     }
 
     /* taille octets */
-    printf("%8ld octets  ", s.st_size);
+    printf("%10ld octets  ", s.st_size);
 
     /*** DERNIERE MODIFICATION ***/
     /* jour, mois, date, annee */
@@ -39,17 +39,49 @@ int afficherInfoFichier(char *nom_fichier)
     return 0;
 }
 
+int parcours_repertoire(char *nom_repertoire)
+{
+    DIR *rep;
+    struct dirent *rep_courant;
+
+    if ((rep = opendir(nom_repertoire)) == NULL)
+    {
+        perror(nom_repertoire);
+        return ERROR_OPENDIR;
+    }
+
+    while ((rep_courant = readdir(rep)) != NULL)
+    {
+        afficherInfoFichier(rep_courant->d_name);
+    }
+
+    if (closedir(rep) == -1)
+    {
+        perror(rep_courant->d_name);
+        return ERROR_CLOSINGDIR;
+    }
+
+    /*
+    perror(nom_repertoire);
+    return ERROR_READDIR;
+    */
+    return 0;
+}
+
 int main(int argc, char *argv[])
 {
     if (argc < 2)
     {
-        fprintf(stderr, "Nombre de paramètres insuffisants\n");
+        /* Affiche info sur tout fichiers et rep du rep courant */
+        parcours_repertoire(".");
     }
-
-    for (int i = 1; i < argc; i++)
+    else
     {
-        /* affichage des infos du fichier argv[i] */
-        afficherInfoFichier(argv[i]);
+        for (int i = 1; i < argc; i++)
+        {
+            /* affichage des infos du fichier argv[i] */
+            afficherInfoFichier(argv[i]);
+        }
     }
 
     return 0;

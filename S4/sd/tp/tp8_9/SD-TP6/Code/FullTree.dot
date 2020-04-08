@@ -1,0 +1,87 @@
+digraph BinarySearchTree {
+	graph [ranksep=0.5];
+	node [shape = record];
+
+	n7 [label="{{<parent>}|7|{<left>|<right>}}"];
+	n7:left:c -> n3:parent:c [headclip=false, tailclip=false]
+	n7:right:c -> n16:parent:c [headclip=false, tailclip=false]
+	n3 [label="{{<parent>}|3|{<left>|<right>}}"];
+	n3:left:c -> n2:parent:c [headclip=false, tailclip=false]
+	n3:right:c -> n6:parent:c [headclip=false, tailclip=false]
+	n16 [label="{{<parent>}|16|{<left>|<right>}}"];
+	n16:left:c -> n13:parent:c [headclip=false, tailclip=false]
+	n16:right:c -> n19:parent:c [headclip=false, tailclip=false]
+	n2 [label="{{<parent>}|2|{<left>|<right>}}"];
+	n2:left:c -> n1:parent:c [headclip=false, tailclip=false]
+	rnil2 [style=filled, fillcolor=grey, label="NIL"];
+	n2:right:c -> rnil2:n [headclip=false, tailclip=false]
+	n6 [label="{{<parent>}|6|{<left>|<right>}}"];
+	n6:left:c -> n4:parent:c [headclip=false, tailclip=false]
+	rnil6 [style=filled, fillcolor=grey, label="NIL"];
+	n6:right:c -> rnil6:n [headclip=false, tailclip=false]
+	n13 [label="{{<parent>}|13|{<left>|<right>}}"];
+	n13:left:c -> n8:parent:c [headclip=false, tailclip=false]
+	n13:right:c -> n14:parent:c [headclip=false, tailclip=false]
+	n19 [label="{{<parent>}|19|{<left>|<right>}}"];
+	n19:left:c -> n18:parent:c [headclip=false, tailclip=false]
+	n19:right:c -> n20:parent:c [headclip=false, tailclip=false]
+	n1 [label="{{<parent>}|1|{<left>|<right>}}"];
+	lnil1 [style=filled, fillcolor=grey, label="NIL"];
+	n1:left:c -> lnil1:n [headclip=false, tailclip=false]
+	rnil1 [style=filled, fillcolor=grey, label="NIL"];
+	n1:right:c -> rnil1:n [headclip=false, tailclip=false]
+	n4 [label="{{<parent>}|4|{<left>|<right>}}"];
+	lnil4 [style=filled, fillcolor=grey, label="NIL"];
+	n4:left:c -> lnil4:n [headclip=false, tailclip=false]
+	n4:right:c -> n5:parent:c [headclip=false, tailclip=false]
+	n8 [label="{{<parent>}|8|{<left>|<right>}}"];
+	lnil8 [style=filled, fillcolor=grey, label="NIL"];
+	n8:left:c -> lnil8:n [headclip=false, tailclip=false]
+	n8:right:c -> n11:parent:c [headclip=false, tailclip=false]
+	n14 [label="{{<parent>}|14|{<left>|<right>}}"];
+	lnil14 [style=filled, fillcolor=grey, label="NIL"];
+	n14:left:c -> lnil14:n [headclip=false, tailclip=false]
+	n14:right:c -> n15:parent:c [headclip=false, tailclip=false]
+	n18 [label="{{<parent>}|18|{<left>|<right>}}"];
+	n18:left:c -> n17:parent:c [headclip=false, tailclip=false]
+	rnil18 [style=filled, fillcolor=grey, label="NIL"];
+	n18:right:c -> rnil18:n [headclip=false, tailclip=false]
+	n20 [label="{{<parent>}|20|{<left>|<right>}}"];
+	lnil20 [style=filled, fillcolor=grey, label="NIL"];
+	n20:left:c -> lnil20:n [headclip=false, tailclip=false]
+	rnil20 [style=filled, fillcolor=grey, label="NIL"];
+	n20:right:c -> rnil20:n [headclip=false, tailclip=false]
+	n5 [label="{{<parent>}|5|{<left>|<right>}}"];
+	lnil5 [style=filled, fillcolor=grey, label="NIL"];
+	n5:left:c -> lnil5:n [headclip=false, tailclip=false]
+	rnil5 [style=filled, fillcolor=grey, label="NIL"];
+	n5:right:c -> rnil5:n [headclip=false, tailclip=false]
+	n11 [label="{{<parent>}|11|{<left>|<right>}}"];
+	n11:left:c -> n10:parent:c [headclip=false, tailclip=false]
+	n11:right:c -> n12:parent:c [headclip=false, tailclip=false]
+	n15 [label="{{<parent>}|15|{<left>|<right>}}"];
+	lnil15 [style=filled, fillcolor=grey, label="NIL"];
+	n15:left:c -> lnil15:n [headclip=false, tailclip=false]
+	rnil15 [style=filled, fillcolor=grey, label="NIL"];
+	n15:right:c -> rnil15:n [headclip=false, tailclip=false]
+	n17 [label="{{<parent>}|17|{<left>|<right>}}"];
+	lnil17 [style=filled, fillcolor=grey, label="NIL"];
+	n17:left:c -> lnil17:n [headclip=false, tailclip=false]
+	rnil17 [style=filled, fillcolor=grey, label="NIL"];
+	n17:right:c -> rnil17:n [headclip=false, tailclip=false]
+	n10 [label="{{<parent>}|10|{<left>|<right>}}"];
+	n10:left:c -> n9:parent:c [headclip=false, tailclip=false]
+	rnil10 [style=filled, fillcolor=grey, label="NIL"];
+	n10:right:c -> rnil10:n [headclip=false, tailclip=false]
+	n12 [label="{{<parent>}|12|{<left>|<right>}}"];
+	lnil12 [style=filled, fillcolor=grey, label="NIL"];
+	n12:left:c -> lnil12:n [headclip=false, tailclip=false]
+	rnil12 [style=filled, fillcolor=grey, label="NIL"];
+	n12:right:c -> rnil12:n [headclip=false, tailclip=false]
+	n9 [label="{{<parent>}|9|{<left>|<right>}}"];
+	lnil9 [style=filled, fillcolor=grey, label="NIL"];
+	n9:left:c -> lnil9:n [headclip=false, tailclip=false]
+	rnil9 [style=filled, fillcolor=grey, label="NIL"];
+	n9:right:c -> rnil9:n [headclip=false, tailclip=false]
+
+}

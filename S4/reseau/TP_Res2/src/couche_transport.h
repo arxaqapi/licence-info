@@ -33,9 +33,9 @@ typedef struct paquet_s {
 
 // TODO...
 
-/* Genere le crc */
+/* Genere le code de controle */
 uint8_t generer_controle(paquet_t p);
-
+/* verifier l'intégrité du code de controle */
 int verifier_controle(paquet_t p);
 
 /*--------------------------------------*

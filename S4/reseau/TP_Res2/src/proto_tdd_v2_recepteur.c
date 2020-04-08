@@ -22,6 +22,8 @@ int main(int argc, char *argv[])
     paquet_t p_controle;             /* paquet de controle */
     int fin = 0;                     /* condition d'arrêt */
 
+    uint8_t seq_num_checker;
+
     init_reseau(RECEPTION);
 
     printf("[TRP] Initialisation reseau : OK.\n");
@@ -30,11 +32,9 @@ int main(int argc, char *argv[])
     /* tant que le récepteur reçoit des données */
     while (!fin)
     {
-
-        // attendre(); /* optionnel ici car de_reseau() fct bloquante */
         de_reseau(&paquet);
 
-        if (verifier_controle(paquet) == ACK)
+        if (verifier_controle(paquet) == DATA)
         {
             /* extraction des donnees du paquet recu */
             for (int i = 0; i < paquet.lg_info; i++)
@@ -42,16 +42,17 @@ int main(int argc, char *argv[])
                 message[i] = paquet.info[i];
             }
             p_controle.type = ACK;
-            paquet.type = ACK;
+
+            vers_reseau(&p_controle);
+            // NUM DE SEQ
+            if (seq_num_checker != paquet.num_seq)
+            {
+                fin = vers_application(message, paquet.lg_info);
+            }
+            seq_num_checker = paquet.num_seq;
+            
             /* remise des données à la couche application */
-            fin = vers_application(message, paquet.lg_info);
         }
-        else
-        {
-            p_controle.type = NACK;
-        }
-        // envoie du paquet de controle a l'emetteur
-        vers_reseau(&p_controle);
     }
 
     printf("[TRP] Fin execution protocole transport.\n");

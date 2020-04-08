@@ -10,48 +10,21 @@
 #include "queue.h"
 #include "stack.h"
 
-void printToken(FILE *f, void *e)
+void *printToken(FILE *f, void *e)
 {
-	fprintf(f, "%s", );
+	fprintf(f, "Infix	:");
+
 }
-
-
-void computeExpressions(FILE *input)
-{
-	/* line that is being read */
-	char *line;
-	size_t len = 0;
-	ssize_t read;
-	
-	Queue *q;
-
-	while ((read = getline(&line, &len, input)) != -1)
-	{
-		if (read > 1)
-		{
-			fprintf(stdout, "Input	: %s", line);
-			q = stringToTokenQueue(line);
-			
-			/* fprintf(stdout, "Recepition ligne de lg %zu \n", read); */
-		}
-	}
-	if (line)
-	{
-		free(line);
-	}
-}
-
-
 
 bool isSymbol(char c)
 {
-	if (	strcmp(c, '+')
-		|| 	strcmp(c, '-')
-		|| 	strcmp(c, '*')
-		|| 	strcmp(c, '/')
-		|| 	strcmp(c, '^')
-		|| 	strcmp(c, '(')
-		|| 	strcmp(c, ')'))
+	if (	strcmp(&c, "+")
+		|| 	strcmp(&c, "-")
+		|| 	strcmp(&c, "*")
+		|| 	strcmp(&c, "/")
+		|| 	strcmp(&c, "^")
+		|| 	strcmp(&c, "(")
+		|| 	strcmp(&c, ")"))
 	{
 		return true;
 	}
@@ -59,22 +32,17 @@ bool isSymbol(char c)
 }
 
 
-/*
-if ' ' || '\n'
-	
-*/
 Queue *stringToTokenQueue(const char *expression)
 {
-	ptrQueue pq;
 	Queue *q = createQueue(q);
 
 	char *curspos = expression;
 	int lg = 0;
 
-	while (!strcmp(curspos, '\0'))
+	while (!strcmp(curspos, "\0"))
 	{
 		Token *t;
-		if (strcmp(curspos, ' ') && strcmp(curspos, '\n'))
+		if (strcmp(curspos, " ") && strcmp(curspos, "\n"))
 		{
 			if (lg > 0)
 			{
@@ -101,6 +69,35 @@ Queue *stringToTokenQueue(const char *expression)
 
 	return q;
 }
+
+
+void computeExpressions(FILE *input)
+{
+	/* line that is being read */
+	char *line;
+	size_t len = 0;
+	ssize_t read;
+	
+	Queue *q;
+
+	while ((read = getline(&line, &len, input)) != -1)
+	{
+		if (read > 1)
+		{
+			fprintf(stdout, "Input	: %s", line);
+			q = stringToTokenQueue(line);
+			queueDump(stdout, q, printToken(stdout, q));
+			
+			/* fprintf(stdout, "Recepition ligne de lg %zu \n", read); */
+		}
+	}
+	if (line)
+	{
+		free(line);
+	}
+}
+
+
 
 /** Main function for testing.
  * The main function expects one parameter that is the file where expressions to translate are

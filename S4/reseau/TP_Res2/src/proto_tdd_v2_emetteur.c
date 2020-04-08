@@ -22,6 +22,7 @@ int main(int argc, char *argv[])
     paquet_t paquet;                 /* paquet utilisé par le protocole */
     paquet_t p_controle;             /* paquet de controle */
 
+    int n_tempo;
     int codeRetour;
 
     init_reseau(EMISSION);
@@ -46,19 +47,43 @@ int main(int argc, char *argv[])
 
         /* generation du controle */
         paquet.somme_ctrl = generer_controle(paquet);
-
         /* remise à la couche reseau */
+        /* // on envoie le paquet au recepteur
+        vers_reseau(&paquet);
+        // on lance un temporisateur 
+        n_tempo = 0;
+        depart_temporisateur(n_tempo, 200);
+        // puis on attend un code de retour
+        if((codeRetour = attendre()) == -1)
+        {
+            // si reception == -1 on passe au paquet suivant, ack recut
+            arreter_temporisateur(n_tempo);
+        } else
+        {
+            // sinon on arrete le tempo n° de retour 
+            // et on renvoie le paquet
+            if
+        } */
+        //////////////////////////////////////////////////////////////////////
+        n_tempo = 0;
         do
         {
             vers_reseau(&paquet);
+            // on lance un temporisateur
+            depart_temporisateur(n_tempo, 200);
+            // puis on attend un code de retour
+            do
+            {
+                // on traite le cas ou le n° de tempo expiré
+                // est différent au n° de tempo lancé
+                codeRetour = attendre();
+            } while (codeRetour != n_tempo && codeRetour != PAQUET_RECU);
 
-            //   attendre x secondes
-            attendre();
-            if (!= -1) // resend
-
-        //recevoir packet_ack de controle
-            de_reseau(&p_controle);
-        } while (p_controle.type == NACK);
+            n_tempo++;
+            // si reception == -1 on passe au paquet suivant, ack recut
+            // sinon on renvoie le paquet
+        } while (codeRetour != PAQUET_RECU && n_tempo <= 31);
+        arreter_temporisateur(n_tempo);
 
         /* lecture des donnees suivantes de la couche application */
         de_application(message, &taille_msg);

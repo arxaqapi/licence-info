@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-std=c99 -Wextra -Wall #-Werror -pedantic 
+CFLAGS=-std=c99 -Wextra -Wall -Werror -pedantic 
 LDFLAGS=-lm
 
 ifeq ($(DEBUG),yes)
@@ -10,7 +10,7 @@ else
 	LDFLAGS +=
 endif
 
-EXEC=expr_ex1
+EXEC=bstreetest
 SRC= $(wildcard *.c)
 OBJ= $(SRC:.c=.o)
 
@@ -34,10 +34,15 @@ clean:
 	@rm -rf *.o
 
 mrproper: clean
-	@rm -rf $(EXEC) documentation/html
+	@rm -rf $(EXEC) documentation/html *.dot *.pdf
 
-doc: stack.h
-	@doxygen documentation/TP2
+doc: bstree.h queue.h main.c
+	@doxygen documentation/TP6-7
+
+pdf : $(EXEC)
+	@dot -Tpdf *.dot -O
 	
-main.o:  token.h stack.h
-
+queue.o : queue.h
+bstree.o : bstree.h queue.h
+main.o : bstree.o queue.o
+doc : bstree.h queue.h main.c

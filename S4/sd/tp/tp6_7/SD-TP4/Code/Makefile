@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-std=c99 -Wextra -Wall #-Werror -pedantic 
+CFLAGS=-std=c99 -Wextra -Wall -Werror -pedantic 
 LDFLAGS=-lm
 
 ifeq ($(DEBUG),yes)
@@ -10,7 +10,7 @@ else
 	LDFLAGS +=
 endif
 
-EXEC=expr_ex1
+EXEC=skiplisttest
 SRC= $(wildcard *.c)
 OBJ= $(SRC:.c=.o)
 
@@ -36,8 +36,15 @@ clean:
 mrproper: clean
 	@rm -rf $(EXEC) documentation/html
 
-doc: stack.h
-	@doxygen documentation/TP2
+doc: rng.h skiplist.h
+	@doxygen documentation/TP4-5
+
+
+tests : $(EXEC)
+	@$(BASH) ../Test/test_script.sh $(EXEC)
 	
-main.o:  token.h stack.h
+rng.o : rng.h
+skiplist.o : skiplist.h rng.h
+skiplisttest.o : skiplist.h rng.h
+doc : rng.h skiplist.h
 
