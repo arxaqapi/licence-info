@@ -1,6 +1,6 @@
 /*************************************************************
-* proto_tdd_v2 -  recepteur                                  *
-* TRANSFERT DE DONNEES  v2                                   *
+* proto_tdd_v1 -  recepteur                                  *
+* TRANSFERT DE DONNEES  v1                                   *
 *                                                            *
 * Transfert de donnée avec détection d'erreur et contrôle de *
 * flux et reprise sur erreur   < Stop-and-wait >             *

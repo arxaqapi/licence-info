@@ -35,7 +35,9 @@ typedef struct paquet_s {
 
 /* Genere le code de controle */
 uint8_t generer_controle(paquet_t p);
-/* verifier l'intégrité du code de controle */
+/** verifier l'intégrité du code de controle
+ *  @return ACK si ok NACK si non ok
+ */
 int verifier_controle(paquet_t p);
 
 /*--------------------------------------*
