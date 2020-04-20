@@ -622,3 +622,107 @@ ptrBinarySearchTree uncle(ptrBinarySearchTree n)
         return gp->left;
     }
 }
+
+
+ptrBinarySearchTree fixredblack_insert_case2_left(ptrBinarySearchTree x)
+{
+    BinarySearchTree *pp = grandparent(x);
+    // x fils gauche de p
+    if (x->parent->left == x)
+    {
+        // rotation droite en pp
+        rightrotate(pp);
+        //p.color -> black
+        x->parent->color = black;
+        // pp.color -> red
+        pp->color = red;
+        return x;
+    }
+    
+    // x fils droit de p
+    // rotation gauche en p
+    leftrotate(x->parent);
+    return fixredblack_insert_case2_left(x);
+}
+
+ptrBinarySearchTree fixredblack_insert_case2_right(ptrBinarySearchTree x)
+{
+    BinarySearchTree *pp = grandparent(x);
+    // x fils droit de p
+    if (x->parent->right == x)
+    {
+        // rotation gauche en pp
+        leftrotate(pp);
+        //p.color -> black
+        x->parent->color = black;
+        // pp.color -> red
+        pp->color = red;
+        return x;
+    }
+    
+    // x fils gauche de p
+    // rotation droite en p
+    rightrotate(x->parent);
+    return fixredblack_insert_case2_right(x);
+}
+
+ptrBinarySearchTree fixredblack_insert_case2(ptrBinarySearchTree x)
+{
+    BinarySearchTree *pp = grandparent(x);
+    // p fils gauche de pp
+    if (pp->left == x->parent)
+    {
+        return fixredblack_insert_case2_left(x);
+    }
+    // p fils droit de pp
+    return fixredblack_insert_case2_right(x);
+}
+
+// explicit declaration
+ptrBinarySearchTree fixredblack_insert(ptrBinarySearchTree x);
+
+ptrBinarySearchTree fixredblack_insert_case1(ptrBinarySearchTree x)
+{
+    // cas 1: le frere f de p est rouge, (f est donc l'oncle de x)
+    BinarySearchTree *pp = grandparent(x);
+    BinarySearchTree *uncle_x = uncle(x);
+
+    if (uncle_x->color == red)
+    {
+        // f et p deviennent noir
+        //p:
+        x->parent->color = black;
+        //f:
+        uncle_x->color = black;
+        // et pp devient rouge
+        pp->color = red;
+        return fixredblack_insert(pp);
+    }
+    return fixredblack_insert_case2(x);
+    
+}
+
+ptrBinarySearchTree fixredblack_insert_case0(ptrBinarySearchTree x)
+{
+    // cas 0: le pere et la racine de l'arbre, on recolore la racine
+    if (x->parent->parent == NULL)
+    {
+        // on recolore:
+        x->parent->color = black;
+        return x;
+    }
+    return fixredblack_insert_case1(x);
+}
+
+ptrBinarySearchTree fixredblack_insert(ptrBinarySearchTree x)
+{
+    assert(x->color == red);
+
+    if (x->parent->color == red)
+    {
+        // recoloration
+        return fixredblack_insert_case0(x);
+    }
+    // pas de recoloration nécessaire
+    return x;
+}
