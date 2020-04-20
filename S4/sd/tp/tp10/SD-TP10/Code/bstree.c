@@ -8,6 +8,9 @@
 
 void bstree_remove_node(ptrBinarySearchTree *t, ptrBinarySearchTree current);
 
+// explicit declaration
+ptrBinarySearchTree fixredblack_insert(ptrBinarySearchTree x);
+
 /*------------------------  RedBlackTree  -----------------------------*/
 
 typedef enum {red, black} NodeColor;
@@ -98,6 +101,7 @@ void bstree_add(ptrBinarySearchTree* t, int v)
 {
     (void)t; (void)v;
     BinarySearchTree *parent;
+    //BinarySearchTree *root = *t;
 
     if (*t == NULL)
     {
@@ -118,6 +122,17 @@ void bstree_add(ptrBinarySearchTree* t, int v)
         *t = bstree_cons(NULL, NULL, v);
         (*t)->parent = parent;
     }
+    fixredblack_insert(*t);
+
+    // fix colors after insertion
+    /* BinarySearchTree *stop = fixredblack_insert(*t);
+    (void)stop; */
+    /* stop is the node at which the coloration procedure terminates.
+    It may be the new root of the tree. */
+    /* if (stop->parent  == NULL)
+    {
+        root = stop;
+    } */
 }
 
 bool bstree_search(const BinarySearchTree *t, int v) {
@@ -678,8 +693,6 @@ ptrBinarySearchTree fixredblack_insert_case2(ptrBinarySearchTree x)
     return fixredblack_insert_case2_right(x);
 }
 
-// explicit declaration
-ptrBinarySearchTree fixredblack_insert(ptrBinarySearchTree x);
 
 ptrBinarySearchTree fixredblack_insert_case1(ptrBinarySearchTree x)
 {
@@ -704,7 +717,7 @@ ptrBinarySearchTree fixredblack_insert_case1(ptrBinarySearchTree x)
 
 ptrBinarySearchTree fixredblack_insert_case0(ptrBinarySearchTree x)
 {
-    // cas 0: le pere et la racine de l'arbre, on recolore la racine
+    // cas 0: le pere est la racine de l'arbre, on recolore la racine
     if (x->parent->parent == NULL)
     {
         // on recolore:
