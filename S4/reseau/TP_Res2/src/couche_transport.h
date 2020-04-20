@@ -45,4 +45,10 @@ int verifier_controle(paquet_t p);
  *--------------------------------------*/
 int dans_fenetre(unsigned int inf, unsigned int pointeur, int taille);
 
+/** Incremente la valeur % SEQ_NUM_SIZE
+ * @param value la valeur a incrémenter
+ * @return la valeur incrémenté
+ */
+int inc(int value);
+
 #endif

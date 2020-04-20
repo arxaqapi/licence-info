@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
             depart_temporisateur(n_tempo, 200);
             code_retour = attendre();
             n_tempo ++;
-        } while (code_retour != PAQUET_RECU /* && n_tempo <= 31 */);
+        } while (code_retour != PAQUET_RECU && n_tempo <= 31);
 
         do
         {

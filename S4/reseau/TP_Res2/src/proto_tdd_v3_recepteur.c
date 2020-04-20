@@ -1,9 +1,9 @@
 /*************************************************************
-* proto_tdd_v1 -  recepteur                                  *
-* TRANSFERT DE DONNEES  v1                                   *
+* proto_tdd_v3 -  recepteur                                  *
+* TRANSFERT DE DONNEES  v3                                   *
 *                                                            *
-* Transfert de donnée avec détection d'erreur et contrôle de *
-* flux et reprise sur erreur   < Stop-and-wait >             *
+* Transfert de donnée avec fenêtre d'anticipation et reprise *
+* sur erreur   < Go-Back-N >                                 *
 * T. KUNZE - Univ. de Toulouse III - Paul Sabatier           *
 **************************************************************/
 
@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     paquet_t p_controle;             /* paquet de controle */
     int fin = 0;                     /* condition d'arrêt */
 
-    int prev_seq_n = -1;
+    int seq_attendu = 0;
 
     init_reseau(RECEPTION);
 
@@ -32,29 +32,26 @@ int main(int argc, char *argv[])
     /* tant que le récepteur reçoit des données */
     while (!fin)
     {
-
-        // attendre(); /* optionnel ici car de_reseau() fct bloquante */
         de_reseau(&paquet);
 
-        p_controle.type = ACK;
-        p_controle.num_seq = paquet.num_seq;
-        
-        if (verifier_controle(paquet) == ACK && paquet.type == DATA && paquet.num_seq != prev_seq_n)
+        if (verifier_controle(paquet) == ACK)
         {
-            /* extraction des donnees du paquet recu */
-            for (int i = 0; i < paquet.lg_info; i++)
+            if (paquet.num_seq == seq_attendu)
             {
-                message[i] = paquet.info[i];
-            }
-            paquet.type = ACK;
-            /* remise des données à la couche application */
-            fin = vers_application(message, paquet.lg_info);
-        }
-        
-        // envoie du paquet de controle a l'emetteur
-        vers_reseau(&p_controle);
+                for (int i = 0; i < paquet.lg_info; i++)
+                {
+                    message[i] = paquet.info[i];
+                }
+                p_controle.type = ACK;
+                p_controle.num_seq = paquet.num_seq;
+                p_controle.lg_info = 0;
+                p_controle.somme_ctrl = generer_controle(p_controle);
 
-        prev_seq_n = paquet.num_seq;
+                seq_attendu = inc(seq_attendu);
+                fin = vers_application(message, paquet.lg_info);
+                vers_reseau(&p_controle);
+            }
+        }
     }
 
     printf("[TRP] Fin execution protocole transport.\n");

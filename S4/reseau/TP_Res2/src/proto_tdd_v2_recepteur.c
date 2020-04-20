@@ -52,7 +52,10 @@ int main(int argc, char *argv[])
         }
         
         // envoie du paquet de controle a l'emetteur
-        vers_reseau(&p_controle);
+        if (verifier_controle(paquet) == ACK && paquet.type == DATA)
+        {
+            vers_reseau(&p_controle);
+        }
 
         prev_seq_n = paquet.num_seq;
     }

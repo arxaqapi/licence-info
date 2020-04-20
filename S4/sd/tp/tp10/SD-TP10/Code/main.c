@@ -2,9 +2,9 @@
 #include <stdio.h>
 
 /* Define this for solving the exercice 1 - coloring the tree. */
-//#define EXERCICE_1
+#define EXERCICE_1
 /* Define this for solving the exercice 2. - test rotations on nodes */
-//#define EXERCICE_2
+#define EXERCICE_2
 /* Define this for solving the exercice 3. - fix rb property after add*/
 //#define EXERCICE_3
 /* Define this for solving the exercice 4. - nothing to do, just to verify that search is still operational */
@@ -43,6 +43,9 @@ void print_tree(const BinarySearchTree *t, void *userData) {
  * The values will be added, searched and remove in the order they are read from the file.
  */
 int main(int argc, char **argv) {
+    // to silence compiler
+    int fprintf_ret = 0;
+    fprintf_ret ++;
 
     if (argc < 2) {
         fprintf(stderr, "usage : %s filename\n", argv[0]);
@@ -62,11 +65,11 @@ int main(int argc, char **argv) {
     /* Exercice 1 : add values to the BinarySearchTree */
     printf("Adding values to the tree.\n\t");
     int n;
-    fscanf(input, "%d", &n);
+    fprintf_ret = fscanf(input, "%d", &n);
 
     for (int i = 0; i < n; ++i) {
         int v;
-        fscanf(input, "%d", &v);
+        fprintf_ret = fscanf(input, "%d", &v);
         printf("%d ", v);
         bstree_add(&theTree, v);
     }

@@ -8,12 +8,17 @@
 
 void bstree_remove_node(ptrBinarySearchTree *t, ptrBinarySearchTree current);
 
+/*------------------------  RedBlackTree  -----------------------------*/
+
+typedef enum {red, black} NodeColor;
+
 /*------------------------  BSTreeType  -----------------------------*/
 
 struct _bstree {
     BinarySearchTree *parent;
     BinarySearchTree *left;
     BinarySearchTree *right;
+    NodeColor color;
     int root;
 };
 
@@ -37,6 +42,9 @@ BinarySearchTree *bstree_cons(BinarySearchTree *left, BinarySearchTree *right, i
     if (t->right != NULL)
         t->right->parent = t;
     t->root = root;
+
+    // initialisation du noeud en rouge lors de la construction d'un noeud
+    t->color = red;
     return t;
 }
 
@@ -488,3 +496,129 @@ const BinarySearchTree *bstree_iterator_value(const BSTreeIterator *i) {
     return i->current;
 }
 
+/*------------------------  RedBlackTree operations  -----------------------------*/
+
+void leftrotate(BinarySearchTree *x)
+{
+    BinarySearchTree * y = x->right;
+    BinarySearchTree *x_buffer = x;
+    
+    // le fils droit de x devient le fils gauche de y
+    x->right = y->left;
+    if (y->left != NULL)
+    {
+        y->left->parent = x;
+    }
+    y->parent = x->parent;
+    if (x->parent == NULL)
+    {
+        x = y;
+    }
+    else if (x == x->parent->left)
+    { // sinon on remplace x par y
+        x->parent->left = y;
+    }
+    else
+    {
+        x->parent->right = y;
+    }
+    
+    // on attache x à gauche de y
+    y->left = x_buffer;
+    x_buffer->parent = y;
+}
+
+void rightrotate(BinarySearchTree *y)
+{
+    BinarySearchTree *x = y->left;
+    BinarySearchTree *y_buffer = y;
+
+    y->left = x->right;
+
+    if (x->right != NULL)
+    {
+        x->right->parent = y;
+    }
+
+    x->parent = y->parent;
+    if (x->parent == NULL)
+    {
+        y = x;
+    }
+    else if (y == y->parent->left)
+    { // sinon on remplace y par x
+        y->parent->left = x;
+    }
+    else
+    {
+        y->parent->right = x;
+    }
+    // on attache y à droite de x
+    x->right = y_buffer;
+    y_buffer->parent = x;
+}
+
+void testrotateleft(BinarySearchTree *t)
+{
+    leftrotate(t);
+}
+
+void testrotateright(BinarySearchTree *t)
+{
+    rightrotate(t);
+}
+
+
+/*------------------------  RedBlackTree Dot format  -----------------------------*/
+
+void printNode(const BinarySearchTree *t, void *out)
+{
+    FILE *file = (FILE *) out;
+
+    printf("%d ", bstree_root(t));
+    fprintf(file, "\tn%d [style=filled, fillcolor=red, label=\"{{<parent>}|%d|{<left>|<right>}}\"];\n",
+            bstree_root(t), bstree_root(t));
+
+    if (bstree_left(t)) {
+        fprintf(file, "\tn%d:left:c -> n%d:parent:c [headclip=false, tailclip=false]\n",
+                bstree_root(t), bstree_root(bstree_left(t)));
+    } else {
+        fprintf(file, "\tlnil%d [style=filled, fillcolor=grey, label=\"NIL\"];\n", bstree_root(t));
+        fprintf(file, "\tn%d:left:c -> lnil%d:n [headclip=false, tailclip=false]\n",
+                bstree_root(t), bstree_root(t));
+    }
+    if (bstree_right(t)) {
+        fprintf(file, "\tn%d:right:c -> n%d:parent:c [headclip=false, tailclip=false]\n",
+                bstree_root(t), bstree_root(bstree_right(t)));
+    } else {
+        fprintf(file, "\trnil%d [style=filled, fillcolor=grey, label=\"NIL\"];\n", bstree_root(t));
+        fprintf(file, "\tn%d:right:c -> rnil%d:n [headclip=false, tailclip=false]\n",
+                bstree_root(t), bstree_root(t));
+    }
+}
+
+void rbtree_export_dot(const  BinarySearchTree *t, FILE *file)
+{
+    fprintf(file , "digraph  RedBlackTree  {\n\tgraph[ranksep =0.5];\n\tnode [shape = record ];\n\n");
+    bstree_iterative_depth_infix(t, printNode , file);
+    fprintf(file , "\n}\n");
+}
+
+ptrBinarySearchTree grandparent(ptrBinarySearchTree n)
+{
+    return n->parent->parent;
+}
+
+ptrBinarySearchTree uncle(ptrBinarySearchTree n)
+{
+    BinarySearchTree *gp = grandparent(n);
+    
+    if (gp->left == n->parent)
+    {
+        return gp->right;
+    }
+    else
+    {
+        return gp->left;
+    }
+}
