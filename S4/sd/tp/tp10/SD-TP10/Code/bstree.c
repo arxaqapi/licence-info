@@ -195,6 +195,7 @@ void bstree_swap_nodes(ptrBinarySearchTree *tree, ptrBinarySearchTree from, ptrB
 }
 
 // t -> the tree to remove from, current -> the node to remove
+
 void bstree_remove_node(ptrBinarySearchTree *t, ptrBinarySearchTree current) {
     assert(!bstree_empty(*t) && !bstree_empty(current));
     (void)t; (void)current;
@@ -251,101 +252,25 @@ void bstree_remove_node(ptrBinarySearchTree *t, ptrBinarySearchTree current) {
     }
 
     if (current->color == black)
+    {
+        // fix redblack properties 
+        if ( (*m == NULL) || ((*m)->color == black) ) 
         {
-            // fix redblack properties 
-            if ( (*m == NULL) || ((*m)->color == black) ) 
+            // substitute is double black : must fix 
+            BinarySearchTree * subtreeroot = fixredblack_remove((*m)->parent, *m);//current->parent, *m);
+            if (subtreeroot->parent == NULL)
             {
-                // substitute is double black : must fix 
-                BinarySearchTree * subtreeroot = fixredblack_remove(current->parent, *m);
-                if (subtreeroot->parent == NULL)
-                {
-                    *t = subtreeroot;
-                } 
-                else 
-                {
-                    // substitute become black 
-                    (*m)->color = black;
-                }
+                *t = subtreeroot;
+            } 
+            else 
+            {
+                // substitute become black 
+                (*m)->color = black;
             }
         }
+    }
     
 }
-
-/*------------------------------------------------------------------*/
-/*
-void bstree_remove_node(ptrBinarySearchTree * t, BinarySearchTree * current)
-    {
-        BinarySearchTree * substitute;
-        // Get the real node to remove and its substitute
-        if (current->left == current->right)
-        {
-            substitute = NULL;
-        } 
-        else if (! current->left) 
-        {
-            // current has only its right child
-            substitute = current->right;
-        } else if (! current->right)
-        {
-            // current has only its left child
-            substitute = current->left;
-        } 
-        else
-        {
-            // current has both childs
-            BinarySearchTree *leaf;
-            leaf = bstree_successor(current);
-            // swap current and leaf
-            current->root = leaf->root;
-            current = leaf;
-            substitute = current->right;
-        }
-        // update the tree
-        if (substitute != NULL)
-        {
-            substitute->parent = current->parent;
-        }
-        if ( ! current->parent )
-        {
-            *t = substitute;
-        }
-        else if (current->parent->left == current)
-        {
-        current->parent->left = substitute;
-        }
-        else
-        {
-            current->parent->right = substitute;
-        }
-            // fix the colors if needed
-        if (current->color == black)
-        {
-            // fix redblack properties 
-            if ( (substitute == NULL) || (substitute->color == black) ) 
-            {
-                // substitute is double black : must fix
-                BinarySearchTree * subtreeroot = fixredblack_remove(current->parent, substitute);
-                if (subtreeroot->parent == NULL)
-                {
-                    *t = subtreeroot;
-                } 
-                else 
-                {
-                    // substitute become black 
-                    substitute->color = black;
-                }
-            }
-        }
-    // delete the removed node 
-    free(current);
-}
-*/
-
-
-
-
-
-
 
 
 void bstree_remove(ptrBinarySearchTree *t, int v) {
@@ -948,6 +873,7 @@ ptrBinarySearchTree fixredblack_remove(ptrBinarySearchTree p, ptrBinarySearchTre
 {
     if (p == NULL)
     {
+        x->color = black;
         return x;
     }
     else
@@ -962,5 +888,5 @@ ptrBinarySearchTree fixredblack_remove(ptrBinarySearchTree p, ptrBinarySearchTre
             return fixredblack_remove_case2(p, x);
         }
     }
-    return x;
+    //return x;
 }
