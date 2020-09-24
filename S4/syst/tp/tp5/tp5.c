@@ -41,6 +41,7 @@ int afficherInfoFichier(char *nom_fichier)
 
 int parcours_repertoire(char *nom_repertoire)
 {
+    //wait()
     DIR *rep;
     struct dirent *rep_courant;
 

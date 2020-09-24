@@ -123,7 +123,7 @@ List insert_at(List l, int i, int v)
     new_element->previous = insert_at->previous;
     insert_at->previous->next = new_element;
     insert_at->previous = new_element;
-    new_element->next = insert_at;    
+    //new_element->next = insert_at;    
     ++(l->size);
     return l;
 }

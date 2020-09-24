@@ -37,9 +37,11 @@ int main(void)
         printf("Problème!!\n");
         break;
     case 0:
+        // dans le fils la wesh
         printf("Fils\n");
         disp_inf();
         exit(4);
+        // dans le fils la wesh
 
     default:
 

@@ -29,7 +29,7 @@ int main (int argc, char argv[])
     int restant;
     char bloc[TAILLE_BLOC];
 
-    //  Read or write, pointeur se déplace du nb octet lu, écrit
+    //  Read or write: pointeur se déplace du nb octet lu/écrit
     while ((restant = read(source, bloc, TAILLE_BLOC)) > 0)
     {
         write(destination, &bloc, restant);
