@@ -19,6 +19,12 @@ struct s_args
 	int rang;
 };
 
+struct s_exit_args
+{
+	pthread_t id;
+	int val_retour;
+};
+
 
 /*------------------------------------------------------------------------
  * Affichage de l'identite de l'appelant 
@@ -47,15 +53,18 @@ void thdErreur(char *msg, int cause, int arret)
 
 void *thd_afficher(void *arg)
 {
-	int *valeurDeRetour = calloc(1, sizeof(int));
-	*valeurDeRetour = rand() % 100;
 	int rang = (((struct s_args *)arg)->rang);
+
+	// struct containing the values returned byt he thread
+	struct s_exit_args * ea = malloc(sizeof(struct s_exit_args));
+	ea->id = pthread_self();
+	ea->val_retour = rand() % 100;
 	
-	afficher( rang, pthread_self(), *valeurDeRetour );
+	afficher( rang, ea->id, ea->val_retour );
 	
 	// struct used, can be freed now
 	free(arg);
-	pthread_exit((void*)valeurDeRetour);
+	pthread_exit(ea);
 }
 
 
@@ -94,19 +103,21 @@ int main(int argc, char *argv[])
 		//	can lead to structure freed while thd_afficher() did not finished accessing the data
 	}
 
+	struct s_exit_args ** ea = malloc(nbThreads * sizeof(struct s_exit_args *));
 	int total = 0;
 	/* Attendre la fin des threads  */
 	for (i = 0; i < nbThreads; i++)
 	{
-		void *ret = NULL;
-		if ((etat = pthread_join(idThreads[i], (void**)ret)) != 0)
+		if ((etat = pthread_join(idThreads[i], (void**)&ea[i])) != 0)
 		{
 			thdErreur("Echec join", etat, 0);
 		}
-		printf("Thread principal %lu : valeur retourné par le thread ??  = %d", pthread_self()/*, idThreads[i]*/, *((int*)ret));
-		total += *((int*)ret);
-		free(ret);
+		printf("Thread principal %lu : valeur retourné par le thread %lu  = %d\n", pthread_self(), ea[i]->id, ea[i]->val_retour);
+		total += ea[i]->val_retour;
+		free(ea[i]);
 	}
-	printf("Thread principal %lu : somme des valeurs reçues = %d", pthread_self(), total);
+	printf("Thread principal %lu : somme des valeurs reçues = %d\n", pthread_self(), total);
+
+	free(ea);
 	return 0;
 }
