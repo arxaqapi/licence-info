@@ -88,7 +88,13 @@ public class Monstre <TypePouvoir> extends EtreVivant{
 	}
 	
 	public void rejointBataille(Bataille bataille) {
-		
+		this.bataille = bataille;
+		this.bataille.ajouter(this);
+	}
+
+	@Override
+	public void mourir() {
+		bataille.eliminer(this);
 	}
 	
 }

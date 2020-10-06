@@ -1,9 +1,10 @@
 package protagoniste;
 
-public class Hero extends Homme{
+public class Heros extends Homme{
 
-	public Hero(String nom) {
+	public Heros(String nom) {
 		super(nom);
+		forceDeVie = 100;
 	}
 
 	@Override

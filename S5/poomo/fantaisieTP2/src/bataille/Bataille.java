@@ -5,8 +5,8 @@ import protagoniste.Homme;
 import protagoniste.Monstre;
 
 public class Bataille {
-	private Camp<EtreVivant> campHumains;
-	private Camp<EtreVivant> campMonstres;
+	private Camp<Homme> campHumains = new Camp<Homme>();
+	private Camp<Monstre<?>> campMonstres = new Camp<Monstre<?>>();
 	
 	public void ajouter(Homme homme) {
 		campHumains.ajouter(homme);
@@ -16,11 +16,21 @@ public class Bataille {
 		campHumains.eliminer(homme);
 	}
 	
-	public void ajouter(Monstre monstre) {
+	public void ajouter(Monstre<?> monstre) {
 		campMonstres.ajouter(monstre);
 	}
 	
-	public void eliminer(Monstre monstre) {
-		campHumains.eliminer(monstre);
+	public void eliminer(Monstre<?> monstre) {
+		campMonstres.eliminer(monstre);
 	}
+		
+	public Camp<Homme> getCampHumains() {
+		return campHumains;
+	}
+	
+	public Camp<Monstre<?>> getCampMonstres() {
+		return campMonstres;
+	}
+	
 }
+

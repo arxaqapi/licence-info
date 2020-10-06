@@ -24,8 +24,8 @@ public abstract class EtreVivant {
 	public abstract void mourir();
 	
 	
-	public void rejointBataille() {
-		
+	public void rejointBataille(Bataille bataille) {
+		this.bataille = bataille;
 	}
 	
 	@Override
