@@ -12,6 +12,17 @@
 #define NB_THREADS_MAX 10
 #define NB_FOIS 10
 
+
+/*------------------------------------------------------------------------
+ * Structure contennant les arguments
+  ------------------------------------------------------------------------*/
+struct s_args
+{
+	int nbAffichages;
+	int rang;
+};
+
+
 /*------------------------------------------------------------------------
  * Affichage de l'identite de l'appelant 
   ------------------------------------------------------------------------*/
@@ -28,7 +39,9 @@ void thdErreur(char *msg, int cause, int arret)
 {
 	printf("%s : %s \n", msg, strerror(cause));
 	if (arret)
+	{
 		pthread_exit(NULL);
+	}
 }
 
 /*------------------------------------------------------------------------
@@ -37,22 +50,25 @@ void thdErreur(char *msg, int cause, int arret)
 
 void *thd_afficher(void *arg)
 {
-	/* A compl�ter */
-	int nbAffichages = (int) (arg + 1);
-	int rang = (int) (arg);
+	int nbAffichages = ((struct s_args *)arg)->nbAffichages;
+	int rang = (((struct s_args *)arg)->rang);
 
 	for (int i = 0; i < nbAffichages; i++)
-		afficher(rang, pthread_self());
-
+	{
+		afficher( rang, pthread_self() );
+	}
+	// struct used, can be freed now
+	free(arg);
 	pthread_exit(NULL);
 }
+
+
 
 /*------------------------------------------------------------------------*/
 int main(int argc, char *argv[])
 {
 	int i, nbThreads, etat, nbAffichages;
 	pthread_t idThreads[NB_THREADS_MAX];
-	/* A compl�ter */
 
 	if (argc != 2)
 	{
@@ -67,22 +83,29 @@ int main(int argc, char *argv[])
 
 	printf("Combien d'affichages du message ?\n");
 	scanf("%d", &nbAffichages);
-
-	int arr[2] = {nbAffichages, 0};
-
+	if(nbAffichages > NB_FOIS)
+	{
+		nbAffichages = NB_FOIS;
+	}
 	/* Creation des threads */
 	for (i = 0; i < nbThreads; i++)
 	{
-		arr[1] = i;
-		if ((etat = pthread_create(&idThreads[i], NULL, thd_afficher, arr)) != 0)
+		struct s_args * arguments = malloc(sizeof(struct s_args));
+		arguments->nbAffichages = nbAffichages;
+		arguments->rang = i;
+		if ((etat = pthread_create(&idThreads[i], NULL, thd_afficher, arguments)) != 0) // implicit argument casted to void
 		{
 			thdErreur("Echec create", etat, 0);
+			// free struct if creation fails
+			free(arguments);
 		}
+		// 	do not free structure here, 
+		//	can lead to structure freed while thd_afficher() did not finished accessing the data
 	}
 	/* Attendre la fin des threads  */
 	for (i = 0; i < nbThreads; i++)
 	{
-		if ((etat = pthread_join(/* A compl�ter */)) != 0)
+		if ((etat = pthread_join(idThreads[i], NULL)) != 0)
 		{
 			thdErreur("Echec join", etat, 0);
 		}
