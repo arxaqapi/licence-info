@@ -56,18 +56,40 @@ void attenteAleatoire (int rang) {
 //
 // Implanter l'operation P
 void P ( pthread_mutex_t *mutex ) {
-  // TODO implement error checking
-  /* En cas d'erreur, un message est affiche et l'execution avortee */
-	printf("dab\n");
-	pthread_mutex_lock(mutex);
+	// TODO implement error checking
+	/* En cas d'erreur, un message est affiche et l'execution avortee */
+
+	// pthread_mutex_lock(mutex);
+	switch (pthread_mutex_lock(mutex))
+	{
+		case EINVAL :
+			perror("[ERR] - Mutex not initialized");
+			break;
+		case EDEADLK :
+			perror("[ERR] - Mutex already in use");
+			break;
+		default:
+			break;
+	}
 }
 
 // Implanter l'operation V
 void V ( pthread_mutex_t *mutex ) {
 	// TODO implement error checking
 	/* En cas d'erreur, un message est affiche et l'execution avortee */
-	printf("dab unlock\n");
-	pthread_mutex_unlock(mutex);
+	// pthread_mutex_unlock(mutex);
+
+	switch (pthread_mutex_unlock(mutex))
+	{
+		case EINVAL :
+			perror("[ERR] - Mutex not initialized");
+			break;
+		case EPERM :
+			perror("[ERR] - Mutex not possessed");
+			break;
+		default:
+			break;
+	}
 }
 
 //---------------------------------------------------------------------
@@ -76,8 +98,8 @@ void V ( pthread_mutex_t *mutex ) {
 // Demander a acceder a l'ecran 
 void demanderAcces(Parametres * param) { 
     // lock mutex, prendre un ticket
-	pthread_mutex_lock(param->mutex);
-    // P(param->mutex);
+	// pthread_mutex_lock(param->mutex);
+    P(param->mutex);
     // attendre signal sinon wait
     pthread_cond_wait(param->cond + param->monRang, param->mutex);
 }
@@ -87,8 +109,8 @@ void libererAcces(Parametres * param) {
    	// envoyer signal 
 	pthread_cond_signal(param->cond + ((param->monRang + 1) % param->nbThreads));
    	// unlock mutex, vendre, liberer un ticket
-    // V(param->mutex);
-	pthread_mutex_unlock(param->mutex);
+    V(param->mutex);
+	// pthread_mutex_unlock(param->mutex);
 }
 
 #define NB_THREADS_MAX  20
@@ -185,6 +207,8 @@ int main(int argc, char*argv[]) {
 	// Detruire le(s) semaphore(s) utilise(s)
 	/* A completer */
 	pthread_mutex_destroy(&mutex);
+
+	free(cond);
 
 	printf ("\nFin de l'execution du thread principal \n");
 	return 0;
