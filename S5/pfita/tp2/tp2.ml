@@ -9,9 +9,9 @@ let f1 x y = match x, y with
   | _, _ -> (0, false)
     (*
 let f1 x y = match x, y with
-  | 1, true -> (0, false)
-  | 0, false -> (1, true)
-  | _, _ -> failwith "erreur"*)
+| 1, true -> (0, false)
+| 0, false -> (1, true)
+| _, _ -> failwith "erreur"*)
               
 let f2 a = true
   
@@ -30,8 +30,8 @@ let f8 a b c d = if (a = b) && (d = c) then (a, c) else (b, d)
 (*
       let f8 a b c d = match a = b, b = a, c = d, d = c with
         | true, true, true, true -> (a, c)
-        | _, _, _, _ -> failwith "not defined"
-*) 
+| _, _, _, _ -> failwith "not defined"
+                *) 
 
 let cube e = e * e * e
 
@@ -98,10 +98,60 @@ let sommeIteree n =
   else somme n
       
       
-let dernierCh n =
-  let rec dCh k = 
-    let i = k / 10 in
-    if i = 0 then k
-    else dCh i
-  in if n = 0 then failwith "not null plz"
-  else dCh n
+let dernierCh n = n mod 10
+                  
+let toutSaufDer n = n / 10
+                    
+let premierCh n = 
+  let rec premCh i = 
+    if i < 10 then i
+    else premCh (i / 10)
+  in
+  premCh n
+    
+let toutSaufPrem n = 
+  let rec tsp i =
+    if i < 10 then 0
+    else tsp (i / 10) * 10 + dernierCh i
+  in
+  tsp n
+  
+  
+let rec estPalindrome n = match n < 10 with
+  | true -> true
+  | false -> (premierCh n) = (dernierCh n) && estPalindrome (toutSaufDer (toutSaufPrem n)) 
+    
+let rec nbOcc n c = 
+  if c <= 10 then 
+    if c = n then 1
+    else 0
+  else if dernierCh c = n then 1 + nbOcc n (c / 10)
+  else nbOcc n (c / 10)
+      
+      
+let rec nbOccsPM n c = match n, c < 10 with
+  | _, true -> if c = n then 1 else 0
+  | _, _ -> if dernierCh c = n then 1 + nbOccsPM n (c / 10) else nbOccsPM n (c / 10)
+          
+let rec iterer n f x = match n, f, x with
+  | 0, _, _ -> x
+  | _, _, _ -> f (iterer (n - 1) f x)
+                 
+let id z = z
+  
+let compose x y z = x (y z)
+
+(*    
+      let iterer2n f
+*)
+
+let ack m n = 
+  let rec a x y = match x, y with
+    | 0, _ -> y + 1
+    | _, 0 -> a (x - 1) 1
+    | _, _ -> a (x - 1) (a x (y - 1))
+  in
+  if (m < 0) || (n < 0) 
+  then failwith "error m, n should be positive numbers"
+  else a m n
+
