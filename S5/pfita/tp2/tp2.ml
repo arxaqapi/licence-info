@@ -27,13 +27,12 @@ let f6 = fun f -> fun g -> fun h -> g h (f h)
 let f7 (a, b, c) = b (c, a c)
   
 let f8 a b c d = if (a = b) && (d = c) then (a, c) else (b, d)
-    (*
+(*
       let f8 a b c d = match a = b, b = a, c = d, d = c with
         | true, true, true, true -> (a, c)
         | _, _, _, _ -> failwith "not defined"
-                        *) 
-  
-  
+*) 
+
 let cube e = e * e * e
 
 let quad a = a * 4
@@ -76,3 +75,33 @@ let nand a b = match a, b with
   | true, true -> false
     
 (* Partie B - Récursion *) 
+
+
+let sommeChiffres n =
+  let rec somme k = match k with
+    | 0 -> 0
+    | _ -> k mod 10 + somme (k / 10)
+  in
+  if n < 0 then failwith "valeurs negatives non permises"
+  else somme n
+      
+      
+let sommeIteree n =
+  let rec somme k =
+    let r = k mod 10
+    in
+    if k = 0 then 0
+    else if r + somme(k / 10) >= 10 then r
+    else r + somme (k/10) 
+  in
+  if n < 0 then failwith "valeurs negatives non permises"
+  else somme n
+      
+      
+let dernierCh n =
+  let rec dCh k = 
+    let i = k / 10 in
+    if i = 0 then k
+    else dCh i
+  in if n = 0 then failwith "not null plz"
+  else dCh n
