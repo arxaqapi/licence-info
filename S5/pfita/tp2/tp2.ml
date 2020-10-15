@@ -86,6 +86,8 @@ let sommeChiffres n =
   else somme n
       
       
+(*--------------------------*)
+      
 let sommeIteree n =
   let rec somme k =
     let r = k mod 10
@@ -96,8 +98,22 @@ let sommeIteree n =
   in
   if n < 0 then failwith "valeurs negatives non permises"
   else somme n
-      
-      
+  
+(*
+let sommeIteree n =
+  let rec si i =
+    let k = sommeChiffres i in
+    if k < 10 && k > i then k
+        (*else if k < i then i mod 10*)
+    else si (i / 10)
+  in
+  if n < 0 then failwith "valeurs negatives non permises"
+  else si n 
+*)          
+(*--------------------------*)
+
+
+
 let dernierCh n = n mod 10
                   
 let toutSaufDer n = n / 10
@@ -141,17 +157,27 @@ let id z = z
   
 let compose x y z = x (y z)
 
-(*    
-      let iterer2n f
-*)
+    
+let rec iterer2 n f = 
+  if n = 0 then id 
+  else compose f (iterer2 (n - 1) f)
+      
+let rec itererBis f p x =
+  if p x = true then x
+  else itererBis f p (f x)
 
-let ack m n = 
-  let rec a x y = match x, y with
+let sommeIteree2 n = itererBis (fun x -> x / 10) (fun x -> x < 10) n
+
+let rec qqsoit n p = 
+  if n = 1 then p n
+  else qqsoit (n - 1) p && p n
+
+let ack (m, n) = 
+  let rec a (x, y) = match x, y with
     | 0, _ -> y + 1
-    | _, 0 -> a (x - 1) 1
-    | _, _ -> a (x - 1) (a x (y - 1))
+    | _, 0 -> a (x - 1, 1)
+    | _, _ -> a (x - 1, a (x ,y - 1))
   in
   if (m < 0) || (n < 0) 
   then failwith "error m, n should be positive numbers"
-  else a m n
-
+  else a (m, n)
