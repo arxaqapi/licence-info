@@ -89,27 +89,13 @@ let sommeChiffres n =
 (*--------------------------*)
       
 let sommeIteree n =
-  let rec somme k =
-    let r = k mod 10
+  let rec si k = 
+    let somme = sommeChiffres k 
     in
-    if k = 0 then 0
-    else if r + somme(k / 10) >= 10 then r
-    else r + somme (k/10) 
+    if somme < 10 then somme
+    else sommeChiffres somme
   in
-  if n < 0 then failwith "valeurs negatives non permises"
-  else somme n
-  
-(*
-let sommeIteree n =
-  let rec si i =
-    let k = sommeChiffres i in
-    if k < 10 && k > i then k
-        (*else if k < i then i mod 10*)
-    else si (i / 10)
-  in
-  if n < 0 then failwith "valeurs negatives non permises"
-  else si n 
-*)          
+  si n
 (*--------------------------*)
 
 
@@ -166,11 +152,16 @@ let rec itererBis f p x =
   if p x = true then x
   else itererBis f p (f x)
 
-let sommeIteree2 n = itererBis (fun x -> x / 10) (fun x -> x < 10) n
+let sommeIteree2 n = itererBis (fun x -> sommeChiffres x) (fun x -> x < 10) n
 
-let rec qqsoit n p = 
-  if n = 1 then p n
-  else qqsoit (n - 1) p && p n
+let qqsoit n p = 
+  let rec qqs i f =
+    if i = 1 then f i
+    else qqs (i - 1) f && f i
+  in
+  if n < 1 then failwith "No negative numbers"
+  else 
+    qqs n p
 
 let ack (m, n) = 
   let rec a (x, y) = match x, y with
