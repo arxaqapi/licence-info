@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.NavigableSet;
 import java.util.TreeSet;
 
+import attaque.Glace;
 import bataille.Bataille;
 import bataille.Camp;
 import protagoniste.Domaine;
@@ -15,19 +16,19 @@ import protagoniste.Monstre;
 import protagoniste.ZoneDeCombat;
 
 public class AideEcrivain {
-	
+	private Bataille bataille;
 	private LinkedList<Homme> listeTriee = new LinkedList<Homme>();
+	
 	private TreeSet<Monstre<?>> monstreDomaineSet = 
 			new TreeSet<Monstre<?>>(
 					new Comparator<Monstre<?>>() {
 						public int compare(Monstre<?> arg0, Monstre<?> arg1) {
-							Domaine darg0 = arg0.getDomaine();
-							Domaine darg1 = arg1.getDomaine();
+							int c = arg0.getDomaine().compareTo(arg1.getDomaine());
 							// prevent the exclusion of same domain monster
-							if (darg0 == darg1 && !arg0.equals(arg1)) {
-								return -1;
+							if (c == 0) {
+								c = arg0.getNom().compareTo(arg1.getNom());
 							}
-							return darg0.compareTo(darg1);
+							return c;
 						}
 					});
 	private TreeSet<Monstre<?>> monstresZoneSet = 
@@ -38,25 +39,24 @@ public class AideEcrivain {
 							ZoneDeCombat zarg1 = arg1.getZoneDeCombat();
 							int farg0 = arg0.getForceDeVie();
 							int farg1 = arg1.getForceDeVie();
-							if (zarg0 == zarg1 && farg0 == farg1) {
-								return -1;
-							} else if (zarg0 == zarg1) {
-								if (farg0 > farg1) {
-									return -1;
+							if(zarg0.equals(zarg1)) {
+								if (farg0 == farg1) {
+									return arg0.getNom().compareTo(arg1.getNom());
 								}
-								if (farg0 < farg1) {
-									return 1;
+								else {
+									return arg1.getForceDeVie() - arg0.getForceDeVie();
 								}
 							}
-							return zarg0.compareTo(zarg1);
+							else {
+								return zarg0.compareTo(zarg1);
+							}
 						}
 					});
 	
-	private NavigableSet<Monstre<?>> monstresDeFeu; // = monstreDomaineSet.headSet(new Monstre<Feu>(), true);
-	private NavigableSet<Monstre<?>> monstresDeGlace; 
-	private NavigableSet<Monstre<?>> monstesTranchants;
+	private NavigableSet<Monstre<?>> monstresDeFeu = new TreeSet<Monstre<?>>();
+	private NavigableSet<Monstre<?>> monstresDeGlace = new TreeSet<Monstre<?>>();
+	private NavigableSet<Monstre<?>> monstresTranchants = new TreeSet<Monstre<?>>();
 	
-	private Bataille bataille;
 	
 	public AideEcrivain(Bataille bataille) {
 		this.bataille = bataille;
@@ -167,29 +167,51 @@ public class AideEcrivain {
 	}
 
 	public NavigableSet<Monstre<?>> getMonstresDeFeu() {
+		initMonstresDeFeu();
 		return monstresDeFeu;
 	}
 
 	public NavigableSet<Monstre<?>> getMonstresDeGlace() {
+		initMonstresDeGlace();
 		return monstresDeGlace;
 	}
 
-	public NavigableSet<Monstre<?>> getMonstesTranchants() {
-		return monstesTranchants;
+	public NavigableSet<Monstre<?>> getMonstresTranchants() {
+		initMonstresTranchant();
+		return monstresTranchants;
 	}
 	
-	public Monstre<?> firstMonstreDomaine(Domaine d) {
-		for (Iterator<Monstre<?>> it = monstreDomaineSet.iterator(); it.hasNext();) {
-			Monstre<?> m = it.next();
-			if (m.getDomaine() == d) {
-				return m;
+	
+	public Monstre<?> firstMonstreDomaine(Domaine domaine){
+		Iterator<Monstre<?>> iter = bataille.getCampMonstres().iterator();
+		Monstre<?> retourFonction = iter.next();
+		while(iter.hasNext()) {
+			if(retourFonction.getDomaine().equals(domaine)) {
+				return retourFonction;
 			}
+			retourFonction = iter.next();
 		}
 		return null;
 	}
 	
+//	public void initMonstresDeFeu() {
+//		updateMonstresDomaine();
+//		monstresDeFeu = monstreDomaineSet.headSet(firstMonstreDomaine(Domaine.GLACE), false);
+//	}
+	
 	public void initMonstresDeFeu() {
-		monstresDeFeu = monstreDomaineSet.headSet(firstMonstreDomaine(Domaine.GLACE), false);
+		updateMonstresDomaine();
+		monstresDeFeu = monstreDomaineSet.headSet(new Monstre<Glace>("aaaa", 0, null, Domaine.GLACE, (Glace[] )null) , false);
+	}
+	
+	public void initMonstresDeGlace() {
+		updateMonstresDomaine();
+		monstresDeGlace = monstreDomaineSet.subSet(new Monstre<Glace>("zzzz", 0, null, Domaine.FEU, (Glace[] )null) , false, new Monstre<Glace>("aaaaa", 0, null, Domaine.TRANCHANT, (Glace[] )null), false);
+	}
+	
+	public void initMonstresTranchant() {
+		updateMonstresDomaine();
+		monstresTranchants = monstreDomaineSet.tailSet(new Monstre<Glace>("zzzz", 0, null, Domaine.GLACE, (Glace[] )null) , false);
 	}
 	
 	

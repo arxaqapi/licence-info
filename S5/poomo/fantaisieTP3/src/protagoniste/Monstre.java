@@ -19,12 +19,16 @@ public class Monstre <TypePouvoir> extends EtreVivant{
 		super(nom, forceDeVie);
 		this.zoneDeCombat = zoneDeCombat;
 		this.domaine = domaine;
-		
-		this.attaques = new Pouvoir[pouvoirs.length];
-		int i = 0;
-		for (TypePouvoir p : pouvoirs) {
-			this.attaques[i] = (Pouvoir) p;
-			i++;
+		if (pouvoirs != null) {
+			this.attaques = new Pouvoir[pouvoirs.length];
+			int i = 0;
+			for (TypePouvoir p : pouvoirs) {
+				this.attaques[i] = (Pouvoir) p;
+				i++;
+			}
+		}
+		else {
+			this.attaques = null;
 		}
 	}
 	

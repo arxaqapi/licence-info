@@ -1,2 +1,2 @@
 main:
-	gcc -Wall -fopenmp -o exo t.c
+	gcc -Wall -fopenmp -o exo exo2.c

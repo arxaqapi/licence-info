@@ -44,9 +44,9 @@ void thdErreur(int codeErr, char *msgErr, void *codeArret) {
 //---------------------------------------------------------------------
 // Fonction pour perdre un peu de temps
 void attenteAleatoire (int rang) {
-#ifdef TEMPO	
+// #ifdef TEMPO	
     usleep((rand()%100) * (rang + 1));	  
-#endif
+// #endif
 }
 
 //---------------------------------------------------------------------
@@ -99,9 +99,9 @@ void V ( pthread_mutex_t *mutex ) {
 void demanderAcces(Parametres * param) { 
     // lock mutex, prendre un ticket
 	// pthread_mutex_lock(param->mutex);
-    P(param->mutex);
+    P(param->mutex + param->monRang);
     // attendre signal sinon wait
-    pthread_cond_wait(param->cond + param->monRang, param->mutex);
+    pthread_cond_wait(param->cond + param->monRang, param->mutex+ param->monRang);
 }
 
 // Liberer l'acces a l'ecran 
@@ -109,7 +109,7 @@ void libererAcces(Parametres * param) {
    	// envoyer signal 
 	pthread_cond_signal(param->cond + ((param->monRang + 1) % param->nbThreads));
    	// unlock mutex, vendre, liberer un ticket
-    V(param->mutex);
+    V(param->mutex + param->monRang);
 	// pthread_mutex_unlock(param->mutex);
 }
 
@@ -170,19 +170,20 @@ int main(int argc, char*argv[]) {
 	// Initialiser le(s) semaphore(s) utilise(s)
 	/* A completer */
 	// mutex
-	pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-  	pthread_cond_t *cond =  malloc(nbThreads * sizeof(pthread_cond_t)); //PTHREAD_COND_INITIALIZER
+	pthread_mutex_t *mutex = malloc(nbThreads * sizeof(pthread_mutex_t));
+  	pthread_cond_t *cond =  malloc(nbThreads * sizeof(pthread_cond_t));
 	for(int i = 0; i < nbThreads; i++)
 	{
 		// cond[i] = PTHREAD_COND_INITIALIZER;
 		// *(cond + i) = PTHREAD_COND_INITIALIZER;
+		pthread_mutex_init(&mutex[i],NULL);
 		pthread_cond_init(&cond[i], NULL);
 	}
 
   // Lancer les threads afficheurs
 	for (i = 0; i < nbThreads; i++)
 	{
-		param[i].mutex = &mutex;
+		param[i].mutex = mutex;
 		param[i].cond = cond;
 		param[i].monRang   = i;
 		param[i].nbThreads = nbThreads;
@@ -194,6 +195,7 @@ int main(int argc, char*argv[]) {
 		}
 	}
 	// premier signal permettant l'execution du 1er thread
+	sleep(1);
 	pthread_cond_signal(param->cond);
 
 	// Attendre la fin des threads afficheur car si le thread principal
@@ -206,7 +208,7 @@ int main(int argc, char*argv[]) {
 
 	// Detruire le(s) semaphore(s) utilise(s)
 	/* A completer */
-	pthread_mutex_destroy(&mutex);
+	pthread_mutex_destroy(mutex);
 
 	free(cond);
 

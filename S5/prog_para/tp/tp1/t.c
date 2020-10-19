@@ -3,11 +3,9 @@
 #include <stdlib.h>
 #include <sys/time.h>
 #define SIZE 20000
-// Nombre de thread
-#define THREAD_NUMB 8
+#define THREAD_NUMB 2
 
 int main(int argc, char **argv) {
-  printf("Nombre de thread: %d\n", THREAD_NUMB);
   int j, tid;
   double t, start, stop;
   double **matrice;
@@ -17,11 +15,7 @@ int main(int argc, char **argv) {
     matrice[i] = calloc(SIZE, sizeof(double));
   }
 
-  double somme[THREAD_NUMB];
-  for (int i = 0; i < THREAD_NUMB ; i++)
-  {
-    somme[i] = 0;
-  }
+  double somme[THREAD_NUMB] = {0, 0};//, 0, 0, 0, 0, 0, 0, 0};
   double somme_finale = 0;
 
   // Initialisations

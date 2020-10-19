@@ -69,7 +69,7 @@ public class TestGestionProtagonistes {
 		aideEcrivain.initMonstresDeFeu();
 		NavigableSet<Monstre<?>> monstres = aideEcrivain.getMonstresDeFeu();
 		String affichage = affichageMonstres(monstres);
-		System.out.println("\nmonstres de feu :\n" + affichage);
+//		System.out.println("\nmonstres de feu :\n" + affichage);
 
 		Monstre<Glace> soufflemort = new Monstre<>("soufflemort", 120, ZoneDeCombat.AERIEN, Domaine.GLACE,
 				new Tornade(8));
@@ -78,41 +78,41 @@ public class TestGestionProtagonistes {
 		soufflemort.rejointBataille(bataille);
 		cramombre.rejointBataille(bataille);
 
-		monstres = aideEcrivain.getMonstresDeFeu();
-		affichage = affichageMonstres(monstres);
-		System.out.println("\nmonstres de feu :\n" + affichage);
+//		monstres = aideEcrivain.getMonstresDeFeu();
+//		affichage = affichageMonstres(monstres);
+//		System.out.println("\nmonstres de feu :\n" + affichage);
 
 		Monstre<Glace> givrogolem = new Monstre<>("givrogolem", 200, ZoneDeCombat.TERRESTRE, Domaine.GLACE,
 				new PicsDeGlace(10), new Tornade(1));
 		givrogolem.rejointBataille(bataille);
 
-		monstres = aideEcrivain.getMonstresDeFeu();
-		affichage = affichageMonstres(monstres);
-		System.out.println("\nmonstres de feu :\n" + affichage);
-//
-//		aideEcrivain.initMonstresDeGlace();
-//		aideEcrivain.initMonstresTranchant();
-//
-//		Monstre<Feu> aqualave = new Monstre<>("aqualave", 30, ZoneDeCombat.AQUATIQUE, Domaine.FEU, new Lave(5));
-//
-//		Monstre<Tranchant> requispectre = new Monstre<>("requispectre", 200, ZoneDeCombat.AQUATIQUE, Domaine.TRANCHANT,
-//				new Griffe());
-//
-//		aqualave.rejointBataille(bataille);
-//		requispectre.rejointBataille(bataille);
-//
 //		monstres = aideEcrivain.getMonstresDeFeu();
 //		affichage = affichageMonstres(monstres);
 //		System.out.println("\nmonstres de feu :\n" + affichage);
-//
-//		monstres = aideEcrivain.getMonstresDeGlace();
-//		affichage = affichageMonstres(monstres);
-//		System.out.println("\nmonstres de glace :\n" + affichage);
-//
-//		monstres = aideEcrivain.getMonstresTranchants();
-//		affichage = affichageMonstres(monstres);
-//		System.out.println("\nmonstres tranchant :\n" + affichage);
-//
+
+		aideEcrivain.initMonstresDeGlace();
+		aideEcrivain.initMonstresTranchant();
+
+		Monstre<Feu> aqualave = new Monstre<>("aqualave", 30, ZoneDeCombat.AQUATIQUE, Domaine.FEU, new Lave(5));
+
+		Monstre<Tranchant> requispectre = new Monstre<>("requispectre", 200, ZoneDeCombat.AQUATIQUE, Domaine.TRANCHANT,
+				new Griffe());
+
+		aqualave.rejointBataille(bataille);
+		requispectre.rejointBataille(bataille);
+
+		monstres = aideEcrivain.getMonstresDeFeu();
+		affichage = affichageMonstres(monstres);
+		System.out.println("\nmonstres de feu :\n" + affichage);
+
+		monstres = aideEcrivain.getMonstresDeGlace();
+		affichage = affichageMonstres(monstres);
+		System.out.println("\nmonstres de glace :\n" + affichage);
+
+		monstres = aideEcrivain.getMonstresTranchants();
+		affichage = affichageMonstres(monstres);
+		System.out.println("\nmonstres tranchant :\n" + affichage);
+
 	}
 
 	public static String affichageMonstres(NavigableSet<Monstre<?>> monstres) {
