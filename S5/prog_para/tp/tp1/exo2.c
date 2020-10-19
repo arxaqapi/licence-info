@@ -3,31 +3,34 @@
 #include <stdlib.h>
 #include <sys/time.h>
 #define SIZE 20000
-#define THREAD_NUMB 8
+#define THREAD_NUMB 2
 
 int main(int argc, char **argv) {
-  int i, j, tid;
+  int j, tid;
   double t, start, stop;
-  double *matrice_A;
+  double **matrice;
+  matrice = malloc(SIZE * sizeof(double *));
 
-  double somme[THREAD_NUMB] = {0, 0, 0, 0, 0, 0, 0, 0};
+  for (int i = 0; i < SIZE; i++) {
+    matrice[i] = calloc(SIZE, sizeof(double));
+  }
+
+  double somme[THREAD_NUMB] = {0, 0};//, 0, 0, 0, 0, 0, 0, 0};
   double somme_finale = 0;
-  // Allocations
-  matrice_A = (double *)malloc(SIZE * SIZE * sizeof(double));
 
   // Initialisations
-  for (i = 0; i < SIZE; i++) {
+  for (int i = 0; i < SIZE; i++) {
     for (j = 0; j < SIZE; j++) {
-      matrice_A[i * SIZE + j] = 0.0000001;
+      matrice[i][j] = 0.0000001;
     }
   }
   // ------------------------------------------------------//
   //                        1) sequentiel
   // ------------------------------------------------------//
   start = omp_get_wtime();
-  for (i = 0; i < SIZE; i++) {
+  for (int i = 0; i < SIZE; i++) {
     for (j = 0; j < SIZE; j++) {
-      somme_finale += matrice_A[i * SIZE + j];
+      somme_finale += matrice[i][j];
     }
   }
   stop = omp_get_wtime();
@@ -44,9 +47,9 @@ int main(int argc, char **argv) {
   {
     tid = omp_get_thread_num();
 #pragma omp for
-    for (i = 0; i < SIZE; i++) {
+    for (int i = 0; i < SIZE; i++) {
       for (j = 0; j < SIZE; j++) {
-        somme[tid] += matrice_A[i * SIZE + j];
+        somme[tid] += matrice[i][j];
       }
     }
 
@@ -76,9 +79,9 @@ int main(int argc, char **argv) {
   {
     tid = omp_get_thread_num();
 #pragma omp for
-    for (i = 0; i < SIZE; i++) {
+    for (int i = 0; i < SIZE; i++) {
       for (j = 0; j < SIZE; j++) {
-        somme[tid] += matrice_A[i * SIZE + j];
+        somme[tid] += matrice[i][j];
       }
     }
 // add to somme_finale
@@ -100,9 +103,9 @@ int main(int argc, char **argv) {
 #pragma omp parallel num_threads(THREAD_NUMB) private(j) reduction(+:somme_finale)
   {
 #pragma omp for
-    for (i = 0; i < SIZE; i++) {
+    for (int i = 0; i < SIZE; i++) {
       for (j = 0; j < SIZE; j++) {
-        somme_finale += matrice_A[i * SIZE + j];
+        somme_finale += matrice[i][j];
       }
     }
   }
@@ -111,7 +114,5 @@ int main(int argc, char **argv) {
   printf("4) Temps ex4: %f\n", t);
   printf("4) somme finale = %f\n\n", somme_finale);
 
-  // Liberations
-  free(matrice_A);
   return EXIT_SUCCESS;
 }
