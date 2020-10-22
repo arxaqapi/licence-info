@@ -1,124 +1,132 @@
 #include <omp.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/time.h>
+#include <time.h>
+
 #define SIZE 20000
-// Nombre de thread
 #define THREAD_NUMB 8
 
-int main(int argc, char **argv) {
-  printf("Nombre de thread: %d\n", THREAD_NUMB);
-  int j, tid;
-  double t, start, stop;
-  double **matrice;
-  matrice = malloc(SIZE * sizeof(double *));
+int main()
+{
+    srand(time(NULL));
 
-  for (int i = 0; i < SIZE; i++) {
-    matrice[i] = calloc(SIZE, sizeof(double));
-  }
+    double t, start, stop;
 
-  double somme[THREAD_NUMB];
-  for (int i = 0; i < THREAD_NUMB ; i++)
-  {
-    somme[i] = 0;
-  }
-  double somme_finale = 0;
+    long somme = 0;
+    int ** matrix = calloc(SIZE, sizeof(int *));
 
-  // Initialisations
-  for (int i = 0; i < SIZE; i++) {
-    for (j = 0; j < SIZE; j++) {
-      matrice[i][j] = 0.0000001;
-    }
-  }
-  // ------------------------------------------------------//
-  //                        1) sequentiel
-  // ------------------------------------------------------//
-  start = omp_get_wtime();
-  for (int i = 0; i < SIZE; i++) {
-    for (j = 0; j < SIZE; j++) {
-      somme_finale += matrice[i][j];
-    }
-  }
-  stop = omp_get_wtime();
-  t = stop - start;
-  printf("1) Temps ex1: %f\n", t);
-  printf("1) somme finale = %f\n\n", somme_finale);
-
-  // ------------------------------------------------------//
-  //              2) somme des sommes partielles
-  // ------------------------------------------------------//
-  somme_finale = 0;
-  start = omp_get_wtime();
-#pragma omp parallel num_threads(THREAD_NUMB) private(j, tid)
-  {
-    tid = omp_get_thread_num();
-#pragma omp for
-    for (int i = 0; i < SIZE; i++) {
-      for (j = 0; j < SIZE; j++) {
-        somme[tid] += matrice[i][j];
-      }
-    }
-
-#pragma omp single
+    for (int i = 0; i < SIZE; i++)
     {
-      for (int i = 0; i < THREAD_NUMB; i++) {
-        somme_finale += somme[i];
-      }
+        matrix[i] = calloc(SIZE, sizeof(int));
+        for (int j = 0; j < SIZE; j++)
+        {
+            matrix[i][j] = (int)rand() % 2;
+        }
     }
-  }
-  stop = omp_get_wtime();
-  t = stop - start;
-  printf("2) Temps ex2: %f\n", t);
-  // main thread
-  printf("2) somme finale = %f\n\n", somme_finale);
 
-  // ------------------------------------------------------//
-  //        3) somme des sommes partielles par thread
-  // ------------------------------------------------------//
-  // reset
-  somme_finale = 0;
-  for (int i = 0; i < THREAD_NUMB; i++) {
-    somme[i] = 0;
-  }
-  start = omp_get_wtime();
-#pragma omp parallel num_threads(THREAD_NUMB) private(j, tid)
-  {
-    tid = omp_get_thread_num();
-#pragma omp for
-    for (int i = 0; i < SIZE; i++) {
-      for (j = 0; j < SIZE; j++) {
-        somme[tid] += matrice[i][j];
-      }
+    // ------------------------------------------------------//
+    //                        1) sequentiel
+    // ------------------------------------------------------//
+    start = omp_get_wtime();
+    for (int i = 0; i < SIZE; i++)
+    {
+        for (int j = 0; j < SIZE; j++)
+        {
+            somme += matrix[i][j];
+        }
     }
-// add to somme_finale
-#pragma omp critical
-    { somme_finale += somme[tid]; }
-  }
+    stop = omp_get_wtime();
+    t = stop - start;
+    printf("1) time = %f\n", t);
+    printf("1) somme = %ld\n\n", somme);
+    start = stop = t = somme = 0;
 
-  stop = omp_get_wtime();
-  t = stop - start;
-  printf("3) Temps ex3: %f\n", t);
-  printf("3) somme finale = %f\n\n", somme_finale);
-
-  // ------------------------------------------------------//
-  //              4) réduction
-  // ------------------------------------------------------//
-  // reset
-  somme_finale = 0;
-  start = omp_get_wtime();
-#pragma omp parallel num_threads(THREAD_NUMB) private(j) reduction(+:somme_finale)
-  {
-#pragma omp for
-    for (int i = 0; i < SIZE; i++) {
-      for (j = 0; j < SIZE; j++) {
-        somme_finale += matrice[i][j];
-      }
+    // ------------------------------------------------------//
+    //             2) somme des sommes partielles
+    // ------------------------------------------------------//
+    long * somme_partielle = calloc(THREAD_NUMB, sizeof(long));
+    for (int i = 0; i < THREAD_NUMB; i++)
+    {
+        somme_partielle[i] = 0;
     }
-  }
-  stop = omp_get_wtime();
-  t = stop - start;
-  printf("4) Temps ex4: %f\n", t);
-  printf("4) somme finale = %f\n\n", somme_finale);
 
-  return EXIT_SUCCESS;
+    start = omp_get_wtime();
+    #pragma omp parallel num_threads(THREAD_NUMB)
+    {
+        int tid = omp_get_thread_num();
+        #pragma omp for
+        for (int i = 0; i < SIZE; i++)
+        {
+            for (int j = 0; j < SIZE; j++)
+            {
+                somme_partielle[tid] += matrix[i][j];
+            }
+        }
+        #pragma omp single
+        {
+            for (int i = 0; i < THREAD_NUMB; i++)
+            {
+                somme += somme_partielle[i];
+            }
+        }
+    }
+    stop = omp_get_wtime();
+    t = stop - start;
+    printf("2) time = %f\n", t);
+    printf("2) somme = %ld\n\n", somme);
+    start = stop = t = somme = 0;
+    // free somme_partielle
+    free(somme_partielle);
+
+    // ------------------------------------------------------//
+    //        3) somme des sommes partielles par thread
+    // ------------------------------------------------------//
+    start = omp_get_wtime();
+    #pragma omp parallel num_threads(THREAD_NUMB)
+    {
+        long sm = 0;
+        #pragma omp for
+        for (int i = 0; i < SIZE; i++)
+        {
+            for (int j = 0; j < SIZE; j++)
+            {
+                sm += matrix[i][j];
+            }
+        }
+        #pragma omp atomic
+        somme += sm;
+    }
+    stop = omp_get_wtime();
+    t = stop - start;
+    printf("3) time = %f\n", t);
+    printf("3) somme = %ld\n\n", somme);
+    start = stop = t = somme = 0;
+
+    // ------------------------------------------------------//
+    //                    4) réduction
+    // ------------------------------------------------------//
+    start = omp_get_wtime();
+    #pragma omp parallel for num_threads(THREAD_NUMB) reduction(+:somme)
+    for (int i = 0; i < SIZE; i++)
+    {
+        for (int j = 0; j < SIZE; j++)
+        {
+            somme += matrix[i][j];
+        }
+    }
+    stop = omp_get_wtime();
+    t = stop - start;
+    printf("4) time = %f\n", t);
+    printf("4) somme = %ld\n\n", somme);
+    start = stop = t = somme = 0;
+
+
+
+    // free the matrix correctly 
+    for (int i = 0; i < SIZE; i++)
+    {
+        free(matrix[i]);
+    }
+    free(matrix);
+    return 0;
 }
