@@ -25,24 +25,22 @@ let rec remove_if p l = match l with
 (* procédures auxiliaire *)
 let fst (f, s) = f
 let snd (f, s) = s
-let thr (f, s, t) = t
-let forth (f, s, t, fo) = fo
 
 (* Q 4 *)
-let init_comments = (0, [])
+let init_comments : comments = (0, [])
 
 (* Q 4.1 *)
-let add_comment author text com_base = 
+let add_comment author text comments : comments = 
   let rec ac c = match c with
-    | [] -> ((fst com_base) + 1, author, text, []) :: []
+    | [] -> ((fst comments) + 1, author, text, []) :: []
     | hd :: tl -> hd :: (ac tl)
   in
   if text = "" then failwith "no comment"
   else
-    (fst com_base + 1, ac (snd com_base))
+    (fst comments + 1, ac (snd comments))
 
 (* Q 4.2 *)
-let rec vote_comment user_id comment_id (com_base : comments) : comments = match com_base with
+let rec vote_comment user_id comment_id (comments : comments) : comments = match comments with
   | (n, []) -> failwith "no comment" 
   | (n, (c_id, u_id, txt, u_id_l) :: tl) -> 
       let is_the_comment = (c_id = comment_id)
@@ -55,7 +53,7 @@ let rec vote_comment user_id comment_id (com_base : comments) : comments = match
       else (n, (c_id, u_id, txt, u_id_l) :: (snd (vote_comment user_id comment_id (n, tl))))
 
 (* Q 4.3 *)
-let rec get_comment comment_id com_base = match (com_base : comments) with
+let rec get_comment comment_id (comments : comments) : text = match comments with
   | (n, []) -> failwith "not found"
   | (n, (c_id, u_id, txt, u_id_l) :: tl) -> 
       if comment_id = c_id 
@@ -63,7 +61,7 @@ let rec get_comment comment_id com_base = match (com_base : comments) with
       else get_comment comment_id (n, tl)
 
 (* Q 4.4 *)
-let rec get_comments author_id com_base = match (com_base : comments) with
+let rec get_comments author_id (comments : comments) = match comments with
   | (n, []) -> []
   | (n, (c_id, u_id, txt, u_id_l) :: tl) -> 
       if author_id = u_id 
@@ -71,14 +69,13 @@ let rec get_comments author_id com_base = match (com_base : comments) with
       else get_comments author_id (n, tl)
 
 
-(* fnc that checks if voted for a comment in a com_base *)
-let rec has_voted user_id u_id_l = match (u_id_l : user_id list) with
+(* fnc that checks if voted for a comment in a comments *)
+let rec has_voted user_id (u_id_l : user_id list) = match u_id_l with
   | [] -> false
   | hd :: tl -> hd = user_id || has_voted user_id tl
 
-
 (* Q 4.5 *)     
-let rec get_voted_comments user_id com_base = match (com_base : comments) with
+let rec get_voted_comments user_id (comments : comments) = match comments with
   | (n, []) -> []
   | (n, (c_id, u_id, txt, u_id_l) :: tl) ->
       if has_voted user_id u_id_l
@@ -118,19 +115,64 @@ let rec update_comment user_id comment_id f comments : comments = match comments
       else (n, (c_id, u_id, txt, u_id_l) :: (snd (update_comment user_id comment_id f (n, tl))))
 
 
-(* ma of 2 ints *)
-let max a b = 
-  if a >= b 
-  then a
-  else if a < b
-  then b
+(* aux *)               
+let better_score c1 c2 = score c1 >= score c2 
+                           
+let older (c_id1, _, _, _) (c_id2, _, _, _) = c_id1 < c_id2
+                                              
+let rec insert p e l = match l with
+  | [] -> e :: []
+  | hd :: tl -> 
+      if p e hd 
+      then (e :: hd :: tl) 
+      else hd :: (insert p e tl)
+
+let rec insertion_sort p l = match l with
+  | [] -> []
+  | hd :: tl -> insert p hd (insertion_sort p tl)
+
+let top_three (comments : comments) : comment list =
+  let c_list = snd comments
+  in
+  let ordered_list = insertion_sort better_score c_list
+  in 
+  match ordered_list with 
+  | f :: s :: t :: tl -> insertion_sort older (f :: s :: t :: [])
+  | _ -> ordered_list 
+
+  (*
+(* ======================================================== *)
+(* insert at *)
+let insert_at k e lst =
+  let rec at l i = match l, i = 0 with
+    | [], false -> failwith "out of bound"
+    | [], true -> e :: []
+    | hd :: tl, false -> hd :: at tl (i - 1)
+    | hd :: tl, true -> e :: hd :: tl
+  in
+  at lst (k - 1)
+   
+(* len of a list *)
+let rec len l = match l with
+  | [] -> 0
+  | hd :: tl -> 1 + len tl
 
 (* Q 4.9 *)
-let rec top_three comments = 
-  let rec tr cl a1 a2 a3 = match cl with
-    | (c_id, u_id, txt, u_id_l) -> true
+
+let top_three (comments : comments) : comment list = 
+  let rec tt c_lst f s t nl = match c_lst with
+    | [] -> nl
+    | hd :: tl -> 
+        let sc = score(hd) in
+        if sc > f then tt tl sc f s (insert_at 1 hd nl)
+        else if sc > s then tt tl f sc s (insert_at 2 hd nl)
+        else if sc > t then tt tl f s sc (insert_at 3 hd nl)
+        else tt tl f s t nl
+  in 
+  let base_snd = (snd comments)
   in
-  tr snd comments 0 0 0
-
-
-(* force int in comments fields:-user_id, bcs 'a accepts every type *)
+  if (len base_snd) <= 3
+  then base_snd
+  else tt base_snd -1 -1 -1 []
+(* ======================================================== *)
+*)
