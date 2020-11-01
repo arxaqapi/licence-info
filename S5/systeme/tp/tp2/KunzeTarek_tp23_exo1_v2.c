@@ -17,12 +17,16 @@
 #include <string.h>
 #include <errno.h>
 #include <pthread.h>
+#include <semaphore.h>
 
 typedef struct {
 	int monRang;		// Rang de creation du thread
 	int nbThreads;	// Nombre de threads de l'application 
 	int nbMsg;		// Nombre de messages a afficher
 	int nbLignes;		// Nombre de lignes de chaque message
+
+	// pointeur sur les semaphores 
+	sem_t * semaphore;
 } Parametres;
 // Rem : Le nombre de threads de l'application pourrait etre une
 // variable globale et donc partagee par les threads
@@ -51,15 +55,33 @@ void attenteAleatoire (int rang) {
 // des operations P et V pour les reutiliser dans les solutions
 //
 // Implanter l'operation P
-void P ( pthread_mutex_t *mutex ) {
+void P ( sem_t * sem , int rang) {
 	// TODO implement error checking
 	/* En cas d'erreur, un message est affiche et l'execution avortee */
+
+	// tenter de prendre un ticket dans son sémaphore a lui
+	// si pas de ticket, mise en attente du processus / thread?
+	if (sem_wait(sem + rang) != 0)
+	{
+		perror("Errer attente sémaphore");
+		exit(2);
+	}
+	// le processus a obtenu son 'ticket' avec ou sans attente
 }
 
 // Implanter l'operation V
-void V ( pthread_mutex_t *mutex ) {
+void V ( sem_t * sem, int rang, int n_threads) {
 	// TODO implement error checking
 	/* En cas d'erreur, un message est affiche et l'execution avortee */
+	
+	// deposer un ticket dans le sémaphore du thread suivant (monRang + 1)%nbThreads
+	if (sem_post( sem + ((rang + 1) % n_threads) ) != 0)
+	{
+		perror("Erreur libération semaphores");
+		exit(3);
+	}
+	// débloquer le processus n+1
+
 }
 
 //---------------------------------------------------------------------
@@ -67,10 +89,12 @@ void V ( pthread_mutex_t *mutex ) {
 //
 // Demander a acceder a l'ecran 
 void demanderAcces(Parametres * param) {
+	P(param->semaphore, param->monRang);
 }
 
 // Liberer l'acces a l'ecran 
 void libererAcces(Parametres * param) { 
+	V(param->semaphore, param->monRang, param->nbThreads);
 }
 
 #define NB_THREADS_MAX  20
@@ -91,7 +115,7 @@ void *thd_afficher (void *arg) {
 	for (i = 0; i < param.nbMsg; i++)
 	{
 	// Acceder a l'ecran pour afficher un message complet a l'ecran
-		demanderAcces( ... );
+		demanderAcces( &param );
 
 		for (j = 0; j < param.nbLignes; j++)
 		{
@@ -100,7 +124,7 @@ void *thd_afficher (void *arg) {
 			attenteAleatoire(param.monRang);
 		} 
 	// Rendre l'acces a l'ecran 
-	libererAcces( ... );
+	libererAcces( &param );
 	}
 
 	printf("Afficheur %d (%lu), je me termine \n", param.monRang, pthread_self());
@@ -129,7 +153,15 @@ int main(int argc, char*argv[]) {
 
 	// Initialiser le(s) semaphore(s) utilise(s)
 	/* A completer */
-
+	sem_t * semaphores = calloc(nbThreads, sizeof(sem_t));
+	// first sem to 1
+	sem_init(&semaphores[0], 0, 1);
+	for (int i = 1; i < nbThreads; i++)
+	{
+		// semaphores[i] = 
+		sem_init(&semaphores[i], 0, 0);
+	}
+	
   // Lancer les threads afficheurs
 	for (i = 0; i < nbThreads; i++)
 	{
@@ -137,13 +169,14 @@ int main(int argc, char*argv[]) {
 		param[i].nbThreads = nbThreads;
 		param[i].nbMsg     = NB_MSG_BASE;
 		param[i].nbLignes  = NB_LIGNES_BASE;
+		param[i].semaphore = semaphores;
 		if ((etat = pthread_create(&idThdAfficheurs[i], NULL, thd_afficher, &param[i])) != 0)
 		{
 			thdErreur(etat, "Creation afficheurs", NULL);
 		}
 	}
-	// premier signal permettant l'execution du 1er thread
-	pthread_cond_signal(param->cond);
+	// TODO premier signal permettant l'execution du 1er thread
+	// pas besoin de premier signal normalement
 
 	// Attendre la fin des threads afficheur car si le thread principal
 	// - i.e. le main() - se termine, les threads crees meurent aussi
@@ -152,6 +185,8 @@ int main(int argc, char*argv[]) {
 		if ((etat = pthread_join(idThdAfficheurs[i], NULL)) != 0)
 		thdErreur(etat, "Join threads afficheurs", NULL);
 	}
+
+	free(semaphores);
 
 	printf ("\nFin de l'execution du thread principal \n");
 	return 0;
