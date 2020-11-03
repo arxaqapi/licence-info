@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
+#include <semaphore.h>
 
 #define NB_PROD_MAX 15
 #define NB_CONSO_MAX 15
@@ -48,6 +49,9 @@ int nbRetraits;		 // Nombre de retraits faits par chaque consommateur
 //
 // A completer : semaphore(s) et variables partagees utile(s)
 //
+sem_t conso_queue;
+sem_t prod_queue;
+sem_t protect_buffer_access;
 
 //-----------------------------------------------------------
 // Affichage erreur liee a l'echec d'un appel a une fonction pthread_
@@ -104,13 +108,36 @@ void retrait(TypeMessage *leMessage)
 /* 
  * Synchronisation a completer : faire un depot et un retrait
  */
+void P(sem_t * sem)
+{
+	/* En cas d'erreur, un message est affiche et l'execution avortee */
+	int e;
+	if ((e = sem_wait(sem)) != 0)
+	{
+		thdErreur(e, "Erreur sem_post", NULL);
+	}
+}
+
+// Implanter l'operation V
+void V(sem_t * sem)
+{
+	/* En cas d'erreur, un message est affiche et l'execution avortee */
+	int e;
+	if ((e = sem_post(sem)) != 0)
+	{
+		thdErreur(e, "Erreur sem_post", NULL);
+	}
+}
 //-----------------------------------------------------------
 // Appele par un producteur pour deposer de maniere sure un
 // message (le rang du producteur est passe pour la trace)
 void deposer(TypeMessage unMessage, int rangProd)
 {
-
+	// protect
+	P(&protect_buffer_access);
 	depot(unMessage);
+	// protect
+	V(&protect_buffer_access);
 	printf("\tProd %d (%lu) : Message depose = %s\n", rangProd, pthread_self(), unMessage.info);
 #ifdef TRACE_BUFFER
 	afficherBuffer();
@@ -123,8 +150,11 @@ void deposer(TypeMessage unMessage, int rangProd)
 // message (le rang du consommateur est passe pour la trace)
 void retirer(TypeMessage *unMessage, int rangConso)
 {
-
+	// protect
+	P(&protect_buffer_access);
 	retrait(unMessage);
+	// protect
+	V(&protect_buffer_access);
 	printf("\t\tConso %d (%lu) : Message retire = %s\n", rangConso, pthread_self(), unMessage->info);
 #ifdef TRACE_BUFFER
 	afficherBuffer();
@@ -153,8 +183,12 @@ void *producteur(void *arg)
 #ifdef TRACE_DMDES
 		printf("Prod %d (%lu) : Depot %d, message = %s \n", rang, pthread_self(), i + 1, leMessage.info);
 #endif
+		// prend un ticket prod pour deposer un massage
 		// Le deposer
+		P(&prod_queue);
 		deposer(leMessage, rang);
+		// depose un ticket chez les conso pour indiquer au consommateur le nvx prod dans le buffer
+		V(&conso_queue);
 	}
 	pthread_exit(NULL);
 }
@@ -173,8 +207,12 @@ void *consommateur(void *arg)
 	{
 		attenteAleatoire();
 
+		// prend un ticket conso pour retirer un massage
+		P(&conso_queue);
 		// Retirer le 1er message disponible
 		retirer(&leMessage, rang);
+		// depose un ticket chez les prod pour indiquer au producteur la place nouvellement créer dans le buffer
+		V(&prod_queue);
 		// L'afficher
 #ifdef TRACE_DMDES
 		printf("Conso %d (%lu) : Retrait %d, message lu = %s \n", rang, pthread_self(), i + 1, leMessage.info);
@@ -199,7 +237,7 @@ int main(int argc, char *argv[])
 	if (argc < 5)
 	{
 		printf("Usage: %s <Nb Prod <= %d> <Nb Conso <= %d> <NB depots/prod> <Nb retraits/conso> <Nb Cases <== %d> \n",
-			   argv[0], NB_PROD_MAX, NB_CONSO_MAX, NB_CASES_MAX);
+				argv[0], NB_PROD_MAX, NB_CONSO_MAX, NB_CASES_MAX);
 		exit(2);
 	}
 
@@ -217,7 +255,11 @@ int main(int argc, char *argv[])
 		nbCases = NB_CASES_MAX;
 
 	/* Initialiser le(s) semaphore(s) */
-	// A completer
+	// init avec le nombre de cases dans le buffer
+	sem_init(&prod_queue, 0, nbCases);
+	sem_init(&conso_queue, 0, 0);
+	sem_init(&protect_buffer_access, 0, 1);
+	
 
 	/* Creation des nbProd producteurs et nbConso consommateurs */
 	for (i = 0; i < nbProd; i++)
@@ -250,6 +292,8 @@ int main(int argc, char *argv[])
 
 	/* Detruire le(s) semaphore(s) */
 	// A completer
+	sem_destroy(&prod_queue);
+	sem_destroy(&conso_queue);
 
 	printf("\nFin de l'execution du main \n");
 

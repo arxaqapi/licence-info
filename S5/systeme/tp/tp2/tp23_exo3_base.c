@@ -53,7 +53,6 @@ void attenteAleatoire(void)
 // Implanter l'operation P
 void P(sem_t * sem)
 {
-	/* A completer */
 	/* En cas d'erreur, un message est affiche et l'execution avortee */
 	int e;
 	if ((e = sem_wait(sem)) != 0)
@@ -65,7 +64,6 @@ void P(sem_t * sem)
 // Implanter l'operation V
 void V(sem_t * sem)
 {
-	/* A completer */
 	/* En cas d'erreur, un message est affiche et l'execution avortee */
 	int e;
 	if ((e = sem_post(sem)) != 0)
