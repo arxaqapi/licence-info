@@ -3,3 +3,6 @@ main:
 
 e2:
 	gcc tp23_exo2_base.c -o exo2b -DTEMPO -lpthread
+
+e3:
+	gcc tp23_exo3_base.c -oexo3b -DTEMPO -lpthread -Wall
