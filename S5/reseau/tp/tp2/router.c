@@ -57,12 +57,23 @@ int forward_packet(packet_data_t *packet, int psize, routing_table_t *rt) {
 
 /* ========================================================================= */
 /* ************************ A FAIRE PAR LES ETUDIANTS ********************** */
+/* **************************** Status == OK[1 q] ************************** */
 /* ========================================================================= */
 
 // Build distance vector packet
 void build_dv_packet(packet_ctrl_t *p, routing_table_t *rt) {
 
-    /* TODO */
+    // p = packet to build with informations in rt
+    // init
+    p->type = CTRL;
+    p->src_id = MY_ID;
+    // for each entry in routing table, add it to the packet_ctrl->dventry
+    for (int i = 0; i < rt->size; i++)
+    {
+        p->dv[i].metric = rt->tab[i].metric;
+        p->dv[i].dest = rt->tab[i].dest;
+        p->dv_size ++;
+    }
 }
 
 // DV to prevent (partially) count to infinity problem
@@ -89,12 +100,15 @@ void *hello(void *args) {
     neighbors_table_t *nt = pargs->nt;
 
     /* >>>>>>>>>> A COMPLETER PAR LES ETUDIANTS - DEB <<<<<<<<<< */
-
-    /* TODO */
-
+    // packet_ctrl_t * c_packet = calloc(nt->size, sizeof(packet_ctrl_t));    
     while (1) {
-
-        /* TODO */
+        for (int i = 0; i < nt->size; i++)
+        {
+            // hm
+            packet_ctrl_t * c_packet = calloc(nt->size, sizeof(packet_ctrl_t));
+            build_dv_packet(&c_packet[i], rt);
+            send_packet(&c_packet[i], sizeof(c_packet), nt->tab[i].ipv4, nt->tab[i].port);
+        }
 
         /* >>>>>>>>>> A COMPLETER PAR LES ETUDIANTS - FIN <<<<<<<<<< */
         sleep(BROADCAST_PERIOD);
@@ -192,8 +206,6 @@ void *process_input_packets(void *args) {
                     /* I am NOT the recipient ==> forward packet */
                     /* >>>>>>>>>> A COMPLETER PAR LES ETUDIANTS - DEB <<<<<<<<<< */
 
-                    /* TODO */
-                    
                     // decr ttl
                     // if == 0 raise send_time_exceeded()
                     if((pdata->ttl -= 1) == 0)
@@ -217,6 +229,7 @@ void *process_input_packets(void *args) {
                 /* >>>>>>>>>> A COMPLETER PAR LES ETUDIANTS - DEB <<<<<<<<<< */
 
                 /* TODO */
+                // ??
 
                 /* >>>>>>>>>> A COMPLETER PAR LES ETUDIANTS - FIN <<<<<<<<<< */
                 break;
