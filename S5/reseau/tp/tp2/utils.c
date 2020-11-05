@@ -11,6 +11,7 @@
 #include <arpa/inet.h> // inet_addr, htons
 #include <unistd.h> // close()
 
+extern int MY_ID;
 // #define LOG_MSG_MAX_SIZE 256
 
 /* ==================================================================== */

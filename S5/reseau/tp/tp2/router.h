@@ -10,10 +10,6 @@
 #define IPV4_ADR_STRLEN 16  // == INET_ADDRSTRLEN
 #define LOCALHOST "127.0.0.1"
 
-/* ============================= */
-/*  Shared data between threads  */
-int MY_ID;
-/* ============================= */
 
 // Small unsigned integer as node ID
 typedef unsigned char node_id_t;

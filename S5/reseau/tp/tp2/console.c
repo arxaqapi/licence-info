@@ -11,6 +11,8 @@
 #define TRACEROUTE_SLEEP 200
 #define PING_SLEEP 200
 
+extern int MY_ID;
+
 /* ============================= */
 /*  Shared data between threads  */
 int end_traceroute = 0;
