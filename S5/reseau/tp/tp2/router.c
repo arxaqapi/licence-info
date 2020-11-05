@@ -29,11 +29,25 @@ int MY_ID;
 
 /* ========================================================================= */
 /* ************************ A FAIRE PAR LES ETUDIANTS ********************** */
+/* ****************************** Status == OK ***************************** */
 /* ========================================================================= */
 int forward_packet(packet_data_t *packet, int psize, routing_table_t *rt) {
 
     /* TODO */
 
+    unsigned char p_dest_id = packet->dst_id;
+
+    int i = 0;
+    while ( (i < rt->size) && (p_dest_id != rt->tab[i].dest) )
+    {
+        i ++;
+    }
+    // reached end of routing_table, error 
+    if (i == rt->size)
+    {
+        return 0;
+    }    
+    send_packet(packet, psize, rt->tab[i].nexthop.ipv4, rt->tab[i].nexthop.port);
     return 1;
 }
 
@@ -179,6 +193,18 @@ void *process_input_packets(void *args) {
                     /* >>>>>>>>>> A COMPLETER PAR LES ETUDIANTS - DEB <<<<<<<<<< */
 
                     /* TODO */
+                    
+                    // decr ttl
+                    // if == 0 raise send_time_exceeded()
+                    if((pdata->ttl -= 1) == 0)
+                    {
+                        send_time_exceeded(pdata, rt);
+                    }
+                    else
+                    {
+                        // else forward_packet()
+                        forward_packet(pdata, size, rt);
+                    }                    
 
                     /* >>>>>>>>>> A COMPLETER PAR LES ETUDIANTS - FIN <<<<<<<<<< */
                 }
