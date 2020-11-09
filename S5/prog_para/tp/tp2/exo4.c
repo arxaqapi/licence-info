@@ -54,7 +54,7 @@ void read_problem(char *filename)
             break;
         }
     }
-    fclose(problem);
+    // fclose(problem);
     if (num_obj == 0)
     {
         fprintf(stderr, "Could not find any object in the problem file. Exiting.");
@@ -108,7 +108,7 @@ int **matrix_s()
     {
         for (int j = 0; j < (capacity + 1); j++)
         {
-            if (j >= weight[i])
+            if ( weight[i] <= j )
             {
                 S[i][j] = MAX(S[i - 1][j], (S[i - 1][j - weight[i]] + utility[i]));
             }
@@ -129,31 +129,22 @@ int *get_E_from_S(int **S)
     int start_i = num_obj - 1;
     int start_j = capacity;
 
-    while (start_i != 0 )
+    while (start_i != 0 && start_j != 0)
     {
-        if (S[start_i][start_j] == S[start_i - 1][start_j - weight[start_i]] + utility[start_i])
+        if (S[start_i][start_j] == S[start_i - 1][start_j])
         {
-            // case i-1 j-weight[i]
+            // case i-1 j
+            E[start_i] = 0;
+        } else
+        {
             E[start_i] = 1;
             start_j -= weight[start_i];
         }
-        else if (S[start_i][start_j] == S[start_i - 1][start_j])
-        {
-            // case i-1 j
-            // E[start_i] = 0;
-        }
         start_i --;
     }
-
-    // while (start_i != 0)
-    // {
-    //     if (S[start_i][start_j] != S[start_i - 1][start_j])
-    //     {
-    //         E[start_i - 1] = 1;
-    //         start_j -= weight[start_i - 1];
-    //     }
-    //     start_i --;
-    // }
+    
+    // handle start_i == 0
+    E[start_i] = S[start_i][start_j] == utility[start_i];
 
     return E;
 }
@@ -182,7 +173,7 @@ int main(void)
     int best;
     int somme = 0;
 
-    read_problem("./p2");
+    read_problem("./p6");
     int **S = matrix_s();
     int *E = get_E_from_S(S);
     
@@ -197,7 +188,6 @@ int main(void)
             somme += utility[i];
         }
     }
-
     if (somme == best)
     {
         printf("[OK] Utilité maximale (%d) == somme des utilités (%d)\n", best, somme);
