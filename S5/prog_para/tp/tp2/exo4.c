@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <omp.h>
 
 #define MAX_NUM_OBJ 1000
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
+#define NB_THREADS 4
 
 int num_obj = 0;
 int capacity;
@@ -89,8 +91,9 @@ int **create_matrix(int yaxis, int xaxis)
 int **matrix_s()
 {
     int **S = create_matrix(num_obj, capacity + 1);
-
     //  S[0]
+    #pragma omp parallel for num_threads(NB_THREADS)
+    
     for (int j = 0; j < (capacity + 1); j++)
     {
         if (weight[0] > j)
@@ -102,10 +105,10 @@ int **matrix_s()
             S[0][j] = utility[0];
         }
     }
-
     // S[1 -- N]
     for (int i = 1; i < num_obj; i++)
     {
+        #pragma omp parallel for num_threads(NB_THREADS)
         for (int j = 0; j < (capacity + 1); j++)
         {
             if ( weight[i] <= j )
@@ -173,10 +176,20 @@ int main(void)
     int best;
     int somme = 0;
 
-    read_problem("./p6");
+    double start, stop;
+
+    read_problem("./p2");
+    //---------------------------
+    start = omp_get_wtime();
+    
     int **S = matrix_s();
     int *E = get_E_from_S(S);
-    
+
+    stop = omp_get_wtime();
+    printf("1)Time n_threads(%d) = %f\n", NB_THREADS, stop - start);
+    start = stop = 0;    
+
+    //---------------------------
     best = S[num_obj - 1][capacity];
 
     printf("Best utility = %d\n", best);
@@ -196,7 +209,6 @@ int main(void)
     {
         printf("[FAIL] Utilité maximale (%d) != somme des utilités (%d)\n", best, somme);
     }
-    // print_mat(S);
 
     // free
     for (int i = 0; i < num_obj; i++)

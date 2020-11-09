@@ -128,6 +128,28 @@ void *hello(void *args) {
 int update_rt(routing_table_t *rt, overlay_addr_t *src, dv_entry_t dv[], int dv_size) {
 
     /* TODO */
+    for (int i = 0; i < dv_size; i++)
+    {
+        /*
+        if (dv[i].dest not in rt->tab)
+        {
+            // add a new route ti e.dest
+            rt->tab[rt->size].dest = e.dest
+            rt->tab[rt->size].metric = e.metric + 1
+            rt->tab[rt->size].nexthop = ?
+            rt->tab[rt->size].time = ?
+            rt->size ++;
+        }
+        else // route existante = r
+        {
+            if (cout(r)>e.metric+1 || prochain_saut(r)==SRC)
+            {
+                update r
+            }
+        }
+        */
+    }
+    
     return 1;
 }
 
@@ -227,9 +249,14 @@ void *process_input_packets(void *args) {
                 packet_ctrl_t *pctrl = (packet_ctrl_t *) buffer_in;
                 log_dv(pctrl, pctrl->src_id, 0);
                 /* >>>>>>>>>> A COMPLETER PAR LES ETUDIANTS - DEB <<<<<<<<<< */
-
-                /* TODO */
-                // ??
+                overlay_addr_t * src;
+                int i = 0;
+                while (i < nt->size && nt->tab[i].id == pctrl->src_id)
+                {
+                    i ++;
+                }
+                src = &nt->tab[i];                
+                update_rt(rt, src, &pctrl->dv, pctrl->dv_size);
 
                 /* >>>>>>>>>> A COMPLETER PAR LES ETUDIANTS - FIN <<<<<<<<<< */
                 break;
