@@ -4,6 +4,8 @@
 #include <string.h>
 #include <assert.h>
 
+#define NB_THREADS 4
+
 typedef struct color_pixel_struct
 {
 	unsigned char r, g, b;
@@ -135,39 +137,31 @@ void equalizeHistogram(grey_image_type *grey_img)
 {
 	int H[256] = {0};
 	int C[256] = {0};
+	int nb_pixels = grey_img->height * grey_img->width;
 	// on calcule l'histogramme de l'image
-	for (int i = 0; i < (grey_img->height * grey_img->width); i++)
+	for (int i = 0; i < nb_pixels; i++)
 	{
-		H[(int)grey_img->pixels[i]] ++;		
+		H[grey_img->pixels[i]] += 1;	
 	}
 	// Histogramme cummulé
 	C[0] = H[0];
 	for (int i = 1; i < 256; i++)
 	{
-		C[i] = C[i -1 ] + H[i];
+		C[i] = C[i - 1] + H[i];
 	}
 	// cacul image résultat
-	int nb_pix = grey_img->height * grey_img->width;
-	for (int i = 0; i < nb_pix ; i++)
+	#pragma omp parallel for num_threads(NB_THREADS)
+	for (int i = 0; i < nb_pixels ; i++)
 	{
-		grey_img->pixels[i] = 256 * (C[grey_img->pixels[i]]) / nb_pix ;
+		// grey_img->pixels[i] = 256 * (C[(grey_img->pixels[i] - '0')]) / nb_pixels ;
+		grey_img->pixels[i] = 256 * C[grey_img->pixels[i]] / nb_pixels ;
 	}
-	
 	
 	// DEBUG
 	// for (int i = 0; i < 256; i++)
 	// {
 	// 	printf("%d ", H[i]);
 	// }
-	
-	// for (int i = 0; i < grey_img->height; i++)
-	// {
-	// 	for (int j = 0; j < grey_img->width; j++)
-	// 	{
-	// 		int index = i * col_img->width + j;
-	// 	}
-	// }
-	
 }
 
 /**********************************************************************/
@@ -191,7 +185,14 @@ int main(int argc, char **argv)
 
 	// égalisation d'histogramme
 	// function(grey_img, equalisez_grey_image)
+	
 	equalizeHistogram(grey_img);
 
 	saveGreyImage(output_file, grey_img);
+
+	// free
+	free(grey_img->pixels);
+	free(grey_img);
+	free(col_img->pixels);
+	free(col_img);
 }
