@@ -79,10 +79,10 @@ void barrier()
 	if (thread_at_barrier == nbThreads)
 	{
 		// tout les threads sont arrivé au point de rendez vous
-		// i = 1 ou 0
-		for (int i = 0; i < nbThreads; i++)
+		// i = 1 , on débloque n-1 thread et non n thread
+		for (int i = 1; i < nbThreads; i++)
 		{
-			// ajout de N tickets pour débloquer tout les threads en attente
+			// ajout de N-1 tickets pour débloquer tout les threads en attente
 			V(&wait_at_barrier);
 		}
 		thread_at_barrier = 0;

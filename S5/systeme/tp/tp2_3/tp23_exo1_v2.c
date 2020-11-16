@@ -123,8 +123,8 @@ void *thd_afficher (void *arg) {
 					param.monRang, pthread_self(), j+1, param.nbLignes, i+1, param.nbMsg);
 			attenteAleatoire(param.monRang);
 		} 
-	// Rendre l'acces a l'ecran 
-	libererAcces( &param );
+		// Rendre l'acces a l'ecran 
+		libererAcces( &param );
 	}
 
 	printf("Afficheur %d (%lu), je me termine \n", param.monRang, pthread_self());
