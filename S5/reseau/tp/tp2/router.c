@@ -17,7 +17,7 @@
 #define BROADCAST_PERIOD 5
 #define FWD_DELAY_IN_MS 10
 #define INFINITY 8
-
+#define METRIC_MAX_VAL 16
 /* ============================= */
 /*  Shared data between threads  */
 int MY_ID;
@@ -76,24 +76,19 @@ void build_dv_packet(packet_ctrl_t *p, routing_table_t *rt)
 // this neighbour
 void build_dv_specific(packet_ctrl_t *p, routing_table_t *rt, node_id_t neigh)
 {
+    p->type = CTRL;
+    p->src_id = rt->tab[0].dest;
+    p->dv_size = 0;
 
-    // // On assigne les valeurs initiales (id de la source qui reste la même et on initialise la taille a 0)
-    // p->type = CTRL;
-    // p->src_id = rt->tab[0].dest;
-    // p->dv_size = 0;
-
-    // /** Pour chaque entrée dans la table de routage, si le routeur associé au  nextHop n'est pas le retour vers lequel on envoie le paquet
-    //  *  on  crée une dv_entry qu'on ajoute à la fin du tableau contenu dans le paquet de contrôle, sans oublier d'incrementer la taille
-    //  **/
-    // for (int i = 0; i < rt->size; i++)
-    // {
-    //     if (rt->tab[i].nexthop.id != neigh)
-    //     {
-    //         p->dv[(p->dv_size)].dest = rt->tab[i].dest;
-    //         p->dv[(p->dv_size)].metric = rt->tab[i].metric;
-    //         p->dv_size = (p->dv_size) + 1;
-    //     }
-    // }
+    for (int i = 0; i < rt->size; i++)
+    {
+        if (rt->tab[i].nexthop.id != neigh)
+        {
+            p->dv[p->dv_size].dest = rt->tab[i].dest;
+            p->dv[p->dv_size].metric = rt->tab[i].metric;
+            p->dv_size += 1;
+        }
+    }
 }
 
 // Remove old RT entries
@@ -124,11 +119,11 @@ void *hello(void *args)
     while (1)
     {
         // v1
-        build_dv_packet(&c_packet, rt);
+        // build_dv_packet(&c_packet, rt);
         for (int i = 0; i < nt->size; i++)
         {
             // v2
-            // build_dv_specific(c_packet, rt, nt->tab[i].id);
+            build_dv_specific(&c_packet, rt, nt->tab[i].id);
             send_packet(&c_packet, sizeof(c_packet), nt->tab[i].ipv4, nt->tab[i].port);
             log_dv(&c_packet, nt->tab[i].id, 1);
         }
@@ -170,12 +165,11 @@ int update_rt(routing_table_t *rt, overlay_addr_t *src, dv_entry_t dv[], int dv_
             // pas dans rt, on ajoute
             add_route(rt, dv[i].dest, src, dv[i].metric + 1);
         }
-        else
+        else if (rt->tab[ind].metric > (dv[i].metric + 1) || (rt->tab[ind].nexthop.id == src->id))
         {
-
-            if (rt->tab[ind].metric > (dv[i].metric + 1) || (rt->tab[ind].nexthop.id == src->id))
+            // on modifie r
+            if (dv[i].metric + 1 <= METRIC_MAX_VAL)
             {
-                // on modifie r
                 rt->tab[ind].nexthop = *src;
                 rt->tab[ind].metric = dv[i].metric + 1;
                 rt->tab[ind].time = time(NULL);
