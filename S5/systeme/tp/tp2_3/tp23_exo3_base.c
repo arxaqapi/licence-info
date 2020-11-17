@@ -57,7 +57,7 @@ void P(sem_t * sem)
 	int e;
 	if ((e = sem_wait(sem)) != 0)
 	{
-		thdErreur(e, "Erreur sem_post", NULL);
+		thdErreur(e, "Erreur sem_wait", NULL);
 	}
 }
 
