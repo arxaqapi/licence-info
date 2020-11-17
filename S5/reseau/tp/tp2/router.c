@@ -31,24 +31,17 @@ int MY_ID;
 /* ************************ A FAIRE PAR LES ETUDIANTS ********************** */
 /* ****************************** Status == OK ***************************** */
 /* ========================================================================= */
-int forward_packet(packet_data_t *packet, int psize, routing_table_t *rt) {
-
-    /* TODO */
-
-    unsigned char p_dest_id = packet->dst_id;
-
-    int i = 0;
-    while ( (i < rt->size) && (p_dest_id != rt->tab[i].dest) )
+int forward_packet(packet_data_t *packet, int psize, routing_table_t *rt)
+{
+    for (int i = 1; i < rt->size; i++)
     {
-        i ++;
+        if (packet->dst_id == rt->tab[i].dest)
+        {
+            send_packet(packet, psize, rt->tab[i].nexthop.ipv4, rt->tab[i].nexthop.port);
+            return 1;
+        }
     }
-    // reached end of routing_table, error 
-    if (i == rt->size)
-    {
-        return 0;
-    }    
-    send_packet(packet, psize, rt->tab[i].nexthop.ipv4, rt->tab[i].nexthop.port);
-    return 1;
+    return 0;
 }
 
 /* ==================================================================== */
@@ -61,53 +54,83 @@ int forward_packet(packet_data_t *packet, int psize, routing_table_t *rt) {
 /* ========================================================================= */
 
 // Build distance vector packet
-void build_dv_packet(packet_ctrl_t *p, routing_table_t *rt) {
+void build_dv_packet(packet_ctrl_t *p, routing_table_t *rt)
+{
 
     // p = packet to build with informations in rt
     // init
+    p->dv_size = 0;
     p->type = CTRL;
-    p->src_id = MY_ID;
+    p->src_id = rt->tab[0].dest;
     // for each entry in routing table, add it to the packet_ctrl->dventry
     for (int i = 0; i < rt->size; i++)
     {
         p->dv[i].metric = rt->tab[i].metric;
         p->dv[i].dest = rt->tab[i].dest;
-        p->dv_size ++;
+        p->dv_size += 1;
     }
 }
 
 // DV to prevent (partially) count to infinity problem
 // Build a DV that contains the routes that have not been learned via
 // this neighbour
-void build_dv_specific(packet_ctrl_t *p, routing_table_t *rt, node_id_t neigh) {
+void build_dv_specific(packet_ctrl_t *p, routing_table_t *rt, node_id_t neigh)
+{
 
-    /* TODO */
+    // // On assigne les valeurs initiales (id de la source qui reste la même et on initialise la taille a 0)
+    // p->type = CTRL;
+    // p->src_id = rt->tab[0].dest;
+    // p->dv_size = 0;
+
+    // /** Pour chaque entrée dans la table de routage, si le routeur associé au  nextHop n'est pas le retour vers lequel on envoie le paquet
+    //  *  on  crée une dv_entry qu'on ajoute à la fin du tableau contenu dans le paquet de contrôle, sans oublier d'incrementer la taille
+    //  **/
+    // for (int i = 0; i < rt->size; i++)
+    // {
+    //     if (rt->tab[i].nexthop.id != neigh)
+    //     {
+    //         p->dv[(p->dv_size)].dest = rt->tab[i].dest;
+    //         p->dv[(p->dv_size)].metric = rt->tab[i].metric;
+    //         p->dv_size = (p->dv_size) + 1;
+    //     }
+    // }
 }
 
 // Remove old RT entries
-void remove_obsolete_entries(routing_table_t *rt) {
-
-    /* TODO */
+void remove_obsolete_entries(routing_table_t *rt)
+{
+    for (int i = 0; i < rt->size; i++)
+    {
+        if (rt->tab[i].dest != MY_ID && difftime(time(NULL), rt->tab[i].time) > BROADCAST_PERIOD)
+        {
+            rt->tab[i] = rt->tab[(rt->size) - 1];
+            rt->size = (rt->size) - 1;
+        }
+    }
 }
 
 // Hello thread to broadcast state to neighbors
-void *hello(void *args) {
+void *hello(void *args)
+{
 
     /* Cast the pointer to the right type */
-    struct th_args *pargs = (struct th_args *) args;
+    struct th_args *pargs = (struct th_args *)args;
     /* Get routing and neighbors table */
     routing_table_t *rt = pargs->rt;
     neighbors_table_t *nt = pargs->nt;
 
     /* >>>>>>>>>> A COMPLETER PAR LES ETUDIANTS - DEB <<<<<<<<<< */
-    // packet_ctrl_t * c_packet = calloc(nt->size, sizeof(packet_ctrl_t));    
-    while (1) {
+    packet_ctrl_t c_packet;
+    while (1)
+    {
+        // v1
+        build_dv_packet(&c_packet, rt);
         for (int i = 0; i < nt->size; i++)
         {
-            // hm
-            packet_ctrl_t * c_packet = calloc(nt->size, sizeof(packet_ctrl_t));
-            build_dv_packet(&c_packet[i], rt);
-            send_packet(&c_packet[i], sizeof(c_packet), nt->tab[i].ipv4, nt->tab[i].port);
+            // v2
+            // build_dv_specific(c_packet, rt, nt->tab[i].id);
+            send_packet(&c_packet, sizeof(c_packet), nt->tab[i].ipv4, nt->tab[i].port);
+            log_dv(&c_packet, nt->tab[i].id, 1);
         }
 
         /* >>>>>>>>>> A COMPLETER PAR LES ETUDIANTS - FIN <<<<<<<<<< */
@@ -124,44 +147,54 @@ void *hello(void *args) {
 /* ************************ A FAIRE PAR LES ETUDIANTS ********************** */
 /* ========================================================================= */
 
-// Update routing table from received distance vector
-int update_rt(routing_table_t *rt, overlay_addr_t *src, dv_entry_t dv[], int dv_size) {
+int is_in_rt(routing_table_t *rt, dv_entry_t dv)
+{
+    for (int i = 0; i < rt->size; i++)
+    {
+        if (rt->tab[i].dest == dv.dest)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
 
-    /* TODO */
+// Update routing table from received distance vector
+int update_rt(routing_table_t *rt, overlay_addr_t *src, dv_entry_t dv[], int dv_size)
+{
+    int ind;
     for (int i = 0; i < dv_size; i++)
     {
-        /*
-        if (dv[i].dest not in rt->tab)
+        if ((ind = is_in_rt(rt, dv[i])) == -1)
         {
-            // add a new route ti e.dest
-            rt->tab[rt->size].dest = e.dest
-            rt->tab[rt->size].metric = e.metric + 1
-            rt->tab[rt->size].nexthop = ?
-            rt->tab[rt->size].time = ?
-            rt->size ++;
+            // pas dans rt, on ajoute
+            add_route(rt, dv[i].dest, src, dv[i].metric + 1);
         }
-        else // route existante = r
+        else
         {
-            if (cout(r)>e.metric+1 || prochain_saut(r)==SRC)
+
+            if (rt->tab[ind].metric > (dv[i].metric + 1) || (rt->tab[ind].nexthop.id == src->id))
             {
-                update r
+                // on modifie r
+                rt->tab[ind].nexthop = *src;
+                rt->tab[ind].metric = dv[i].metric + 1;
+                rt->tab[ind].time = time(NULL);
             }
         }
-        */
     }
-    
     return 1;
 }
 
 // Server thread waiting for input packets
-void *process_input_packets(void *args) {
+void *process_input_packets(void *args)
+{
 
     int sock;
     struct sockaddr_in my_adr, neigh_adr;
     socklen_t adr_len = sizeof(struct sockaddr_in);
     char buffer_in[BUF_SIZE];
     /* Cast the pointer to the right type */
-    struct th_args *pargs = (struct th_args *) args;
+    struct th_args *pargs = (struct th_args *)args;
     /* Get routing and neighbors table */
     routing_table_t *rt = pargs->rt;
     neighbors_table_t *nt = pargs->nt;
@@ -171,7 +204,8 @@ void *process_input_packets(void *args) {
 
     /* Create (server) socket */
     /* ---------------------- */
-    if ( (sock = socket(AF_INET, SOCK_DGRAM, 0)) < 0 ) {
+    if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+    {
         perror("socket error");
         exit(EXIT_FAILURE);
     }
@@ -184,87 +218,92 @@ void *process_input_packets(void *args) {
     my_adr.sin_port = htons(port);
     my_adr.sin_addr.s_addr = htonl(INADDR_ANY);
 
-    if (bind(sock, (struct sockaddr *) &my_adr, sizeof(my_adr)) < 0) {
+    if (bind(sock, (struct sockaddr *)&my_adr, sizeof(my_adr)) < 0)
+    {
         perror("bind error");
         close(sock);
         exit(EXIT_FAILURE);
     }
 
-    logger("SERVER TH","waiting for incoming messages");
-    while (1) {
+    logger("SERVER TH", "waiting for incoming messages");
+    while (1)
+    {
 
-        if ( (size = recvfrom(sock, buffer_in, BUF_SIZE, 0, (struct sockaddr *) &neigh_adr, &adr_len)) < 0 ) {
+        if ((size = recvfrom(sock, buffer_in, BUF_SIZE, 0, (struct sockaddr *)&neigh_adr, &adr_len)) < 0)
+        {
             perror("recvfrom error");
             exit(EXIT_FAILURE);
         }
 
-        switch (buffer_in[0]) {
+        switch (buffer_in[0])
+        {
 
-            case DATA:
-                logger("SERVER TH", "DATA packet received");
-                packet_data_t *pdata = (packet_data_t *) buffer_in;
-                if (pdata->dst_id == MY_ID) {
-                    switch (pdata->subtype) {
-                        case ECHO_REQUEST:
-                            send_ping_reply(pdata, rt);
-                            break;
-                        case ECHO_REPLY:
-                            print_ping_reply(pdata);
-                            break;
-                        case TR_REQUEST:
-                            send_traceroute_reply(pdata, rt);
-                            break;
-                        case TR_TIME_EXCEEDED:
-                            print_traceroute_path(pdata);
-                            break;
-                        case TR_ARRIVED:
-                            print_traceroute_last(pdata);
-                            break;
-                        default:
-                            logger("SERVER TH","unidentified data packet received");
-                    }
-                }
-                else {
-                    /* I am NOT the recipient ==> forward packet */
-                    /* >>>>>>>>>> A COMPLETER PAR LES ETUDIANTS - DEB <<<<<<<<<< */
-
-                    // decr ttl
-                    // if == 0 raise send_time_exceeded()
-                    if((pdata->ttl -= 1) == 0)
-                    {
-                        send_time_exceeded(pdata, rt);
-                    }
-                    else
-                    {
-                        // else forward_packet()
-                        forward_packet(pdata, size, rt);
-                    }                    
-
-                    /* >>>>>>>>>> A COMPLETER PAR LES ETUDIANTS - FIN <<<<<<<<<< */
-                }
-                break;
-
-            case CTRL:
-                logger("SERVER TH", "CTRL packet received");
-                packet_ctrl_t *pctrl = (packet_ctrl_t *) buffer_in;
-                log_dv(pctrl, pctrl->src_id, 0);
-                /* >>>>>>>>>> A COMPLETER PAR LES ETUDIANTS - DEB <<<<<<<<<< */
-                overlay_addr_t * src;
-                int i = 0;
-                while (i < nt->size && nt->tab[i].id == pctrl->src_id)
+        case DATA:
+            logger("SERVER TH", "DATA packet received");
+            packet_data_t *pdata = (packet_data_t *)buffer_in;
+            if (pdata->dst_id == MY_ID)
+            {
+                switch (pdata->subtype)
                 {
-                    i ++;
+                case ECHO_REQUEST:
+                    send_ping_reply(pdata, rt);
+                    break;
+                case ECHO_REPLY:
+                    print_ping_reply(pdata);
+                    break;
+                case TR_REQUEST:
+                    send_traceroute_reply(pdata, rt);
+                    break;
+                case TR_TIME_EXCEEDED:
+                    print_traceroute_path(pdata);
+                    break;
+                case TR_ARRIVED:
+                    print_traceroute_last(pdata);
+                    break;
+                default:
+                    logger("SERVER TH", "unidentified data packet received");
                 }
-                src = &nt->tab[i];                
-                update_rt(rt, src, &pctrl->dv, pctrl->dv_size);
+            }
+            else
+            {
+                /* I am NOT the recipient ==> forward packet */
+                /* >>>>>>>>>> A COMPLETER PAR LES ETUDIANTS - DEB <<<<<<<<<< */
+
+                // decr ttl
+                // if == 0 raise send_time_exceeded()
+                if ((pdata->ttl -= 1) == 0)
+                {
+                    send_time_exceeded(pdata, rt);
+                }
+                else
+                {
+                    // else forward_packet()
+                    forward_packet(pdata, size, rt);
+                }
 
                 /* >>>>>>>>>> A COMPLETER PAR LES ETUDIANTS - FIN <<<<<<<<<< */
-                break;
+            }
+            break;
 
-            default:
-                // drop
-                logger("SERVER TH", "unidentified packet received.");
-                break;
+        case CTRL:
+            logger("SERVER TH", "CTRL packet received");
+            packet_ctrl_t *pctrl = (packet_ctrl_t *)buffer_in;
+            log_dv(pctrl, pctrl->src_id, 0);
+            /* >>>>>>>>>> A COMPLETER PAR LES ETUDIANTS - DEB <<<<<<<<<< */
+            int i = 0;
+            while ((nt->tab[i].id != pctrl->src_id) && (i < nt->size))
+            {
+                i++;
+            }
+            update_rt(rt, &nt->tab[i], pctrl->dv, pctrl->dv_size);
+
+            /* >>>>>>>>>> A COMPLETER PAR LES ETUDIANTS - FIN <<<<<<<<<< */
+            break;
+
+        default:
+            // drop
+            logger("SERVER TH", "unidentified packet received.");
+            break;
         }
     }
 }
@@ -273,7 +312,8 @@ void *process_input_packets(void *args) {
 /* ========================== MAIN PROGRAM ============================ */
 /* ==================================================================== */
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
 
     routing_table_t myrt;
     neighbors_table_t mynt;
@@ -284,7 +324,8 @@ int main(int argc, char **argv) {
     // printf("sizeof(routing table) = %lu bytes\n", sizeof(myrt));
     // printf("sizeof(neighbors table) = %lu bytes\n", sizeof(myrt));
 
-    if (argc!=3) {
+    if (argc != 3)
+    {
         printf("Usage: %s <id> <net_topo_conf>\n", argv[0]);
         printf("or\n");
         printf("Usage: %s <id> --test-forwarding\n", argv[0]);
@@ -300,11 +341,13 @@ int main(int argc, char **argv) {
     printf("* RTR ID : %d *\n", MY_ID);
     printf("**************\n");
 
-    if (strcmp(argv[2], "--test-forwarding") == 0) {
+    if (strcmp(argv[2], "--test-forwarding") == 0)
+    {
         init_full_routing_table(&myrt);
         test_forwarding = 1;
     }
-    else {
+    else
+    {
         read_neighbors(argv[2], rid, &mynt);
         init_routing_table(&myrt);
     }
@@ -316,21 +359,23 @@ int main(int argc, char **argv) {
 
     /* Create a new thread th1 (process input packets) */
     pthread_create(&th1_id, NULL, &process_input_packets, &args);
-    logger("MAIN TH","process input packets thread created with ID %u", (int) th1_id);
+    logger("MAIN TH", "process input packets thread created with ID %u", (int)th1_id);
 
-    if ( !test_forwarding ) {
+    if (!test_forwarding)
+    {
         /* Create a new thread th2 (hello broadcast) */
         pthread_create(&th2_id, NULL, &hello, &args);
-        logger("MAIN TH","hello thread created with ID %u", (int) th2_id);
+        logger("MAIN TH", "hello thread created with ID %u", (int)th2_id);
     }
 
-    int quit=0, len;
+    int quit = 0, len;
     char *command = NULL;
     size_t size;
-    while (!quit) {
+    while (!quit)
+    {
         print_prompt();
         len = getline(&command, &size, stdin);
-        command[len-1] = '\0'; // remove newline
+        command[len - 1] = '\0'; // remove newline
         quit = !strcmp("quit", command) || !strcmp("exit", command);
         if (!quit)
             process_command(command, &myrt, &mynt);
