@@ -16,6 +16,7 @@ typedef struct msg
 void proc(int mon_num, int ** tubes)
 {   
     msg_ msg;
+    
     // TODO Close unused pipe/write end
     // my pipe = tubes[0]
     close(tubes[mon_num][1]);
