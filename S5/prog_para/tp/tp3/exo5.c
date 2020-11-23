@@ -1,10 +1,10 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <omp.h>
 
-#define NB_THREADS 4
+#define NB_THREADS 6
 
 typedef struct color_pixel_struct
 {
@@ -120,6 +120,7 @@ void saveColorImage(char *filename, color_image_type *image)
 
 void colorToGrey(color_image_type *col_img, grey_image_type *grey_img)
 {
+	#pragma omp parallel for num_threads(NB_THREADS)
 	for (int i = 0; i < col_img->height; i++)
 	{
 		for (int j = 0; j < col_img->width; j++)
@@ -139,9 +140,11 @@ void equalizeHistogram(grey_image_type *grey_img)
 	int C[256] = {0};
 	int nb_pixels = grey_img->height * grey_img->width;
 	// on calcule l'histogramme de l'image
+	#pragma omp parallel for num_threads(NB_THREADS)
 	for (int i = 0; i < nb_pixels; i++)
 	{
-		H[grey_img->pixels[i]] += 1;	
+		#pragma omp atomic
+		H[grey_img->pixels[i]] ++;	
 	}
 	// Histogramme cummulé
 	C[0] = H[0];
@@ -156,12 +159,6 @@ void equalizeHistogram(grey_image_type *grey_img)
 		// grey_img->pixels[i] = 256 * (C[(grey_img->pixels[i] - '0')]) / nb_pixels ;
 		grey_img->pixels[i] = 256 * C[grey_img->pixels[i]] / nb_pixels ;
 	}
-	
-	// DEBUG
-	// for (int i = 0; i < 256; i++)
-	// {
-	// 	printf("%d ", H[i]);
-	// }
 }
 
 /**********************************************************************/
@@ -169,6 +166,7 @@ int main(int argc, char **argv)
 {
 	color_image_type *col_img;
 	grey_image_type *grey_img;
+	double start, stop;
 
 	if (argc != 3)
 	{
@@ -181,12 +179,17 @@ int main(int argc, char **argv)
 	col_img = loadColorImage(input_file);
 	grey_img = createGreyImage(col_img->width, col_img->height);
 
+	// ---------- omp for
+	start = omp_get_wtime();
 	colorToGrey(col_img, grey_img);
-
-	// égalisation d'histogramme
-	// function(grey_img, equalisez_grey_image)
-	
+	// égalisation d'histogramme	
+	// omp for
 	equalizeHistogram(grey_img);
+
+	stop = omp_get_wtime();
+    printf("%s )Time n_threads(%d) = %f\n", input_file, NB_THREADS, stop - start);
+    start = stop = 0;
+	// ---------- end
 
 	saveGreyImage(output_file, grey_img);
 
