@@ -1,0 +1,14 @@
++client
+x (A) 2020-11-27 - implement client 
+x (B) 2020-11-27 - create_socket()
+x (B) 2020-11-27 - send_receive_loop()
+x (B) 2020-11-27 - close_socket()
+x (C) 2020-11-27 - Test on distant server: 146.59.237.169:5555
+
++server
+(A) - Write pseudo code
+(B) - break program into functions (reuse)
+(C) - create, bind 
+(D) - listen accept | receive send loop | close
+(E) - Test this out
+(F) - parallelize using processes
