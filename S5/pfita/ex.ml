@@ -32,4 +32,15 @@ let rec listeDebuts l = match l with
   | hd :: tl -> [] :: ajouterElement hd (listeDebuts tl)
 
 
-let () = print_int (*(snd (ack 2 2 0))*) (reconstruct 88886644 (fun x -> x))
+
+let rec ps n = match n with
+  | 0-> (1, 0)
+  | x -> let p = ps (n-1) in if (x mod 10) = 0
+  then (fst p, (snd p) + x) else ((fst p) * x, snd p);;
+
+
+
+
+let () = print_int ( fst (ps 4));
+          print_endline " ";
+        print_int (snd (ps 4))

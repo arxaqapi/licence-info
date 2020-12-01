@@ -9,7 +9,8 @@ boucle:
 	
 e2v2: boucle
 	gcc -g -Wall -o e2v2 tp45_exo2-v2_base.c
-
+e3:
+	gcc -g tp45_exo3_base.c -o tp45_exo3 -Wall
 
 
 clean:
