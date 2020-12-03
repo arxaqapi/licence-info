@@ -64,22 +64,23 @@ void afficher_jeu(int jeu[N][N], int res, int points, int coups) {
 
 
 #define SERVER_PORT 5555
-#define SERVER_ADDRESS "146.59.237.169"
+#define SERVER_ADDRESS "127.0.0.1"
+// #define SERVER_ADDRESS "146.59.237.169"
 
-void close_socket(int * sid)
+void close_socket(int * socket_id)
 {
-    if(close(*sid) == -1)
+    if(close(*socket_id) == -1)
     {
         perror("[CLIENT] - Erreur lors de la fermeture de la connexion distante");
         exit(EXIT_FAILURE);
     }
 }
 
-void create_socket(int * sid)
+void create_socket(int * socket_id)
 {
     // 1. creation
-    (*sid) = socket(AF_INET, SOCK_STREAM, 0);
-    if ( (*sid) == -1 )
+    (*socket_id) = socket(AF_INET, SOCK_STREAM, 0);
+    if ( (*socket_id) == -1 )
     {
         perror("[CLIENT] - Erreur lors de la creation du socket");
         exit(EXIT_FAILURE);
@@ -93,16 +94,16 @@ void create_socket(int * sid)
     distant_server.sin_family = AF_INET;
     distant_server.sin_port = htons(SERVER_PORT);
     inet_pton(AF_INET, SERVER_ADDRESS, &(distant_server.sin_addr));
-    if( connect(*sid, (struct sockaddr*)&distant_server, sizeof(distant_server)) == -1 )
+    if( connect(*socket_id, (struct sockaddr*)&distant_server, sizeof(distant_server)) == -1 )
     {
         perror("[CLIENT] - Erreur lors de l'etablissement de la connexion avec le serveur distant");
-        close_socket(sid);
+        close_socket(socket_id);
         exit(EXIT_FAILURE);
     }
     printf("[log] - Etablissement de la connexion reussite\n");
 }
 
-void send_receive_loop(int * sid, int argc, char **argv)
+void send_receive_loop(int * socket_id, int argc, char **argv)
 {
     int jeu[N][N];
     int lig, col;
@@ -131,10 +132,10 @@ void send_receive_loop(int * sid, int argc, char **argv)
         /*-----------------------------*/
         /* connected to distant / local server*/
         // send and receive loop
-        send(*sid, buffer, sizeof(buffer), 0);
-        // read(*sid, buffer, sizeof(buffer));
+        send(*socket_id, buffer, sizeof(buffer), 0);
+        // read(*socket_id, buffer, sizeof(buffer));
 
-        recv(*sid, buffer, sizeof(buffer), 0);
+        recv(*socket_id, buffer, sizeof(buffer), 0);
         /*-----------------------------*/
         sscanf(buffer, "%d", &res);
 
@@ -158,11 +159,11 @@ void send_receive_loop(int * sid, int argc, char **argv)
 /* ====================================================================== */
 int main(int argc, char **argv) {
 
-    int sid;
+    int socket_id;
 
-    create_socket(&sid);
-    send_receive_loop(&sid, argc, argv);
-    close_socket(&sid);
+    create_socket(&socket_id);
+    send_receive_loop(&socket_id, argc, argv);
+    close_socket(&socket_id);
 
     return 0;
 }
