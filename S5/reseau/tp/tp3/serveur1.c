@@ -17,7 +17,9 @@
 #define N 10
 #define MAX_QUEUE 5
 #define SERVER_PORT 5555
+
 ///////////////////////////////////////////////
+void receive_send_loop(int *client_socket, int tresor_x, int tresor_y);
 
 void close_server_socket(int *socket_id)
 {
@@ -28,7 +30,7 @@ void close_server_socket(int *socket_id)
     }
 }
 
-int create_server_socket(int *socket_id)
+void create_server_socket(int *socket_id)
 {
     // creation du client
     (*socket_id) = socket(AF_INET, SOCK_STREAM, 0);
@@ -50,6 +52,9 @@ int create_server_socket(int *socket_id)
         close_server_socket(socket_id);
         exit(EXIT_FAILURE);
     }
+    // treasure data init
+    int tresor_x = 1 + rand() % N;
+    int tresor_y = 1 + rand() % N;
     // 3. listen for entry con, in an infinite manner
     while (1)
     {
@@ -73,17 +78,18 @@ int create_server_socket(int *socket_id)
         }
         printf("[SERVEUR] - Liaison établie avec le client\n");
         // call send receive here
+        receive_send_loop(&client_socket, tresor_x, tresor_y);
+        close_server_socket(&client_socket);
     }
-    return client_socket;
+    // return client_socket;
+    printf("Closing server\n");
 }
 
-void receive_send_loop(int *client_socket)
+void receive_send_loop(int *client_socket, int tresor_x, int tresor_y)
 {
     srand(time(NULL));
     char buffer[8];
     int read_size;
-    int tresor_x = 1 + rand() % N;
-    int tresor_y = 1 + rand() % N;
     int client_x;
     int client_y;
     int result;
@@ -119,9 +125,8 @@ void receive_send_loop(int *client_socket)
 /* =================================================================== */
 int main(int argc, char **argv)
 {
-
     // create socket
-    // bind adn listen
+    // bind and listen
     // loop:
     //      accept comm
     //      loop:
@@ -133,11 +138,8 @@ int main(int argc, char **argv)
     //      close comm
     // :end
     int socket_id;
-    int client_socket;
-    client_socket = create_server_socket(&socket_id);
-    receive_send_loop(&client_socket);
+    create_server_socket(&socket_id);
     close_server_socket(&socket_id);
-    close_server_socket(&client_socket);
 
     return 0;
 } // end main

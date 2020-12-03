@@ -13,7 +13,7 @@ serveur1: serveur1.o tresor.o
 	$(CC) $(FLAGS) $^ -o $@
 
 serveur2: serveur2.o tresor.o
-	$(CC) $(FLAGS) $^ -o $@
+	$(CC) $(FLAGS) $^ -o $@ -lpthread
 
 test-jeu-centralise: test-jeu-centralise.o tresor.o
 	$(CC) $(FLAGS) $^ -o $@
