@@ -6,9 +6,9 @@ x (B) 2020-11-27 - close_socket()
 x (C) 2020-11-27 - Test on distant server: 146.59.237.169:5555
 
 +server
-(A) - Write pseudo code
-(B) - break program into functions (reuse)
-(C) - create, bind 
-(D) - listen accept | receive send loop | close
-(E) - Test this out
-(F) - parallelize using processes
+x (A) 2020-12-04 - Write pseudo code
+x (B) 2020-12-04 - break program into functions (reuse)
+x (C) 2020-12-04 - create, bind 
+x (D) 2020-12-04 - listen accept | receive send loop | close
+x (E) 2020-12-04 - Test this out
+x (F) 2020-12-04 - parallelize using processes

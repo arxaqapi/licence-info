@@ -1,3 +1,5 @@
+CFLAGS=-Wall -Wextra -Wshadow -pedantic -Werror
+
 main:
 	gcc -g -Wall -o e1 tp45_exo1.c
 
@@ -9,9 +11,12 @@ boucle:
 	
 e2v2: boucle
 	gcc -g -Wall -o e2v2 tp45_exo2-v2_base.c
+
 e3:
 	gcc -g tp45_exo3_base.c -o tp45_exo3 -Wall
 
+e4:
+	gcc -g $(CFLAGS) tp45_exo4.c -o tp45_exo4
 
 clean:
-	rm -rf e1 e2v1 e2v2 boucle
+	rm -rf e1 e2v1 e2v2 boucle tp45_exo3 tp45_exo4
