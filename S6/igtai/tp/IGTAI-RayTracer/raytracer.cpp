@@ -43,27 +43,40 @@ bool intersectSphere(Ray *ray, Intersection *intersection, Object *obj)
     auto c = glm::dot(oc, oc) - powf(obj->geom.sphere.radius, 2);
     auto delta = powf(b, 2.0f) - 4.0f * a * c;
 
-    if (delta > 0.0f)
+    if (delta > acne_eps)
     {
         /* 2 solution, plus petit t compris entre tmin tmax */
-        auto t1 = (-b - sqrt(delta)) / (2.0f * a);
-        auto t2 = (-b + sqrt(delta)) / (2.0f * a);
-        if ((t1 < t2) && (t1 <= ray->tmax) && (t1 >= ray->tmin))
-        // if ((t1 <= ray->tmax) && (t1 >= ray->tmin))
+        auto t1 = (- b - sqrt(delta)) / (2.0f * a);
+        auto t2 = (- b + sqrt(delta)) / (2.0f * a);
+        auto ft = 0.0f;
+        
+        // tmin -- t1 -- t2 -- tmax
+        if (   (t1 >= ray->tmin) 
+            && (t1 <= ray->tmax)
+            && (t2 >= ray->tmin) 
+            && (t2 <= ray->tmax))
+        {
+            if (t1 < t2)
+            {
+                t = t1;
+            } else
+            {
+                t = t2;
+            }
+        // tmin -- t1 -- tmax -- t2
+        } else if ((t1 >= ray->tmin) && (t1 <= ray->tmax))
         {
             t = t1;
-        }
-        else if ((t2 <= t1) && (t2 <= ray->tmax) && (t2 >= ray->tmin))
+        // t1 -- tmin -- t2 -- tmax
+        } else if ((t2 >= ray->tmin) && (t2 <= ray->tmax))
         {
             t = t2;
-        }
-        else
+        } else
         {
             return false;
         }
-        // goto end of if {}
     }
-    else if (delta == 0.0f) //(delta >= 0.0-et) && (delta <= 0.0+et))
+    else if ((delta >= 0.0 - acne_eps) && (delta <= 0.0 + acne_eps))
     {
         /* 1 solution */
         t = (-b) / (2.0f * a);
@@ -71,7 +84,6 @@ bool intersectSphere(Ray *ray, Intersection *intersection, Object *obj)
         {
             return false;
         }
-        // goto end of if {}
     }
     else
     {
