@@ -76,6 +76,7 @@ bool intersectSphere(Ray *ray, Intersection *intersection, Object *obj)
             return false;
         }
     }
+    // else if ( 0.0 <= fabsf(0.0 + acne_eps))
     else if ((delta >= 0.0 - acne_eps) && (delta <= 0.0 + acne_eps))
     {
         /* 1 solution */
@@ -90,7 +91,7 @@ bool intersectSphere(Ray *ray, Intersection *intersection, Object *obj)
         return false;
     }
     intersection->position = ray->orig + t * ray->dir;
-    intersection->normal = glm::normalize(obj->geom.sphere.center * intersection->position);
+    intersection->normal = glm::normalize(intersection->position - obj->geom.sphere.center);
     ray->tmax = t;
     return true;
 }
@@ -100,8 +101,27 @@ bool intersectScene(const Scene *scene, Ray *ray, Intersection *intersection)
     bool hasIntersection = false;
     size_t objectCount = scene->objects.size();
 
-    //!\todo loop on each object of the scene to compute intersection
-
+    for (size_t i = 0; i < objectCount; i++)
+    {
+        Object * const o  = scene->objects[i];
+        if (o->geom.type == SPHERE)
+        {
+            if (intersectSphere(ray, intersection, o))
+            {
+                hasIntersection = true;
+            }
+            
+            // hasIntersection = hasIntersection || intersectSphere(ray, intersection, o);
+        } else if (o->geom.type == PLANE)
+        {
+            if (intersectPlane(ray, intersection, o))
+            {
+                hasIntersection = true;
+            }
+            
+            // hasIntersection = hasIntersection || intersectPlane(ray, intersection, o);
+        }
+    }
     return hasIntersection;
 }
 
@@ -211,9 +231,18 @@ color3 shade(vec3 n, vec3 v, vec3 l, color3 lc, Material *mat)
 
 color3 trace_ray(Scene *scene, Ray *ray, KdTree *tree)
 {
-
+    // renvoie la couleur du pixel correspondant au rayon donné en argument
     color3 ret = color3(0, 0, 0);
     Intersection intersection;
+
+    if (intersectScene(scene, ray, &intersection))
+    {
+        ret = 0.5f * intersection.normal + 0.5f;
+    } else
+    {
+        // -> ciel 
+        ret = scene->skyColor;
+    }
 
     return ret;
 }
