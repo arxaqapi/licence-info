@@ -106,20 +106,12 @@ bool intersectScene(const Scene *scene, Ray *ray, Intersection *intersection)
         Object * const o  = scene->objects[i];
         if (o->geom.type == SPHERE)
         {
-            if (intersectSphere(ray, intersection, o))
-            {
-                hasIntersection = true;
-            }
-            
-            // hasIntersection = hasIntersection || intersectSphere(ray, intersection, o);
+            // be carefull with lazy evaluation
+            hasIntersection = intersectSphere(ray, intersection, o) || hasIntersection;
         } else if (o->geom.type == PLANE)
         {
-            if (intersectPlane(ray, intersection, o))
-            {
-                hasIntersection = true;
-            }
-            
-            // hasIntersection = hasIntersection || intersectPlane(ray, intersection, o);
+            // be carefull with lazy evaluation
+            hasIntersection = intersectPlane(ray, intersection, o) || hasIntersection;
         }
     }
     return hasIntersection;
