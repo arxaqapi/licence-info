@@ -127,7 +127,8 @@ void client(int num)
     }
     printf("Client %d (%d) : Commande envoyée à l’ouvrier 0... je vais l’attendre\n", num, commande_client.client_pid);
     // attente de la réception du colis
-    //
+    pause();
+    // sigsuspend(&mask);
     printf("============== Client %d (%d) : Ma commande est arrivée !\n", num, commande_client.client_pid);
     close(tubes[0][1]);
 }
