@@ -27,6 +27,7 @@ bool intersectPlane(Ray *ray, Intersection *intersection, Object *obj)
     {
         intersection->position = ray->orig + t * ray->dir;
         intersection->normal = obj->geom.plane.normal;
+        intersection->mat = &(obj->mat);
         ray->tmax = t;
         return true;
     }
@@ -92,6 +93,7 @@ bool intersectSphere(Ray *ray, Intersection *intersection, Object *obj)
     }
     intersection->position = ray->orig + t * ray->dir;
     intersection->normal = glm::normalize(intersection->position - obj->geom.sphere.center);
+    intersection->mat = &(obj->mat);;
     ray->tmax = t;
     return true;
 }
@@ -212,9 +214,13 @@ color3 shade(vec3 n, vec3 v, vec3 l, color3 lc, Material *mat)
 {
     color3 ret = color3(0.f);
 
-    //! \todo compute bsdf, return the shaded color taking into account the
-    //! lightcolor
-
+    auto ldotn = glm::dot(l, n);
+    if (ldotn > 0.0f)
+    {
+        auto pi = atan(1.0f) * 4.0f;
+        auto kd_over_pi = mat->diffuseColor / pi;
+        ret = kd_over_pi * ldotn * lc;
+    }
     return ret;
 }
 
@@ -223,19 +229,24 @@ color3 shade(vec3 n, vec3 v, vec3 l, color3 lc, Material *mat)
 
 color3 trace_ray(Scene *scene, Ray *ray, KdTree *tree)
 {
-    // renvoie la couleur du pixel correspondant au rayon donné en argument
     color3 ret = color3(0, 0, 0);
     Intersection intersection;
 
     if (intersectScene(scene, ray, &intersection))
     {
-        ret = 0.5f * intersection.normal + 0.5f;
+        // light
+        for (int i = 0; i < scene->lights.size(); i++)
+        {
+            auto lPos = scene->lights[i]->position;
+            auto pPos = intersection.normal;
+            auto l = glm::normalize(lPos - pPos);
+            auto v = - ray->dir;
+            ret += shade(intersection.normal, v, l, scene->lights[i]->color, intersection.mat);
+        }
     } else
     {
-        // -> ciel 
         ret = scene->skyColor;
     }
-
     return ret;
 }
 
