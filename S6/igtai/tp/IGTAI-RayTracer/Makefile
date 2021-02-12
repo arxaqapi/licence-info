@@ -10,7 +10,7 @@ TARGETS=mrt unit-test
 all: $(TARGETS)
 
 clean:
-	@rm -rf *.o ./lodepng-master/lodepng.o *~ $(TARGETS) .d
+	@rm -rf *.png *.o ./lodepng-master/lodepng.o *~ $(TARGETS) .d
 
 CC=g++
 CFLAGS=-Wall -std=c++14 -g -I./glm-master/ -fopenmp -I./lodepng-master/ -O3

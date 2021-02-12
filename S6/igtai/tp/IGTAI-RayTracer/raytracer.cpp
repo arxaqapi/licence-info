@@ -47,32 +47,33 @@ bool intersectSphere(Ray *ray, Intersection *intersection, Object *obj)
     if (delta > acne_eps)
     {
         /* 2 solution, plus petit t compris entre tmin tmax */
-        auto t1 = (- b - sqrt(delta)) / (2.0f * a);
-        auto t2 = (- b + sqrt(delta)) / (2.0f * a);
+        auto t1 = (-b - sqrt(delta)) / (2.0f * a);
+        auto t2 = (-b + sqrt(delta)) / (2.0f * a);
         auto ft = 0.0f;
-        
+
         // tmin -- t1 -- t2 -- tmax
-        if (   (t1 >= ray->tmin) 
-            && (t1 <= ray->tmax)
-            && (t2 >= ray->tmin) 
-            && (t2 <= ray->tmax))
+        if ((t1 >= ray->tmin) && (t1 <= ray->tmax) && (t2 >= ray->tmin) && (t2 <= ray->tmax))
         {
             if (t1 < t2)
             {
                 t = t1;
-            } else
+            }
+            else
             {
                 t = t2;
             }
-        // tmin -- t1 -- tmax -- t2
-        } else if ((t1 >= ray->tmin) && (t1 <= ray->tmax))
+            // tmin -- t1 -- tmax -- t2
+        }
+        else if ((t1 >= ray->tmin) && (t1 <= ray->tmax))
         {
             t = t1;
-        // t1 -- tmin -- t2 -- tmax
-        } else if ((t2 >= ray->tmin) && (t2 <= ray->tmax))
+            // t1 -- tmin -- t2 -- tmax
+        }
+        else if ((t2 >= ray->tmin) && (t2 <= ray->tmax))
         {
             t = t2;
-        } else
+        }
+        else
         {
             return false;
         }
@@ -93,7 +94,8 @@ bool intersectSphere(Ray *ray, Intersection *intersection, Object *obj)
     }
     intersection->position = ray->orig + t * ray->dir;
     intersection->normal = glm::normalize(intersection->position - obj->geom.sphere.center);
-    intersection->mat = &(obj->mat);;
+    intersection->mat = &(obj->mat);
+    ;
     ray->tmax = t;
     return true;
 }
@@ -105,12 +107,13 @@ bool intersectScene(const Scene *scene, Ray *ray, Intersection *intersection)
 
     for (size_t i = 0; i < objectCount; i++)
     {
-        Object * const o  = scene->objects[i];
+        Object *const o = scene->objects[i];
         if (o->geom.type == SPHERE)
         {
             // be carefull with lazy evaluation
             hasIntersection = intersectSphere(ray, intersection, o) || hasIntersection;
-        } else if (o->geom.type == PLANE)
+        }
+        else if (o->geom.type == PLANE)
         {
             // be carefull with lazy evaluation
             hasIntersection = intersectPlane(ray, intersection, o) || hasIntersection;
@@ -137,9 +140,13 @@ float RDM_chiplus(float c) { return (c > 0.f) ? 1.f : 0.f; }
  */
 float RDM_Beckmann(float NdotH, float alpha)
 {
-
     //! \todo compute Beckmann normal distribution
-    return 0.5f;
+    // NdotH = cos thetaH
+    // auto m = M_PIf32;
+    auto thanSquare = (1 - NdotH * NdotH) / (NdotH * NdotH);
+    auto r_term = exp(-thanSquare / (alpha * alpha)) / (M_PIf32 * alpha * alpha * powf(NdotH, 4));
+    auto chi_plus = NdotH > 0 ? 1 : 0;
+    return chi_plus * r_term;
 }
 
 // Fresnel term computation. Implantation of the exact computation. we can use
@@ -238,12 +245,29 @@ color3 trace_ray(Scene *scene, Ray *ray, KdTree *tree)
         for (int i = 0; i < scene->lights.size(); i++)
         {
             auto lPos = scene->lights[i]->position;
-            auto pPos = intersection.normal;
+            auto pPos = intersection.position;
             auto l = glm::normalize(lPos - pPos);
-            auto v = - ray->dir;
-            ret += shade(intersection.normal, v, l, scene->lights[i]->color, intersection.mat);
+            auto v = -ray->dir;
+            // - creer un rayon d'ombre ayant pour point d'origine P+εL
+            // et pour dir L, avec P point d'intersesc et ε = acne_eps
+            Ray shadow_ray;
+            Intersection shadow_intersec;
+            rayInit(
+                &shadow_ray,
+                intersection.position + acne_eps * normalize(scene->lights[i]->position - intersection.position),
+                normalize(scene->lights[i]->position - intersection.position),
+                0.f, 
+                distance(scene->lights[i]->position, intersection.position));
+            ////
+            if (!intersectScene(scene, &shadow_ray, &shadow_intersec))
+            {
+                // - on appelle shade() uniquement si le rayon d'ombre n'intersecte aucun objet dans la scene entre P et L
+                ret += shade(intersection.normal, v, l, scene->lights[i]->color, intersection.mat);
+            }
+            // Sinon contrib de cette source est noir (color3(0, 0, 0))
         }
-    } else
+    }
+    else
     {
         ret = scene->skyColor;
     }
