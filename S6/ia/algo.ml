@@ -1,5 +1,12 @@
 #use "graphes.ml"
 
+(*imprime une liste contenant des couts*) 
+let rec print_list_string_couts l = match l with  
+    | [] -> print_string ". " 
+    | (n, _, _) :: reste -> print_string (" "^n); print_list_string_couts reste;; 
+
+(* ======================== *) 
+
 (* largeur *)
 let rec largeur attente estBut etatsSuivants = match attente with
     []-> failwith "pas de but trouve"
@@ -13,8 +20,7 @@ let rec largeur attente estBut etatsSuivants = match attente with
 
 
 (* profondeur *)
-let rec profondeur attente estBut etatsSuivants = 
-    match attente with
+let rec profondeur attente estBut etatsSuivants = match attente with
     []-> failwith "pas de but trouve"
     | x :: reste -> 
         if (estBut x) then (print_string "file d'attente:";
@@ -32,15 +38,46 @@ let creerLesFils etat g_etat opPoss hEtat =
         | [] -> []
         | (operateur, cout_op, fils) :: tl -> (fils, g_etat + cout_op, hEtat fils) :: (aux tl)
     in (aux (opPoss etat))
-(* match etat with
-    | [] -> []
-    | (operateur, cout_op, fils) :: tl -> (fils, g_etat + cout_op, hEtat fils) :: (tl @ (creerLesFils fils g opPoss hEtat)) *)
+(* insere chaque fils nouvellement «détecté»/«crée» dans a file de priorité *)
+let insererLesFils liste_fils attente = 
+    let rec insertElem e l = match l with
+        | [] -> e :: []
+        | hd :: tl -> 
+            let (_, g_hd, h_hd) = hd in
+            let (_, g_e, h_e) = e in
+            if (g_e + h_e) < (g_hd + h_hd) then e :: hd :: tl
+            else hd :: insertElem e tl
+    in
+    let rec parcourFils fils = match fils with
+        | [] -> attente
+        | h :: tl -> insertElem h (parcourFils tl)
+    in
+    parcourFils liste_fils
 
-    (* (nom_fils, g.pere + snd opPoss fils, hEtat ) (_, delta , _)) *)
+let rec a_star attente initG estBut opPoss hEtat = match attente with
+    (* | hd :: tl -> insererLesFils (creerLesFils hd 0 opPoss hEtat) tl *)
+    | [] -> failwith "pas de but trouve"
+    | (n, g_n, h_n) :: tl ->
+        if estBut n 
+        then (  
+            print_string "file d'attente:";
+            print_list_string_couts tl;
+            print_newline ();
+            (n, g_n, h_n)
+            )
+        else
+            let g = if initG > g_n then g_n else initG in
+            let fils = (creerLesFils n g opPoss hEtat) in
+            let ordered_attente = (insererLesFils fils tl) in
+            (
+            print_string "file d'attente:"; print_list_string_couts ordered_attente;
+            print_newline ();
+            a_star ordered_attente initG estBut opPoss hEtat
+            )
 
 
-
-let () = creerLesFils
-    (* let found = (profondeur [initG3] estButG3 etatsSuivantsG3) in
+let () = 
+    let (n_found, _, _) = (a_star [(initG1C, 0, (hEtatG1C initG1C))] 0 estButG1C opPossG1C hEtatG1C) in
+    (* let (n_found, _, _) = (a_star [(initG4, 0, (hEtatG4 initG4))] 0 estButG4 opPossG4 hEtatG4) in *)
     print_string "Sommet trouvé: ";
-    print_endline found *)
+    print_endline n_found
