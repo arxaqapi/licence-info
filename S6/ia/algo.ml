@@ -36,7 +36,7 @@ let rec profondeur attente estBut etatsSuivants = match attente with
 let creerLesFils etat g_etat opPoss hEtat = 
     let rec aux l = match l with
         | [] -> []
-        | (operateur, cout_op, fils) :: tl -> (fils, g_etat + cout_op, hEtat fils) :: (aux tl)
+        | (_(*operateur*), cout_op, fils) :: tl -> (fils, g_etat + cout_op, hEtat fils) :: (aux tl)
     in (aux (opPoss etat))
 (* insere chaque fils nouvellement «détecté»/«crée» dans a file de priorité *)
 let insererLesFils liste_fils attente = 
@@ -55,7 +55,6 @@ let insererLesFils liste_fils attente =
     parcourFils liste_fils
 
 let rec a_star attente initG estBut opPoss hEtat = match attente with
-    (* | hd :: tl -> insererLesFils (creerLesFils hd 0 opPoss hEtat) tl *)
     | [] -> failwith "pas de but trouve"
     | (n, g_n, h_n) :: tl ->
         if estBut n 
@@ -81,3 +80,8 @@ let () =
     (* let (n_found, _, _) = (a_star [(initG4, 0, (hEtatG4 initG4))] 0 estButG4 opPossG4 hEtatG4) in *)
     print_string "Sommet trouvé: ";
     print_endline n_found
+
+
+(*  
+    add n to taken_path_list
+*)
