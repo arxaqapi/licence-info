@@ -49,7 +49,6 @@ bool intersectSphere(Ray *ray, Intersection *intersection, Object *obj)
         /* 2 solution, plus petit t compris entre tmin tmax */
         auto t1 = (-b - sqrt(delta)) / (2.0f * a);
         auto t2 = (-b + sqrt(delta)) / (2.0f * a);
-        auto ft = 0.0f;
 
         // tmin -- t1 -- t2 -- tmax
         if ((t1 >= ray->tmin) && (t1 <= ray->tmax) && (t2 >= ray->tmin) && (t2 <= ray->tmax))
@@ -145,8 +144,7 @@ float RDM_Beckmann(float NdotH, float alpha)
     // auto m = M_PIf32;
     auto thanSquare = (1 - NdotH * NdotH) / (NdotH * NdotH);
     auto r_term = exp(-thanSquare / (alpha * alpha)) / (M_PIf32 * alpha * alpha * powf(NdotH, 4));
-    auto chi_plus = NdotH > 0 ? 1 : 0;
-    return chi_plus * r_term;
+    return RDM_chiplus(NdotH) * r_term;
 }
 
 // Fresnel term computation. Implantation of the exact computation. we can use
@@ -154,18 +152,39 @@ float RDM_Beckmann(float NdotH, float alpha)
 // LdotH : Light . Half
 float RDM_Fresnel(float LdotH, float extIOR, float intIOR)
 {
+    auto sin_theta_t = powf(extIOR / intIOR, 2) * (1 - powf(LdotH, 2));
+    if (sin_theta_t > 1)
+    {
+        return 1.0f;
+    }
 
-    //! \todo compute Fresnel term
-    return 0.5f;
+    auto cosTheta_t = sqrtf(1 - sin_theta_t);
+
+    float Rs = powf(extIOR * LdotH - intIOR * cosTheta_t, 2) / powf(extIOR * LdotH + intIOR * cosTheta_t, 2);
+    float Rp = powf(extIOR * cosTheta_t - intIOR * LdotH, 2) / powf(extIOR * cosTheta_t + intIOR * LdotH, 2);
+    return 0.5f * (Rs + Rp);
 }
 
-// DdotH : Dir . Half
-// HdotN : Half . Norm
+// DdotH : Dir . Half | l . h (bissec l et half_vec)
+// HdotN : Half . Norm | . n (normale)
 float RDM_G1(float DdotH, float DdotN, float alpha)
 {
 
     //! \todo compute G1 term of the Smith fonction
-    return 0.5f;
+    // auto b = 1.0f / (alpha * tanf(DdotH));
+    float tan_theta_x = sqrtf(1 - powf(DdotH, 2)) / DdotH;
+    float b = 1.0f / (alpha * tan_theta_x);
+    auto k = DdotH / DdotN;
+    float chi_plus = RDM_chiplus(k);
+    if (b < 1.6f)
+    {
+        float b_s = powf(b, 2);
+        return chi_plus * ((3.535f * b + 2.181f * b_s) / (1 + 2.276f * b + 2.577 * b_s));
+    }
+    else
+    {
+        return chi_plus;
+    }
 }
 
 // LdotH : Light . Half
@@ -175,9 +194,7 @@ float RDM_G1(float DdotH, float DdotN, float alpha)
 float RDM_Smith(float LdotH, float LdotN, float VdotH, float VdotN,
                 float alpha)
 {
-
-    //! \todo the Smith fonction
-    return 0.5f;
+    return RDM_G1(LdotH, LdotN, alpha) * RDM_G1(VdotH, VdotN, alpha);
 }
 
 // Specular term of the Cook-torrance bsdf
@@ -192,6 +209,7 @@ color3 RDM_bsdf_s(float LdotH, float NdotH, float VdotH, float LdotN,
 
     //! \todo specular term of the bsdf, using D = RDB_Beckmann, F = RDM_Fresnel, G
     //! = RDM_Smith
+    ////////////////
     return color3(.5f);
 }
 // diffuse term of the cook torrance bsdf
@@ -199,6 +217,7 @@ color3 RDM_bsdf_d(Material *m)
 {
 
     //! \todo compute diffuse component of the bsdf
+    m->diffuseColor;
     return color3(.5f);
 }
 
@@ -224,8 +243,7 @@ color3 shade(vec3 n, vec3 v, vec3 l, color3 lc, Material *mat)
     auto ldotn = glm::dot(l, n);
     if (ldotn > 0.0f)
     {
-        auto pi = atan(1.0f) * 4.0f;
-        auto kd_over_pi = mat->diffuseColor / pi;
+        auto kd_over_pi = mat->diffuseColor / M_PIf32;
         ret = kd_over_pi * ldotn * lc;
     }
     return ret;
@@ -242,7 +260,7 @@ color3 trace_ray(Scene *scene, Ray *ray, KdTree *tree)
     if (intersectScene(scene, ray, &intersection))
     {
         // light
-        for (int i = 0; i < scene->lights.size(); i++)
+        for (size_t i = 0; i < scene->lights.size(); i++)
         {
             auto lPos = scene->lights[i]->position;
             auto pPos = intersection.position;
@@ -254,10 +272,10 @@ color3 trace_ray(Scene *scene, Ray *ray, KdTree *tree)
             Intersection shadow_intersec;
             rayInit(
                 &shadow_ray,
-                intersection.position + acne_eps * normalize(scene->lights[i]->position - intersection.position),
-                normalize(scene->lights[i]->position - intersection.position),
-                0.f, 
-                distance(scene->lights[i]->position, intersection.position));
+                intersection.position + acne_eps * l,
+                l,
+                0.f,
+                glm::distance(lPos, pPos));
             ////
             if (!intersectScene(scene, &shadow_ray, &shadow_intersec))
             {
