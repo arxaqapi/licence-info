@@ -1,4 +1,9 @@
-#use "graphes.ml"
+#use "F207.ml"
+
+(*imprime une liste *) 
+let rec print_list_string l = match l with  
+    [] -> print_string ". " 
+    |x::reste -> print_string (" "^x); print_list_string reste;; 
 
 (*imprime une liste contenant des couts*) 
 let rec print_list_string_couts l = match l with  
@@ -76,10 +81,13 @@ let rec a_star attente initG estBut opPoss hEtat = match attente with
 
 
 let () = 
-    let (n_found, _, _) = (a_star [(initG1C, 0, (hEtatG1C initG1C))] 0 estButG1C opPossG1C hEtatG1C) in
+    let (n_found, g, h) = (a_star [(initGC, 0, (hEtatGC initGC))] 0 estButGC opPossGC hEtatGC) in
     (* let (n_found, _, _) = (a_star [(initG4, 0, (hEtatG4 initG4))] 0 estButG4 opPossG4 hEtatG4) in *)
     print_string "Sommet trouvé: ";
-    print_endline n_found
+    print_endline n_found;
+    print_int g;
+    print_newline ();
+    print_int h;
 
 
 (*  
