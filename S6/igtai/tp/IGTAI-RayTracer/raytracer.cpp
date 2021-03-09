@@ -209,16 +209,18 @@ color3 RDM_bsdf_s(float LdotH, float NdotH, float VdotH, float LdotN,
 
     //! \todo specular term of the bsdf, using D = RDB_Beckmann, F = RDM_Fresnel, G
     //! = RDM_Smith
-    ////////////////
-    return color3(.5f);
+    float alpha = m->roughness;
+    float D = RDM_Beckmann(NdotH, alpha);
+    float F = RDM_Fresnel(LdotH, 1, m->IOR);
+    float G = RDM_Smith(LdotH, LdotN, VdotH, VdotN, alpha);
+    return m->specularColor * (D * F * G) / (4 * LdotN * VdotN);
 }
 // diffuse term of the cook torrance bsdf
 color3 RDM_bsdf_d(Material *m)
 {
 
     //! \todo compute diffuse component of the bsdf
-    m->diffuseColor;
-    return color3(.5f);
+    return m->diffuseColor / M_PIf32;
 }
 
 // The full evaluation of bsdf(wi, wo) * cos (thetai)
@@ -231,9 +233,8 @@ color3 RDM_bsdf_d(Material *m)
 color3 RDM_bsdf(float LdotH, float NdotH, float VdotH, float LdotN, float VdotN,
                 Material *m)
 {
-
     //! \todo compute bsdf diffuse and specular term
-    return color3(0.f);
+    return RDM_bsdf_d(m) + RDM_bsdf_s(LdotH, NdotH, VdotH, LdotN, VdotN, m);
 }
 
 color3 shade(vec3 n, vec3 v, vec3 l, color3 lc, Material *mat)
@@ -245,6 +246,8 @@ color3 shade(vec3 n, vec3 v, vec3 l, color3 lc, Material *mat)
     {
         auto kd_over_pi = mat->diffuseColor / M_PIf32;
         ret = kd_over_pi * ldotn * lc;
+        // auto h = half vector
+        ret = lc * RDM_bsdf(dot(l, h)) * ldotn;
     }
     return ret;
 }
