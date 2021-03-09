@@ -5,22 +5,16 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
-//import org.junit.Test;
-//import static org.junit.Assert.assertEquals;
-//import static org.junit.Assert.assertArrayEquals;
 
 
 public class Reader {
-	// read file
-	// create graph with all edges
-	// return graph + awaited result in matrix
 	private String filepath;
 	
 	public Reader(String fp) {
 		this.filepath = fp;
 	}
 	
-	public void open() {
+	public void openAndTest() {
 		Graph g;
 		boolean testPassed = true;
 		File f = new File(filepath);
@@ -88,9 +82,9 @@ public class Reader {
 			String a = awaitedList.get(i);
 			String g = gottenList.get(i);
 			if (a.equals(g)) {
-				System.out.println("[Test " + (i + 1) +"] - OK");
+				System.out.println("[Test " + (i + 1) +"] - PASS");
 			} else {
-				System.out.println("[Test " + (i + 1) +"] - KO !");
+				System.out.println("[Test " + (i + 1) +"] - FAIL !");
 				ok = false;
 			}
 		}

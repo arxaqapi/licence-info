@@ -27,7 +27,7 @@ public class Graph {
     	adj[i].add(new Edge(i, j, weight));
     	if (this.type == "u") {
     		adj[j].add(new Edge(j, i, weight));
-    		System.out.println("Undirected graph - added Edge from " + j + " to " + i);
+//    		System.out.println("Undirected graph - added Edge from " + j + " to " + i);
 		}
     }
  

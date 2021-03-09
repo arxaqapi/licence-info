@@ -8,7 +8,7 @@ public class TestGraphs {
  
     public static void main(String[] args) {
     	Reader n = new Reader("test");
-    	n.open();
+    	n.openAndTest();
     	
     	
         Graph g = new Graph(6, "u");
@@ -39,10 +39,7 @@ public class TestGraphs {
 //        
 //        
 //        // print Graph
-        g.printGraph();
-// 
-//        // Dijkstra Shortest Path Algorithm
-//        System.out.println("Dijkstra Shortest Path:");
-        System.out.println(g.Dijkstra(0));
+//        g.printGraph();
+//        g.Dijkstra(0);
     }
 }
