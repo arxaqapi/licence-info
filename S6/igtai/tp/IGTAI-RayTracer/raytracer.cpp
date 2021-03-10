@@ -139,9 +139,7 @@ float RDM_chiplus(float c) { return (c > 0.f) ? 1.f : 0.f; }
  */
 float RDM_Beckmann(float NdotH, float alpha)
 {
-    //! \todo compute Beckmann normal distribution
-    // NdotH = cos thetaH
-    // auto m = M_PIf32;
+    //! compute Beckmann normal distribution
     auto thanSquare = (1 - NdotH * NdotH) / (NdotH * NdotH);
     auto r_term = exp(-thanSquare / (alpha * alpha)) / (M_PIf32 * alpha * alpha * powf(NdotH, 4));
     return RDM_chiplus(NdotH) * r_term;
@@ -170,8 +168,7 @@ float RDM_Fresnel(float LdotH, float extIOR, float intIOR)
 float RDM_G1(float DdotH, float DdotN, float alpha)
 {
 
-    //! \todo compute G1 term of the Smith fonction
-    // auto b = 1.0f / (alpha * tanf(DdotH));
+    //! compute G1 term of the Smith fonction
     float tan_theta_x = sqrtf(1 - powf(DdotH, 2)) / DdotH;
     float b = 1.0f / (alpha * tan_theta_x);
     auto k = DdotH / DdotN;
@@ -207,8 +204,7 @@ color3 RDM_bsdf_s(float LdotH, float NdotH, float VdotH, float LdotN,
                   float VdotN, Material *m)
 {
 
-    //! \todo specular term of the bsdf, using D = RDB_Beckmann, F = RDM_Fresnel, G
-    //! = RDM_Smith
+    //! specular term of the bsdf, using D = RDB_Beckmann, F = RDM_Fresnel, G = RDM_Smith
     float alpha = m->roughness;
     float D = RDM_Beckmann(NdotH, alpha);
     float F = RDM_Fresnel(LdotH, 1, m->IOR);
@@ -219,7 +215,7 @@ color3 RDM_bsdf_s(float LdotH, float NdotH, float VdotH, float LdotN,
 color3 RDM_bsdf_d(Material *m)
 {
 
-    //! \todo compute diffuse component of the bsdf
+    //! diffuse component of the bsdf
     return m->diffuseColor / M_PIf32;
 }
 
@@ -233,7 +229,7 @@ color3 RDM_bsdf_d(Material *m)
 color3 RDM_bsdf(float LdotH, float NdotH, float VdotH, float LdotN, float VdotN,
                 Material *m)
 {
-    //! \todo compute bsdf diffuse and specular term
+    //! compute bsdf diffuse and specular term
     return RDM_bsdf_d(m) + RDM_bsdf_s(LdotH, NdotH, VdotH, LdotN, VdotN, m);
 }
 
@@ -244,10 +240,8 @@ color3 shade(vec3 n, vec3 v, vec3 l, color3 lc, Material *mat)
     auto ldotn = glm::dot(l, n);
     if (ldotn > 0.0f)
     {
-        auto kd_over_pi = mat->diffuseColor / M_PIf32;
-        ret = kd_over_pi * ldotn * lc;
-        // auto h = half vector
-        ret = lc * RDM_bsdf(dot(l, h)) * ldotn;
+        auto h = normalize(v + l);
+        ret = lc * RDM_bsdf(dot(l, h), dot(n, h), dot(v, h), dot(l, n), dot(v, n), mat) * ldotn;
     }
     return ret;
 }
