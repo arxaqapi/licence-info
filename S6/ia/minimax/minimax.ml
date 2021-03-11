@@ -1,6 +1,37 @@
 (* #use "arbres.ml" *)
 
 (* ========================== *)
+let etatInitialA1 = "0";;
+
+let etatsFilsA1
+(e : 'a)
+: ('b * 'a) list =
+match e with
+	"0" -> [("p","a");("v","b");("q","c")]
+	|"a" -> [("u","a1");("r","a2")]
+	|"a1" -> [("s","a1a");("q","a1b")]
+  |"b" -> [("q","b1");("t","b2");("u","b3")]
+  |"c" -> [("x","c1");("r","c2")]
+	| _  -> [];;
+
+(* evaluation de type 'a -> int : fonction d’évaluation qui renvoie un entier           *)
+(* appartenant à l'intervalle [-INFINI,+INFINI]                                         *)
+
+let evaluationA1
+(e : 'a)
+: int =
+match e with
+  |"a1a" -> -7
+  |"a1b" -> -9
+	|"a2" -> -2
+	|"b1" -> 2
+  |"b2" -> 9
+	|"b3" -> -1
+	|"c1" -> -7
+  |"c2" -> -9
+	| _  -> failwith "Erreur : evaluation : etat non terminal";;
+
+
 let etatInitialA5 = "a";;
 
 let etatsFilsA5
@@ -100,37 +131,40 @@ let minimax etatInitial profondeur etatsFils evaluation =
         else List.fold_left (fun b (_, n) -> min b (aux (p + 1) n)) (aux (p + 1) noeud) tl
   in aux 0 etatInitial
 
-
-(* let recherche profondeurMax etatInitial profondeur etatsFils evaluation = 
-  let rec aux p e pm = 
-    let fils = (etatsFils e) in
-    match fils with
-      | [] -> (evaluation e)
-      | (_, noeud) :: tl -> 
-				if pm = 0 then 
-					if p mod 2 = 0
-						(* je dois m'arreter au père et non taper sur les fils, ici je descend 1 fois de trop *)
-					then List.fold_left (fun b (_, n) -> max b (evaluation n)) (evaluation noeud) tl
-					else List.fold_left (fun b (_, n) -> min b (evaluation n)) (evaluation noeud) tl
-				else
-					if p mod 2 = 0
-					then List.fold_left (fun b (_, n) -> max b (aux (p + 1) n (pm - 1))) (aux (p + 1) noeud (pm - 1)) tl
-					else List.fold_left (fun b (_, n) -> min b (aux (p + 1) n (pm - 1))) (aux (p + 1) noeud (pm - 1)) tl
-  in aux 0 etatInitial profondeurMax *)
-
 let recherche profondeurMax etatInitial profondeur etatsFils evaluation = 
 		let rec aux p e pm = 
-			if pm = 0 then evaluation e else
+			if pm = 0 then evaluation e else (* /!\ Fixed here *)
 			let fils = (etatsFils e) in
 			match fils with
 				| [] -> (evaluation e)
-				| (_, noeud) :: tl -> (* je dois m'arreter au père et non taper sur les fils, ici je descend 1 fois de trop *)
+				| (_, noeud) :: tl -> (* /!\ je dois m'arreter au père et non taper sur les fils, ici je descend-AIS 1 fois de trop *)
 						if p mod 2 = 0
 						then List.fold_left (fun b (_, n) -> max b (aux (p + 1) n (pm - 1))) (aux (p + 1) noeud (pm - 1)) tl
 						else List.fold_left (fun b (_, n) -> min b (aux (p + 1) n (pm - 1))) (aux (p + 1) noeud (pm - 1)) tl
 		in aux 0 etatInitial profondeurMax
 
+
 let meilleurCoup profondeurMax etatInitial profondeur etatsFils evaluation = 
+		let rec aux p (e, chem) pm = 
+			if pm = 0 then (evaluation e, chem) else
+			let fils = (etatsFils e) in
+			match fils with
+				| [] -> (evaluation e, chem)
+				| (arc, noeud) :: tl -> 
+						if p mod 2 = 0
+						then 
+						(* (max b (aux (p + 1) n (pm - 1)), a) *)
+						List.fold_left (fun (bv, ba) (a, n) -> let valNode, chemNode = aux (p + 1) (n, a) (pm - 1) in if valNode > bv then (valNode, chemNode) else (bv, ba)) 
+													(aux (p + 1) (noeud, arc) (pm - 1)) 
+													tl
+						else 
+							List.fold_left (fun (bv, ba) (a, n) -> let valNode, chemNode = aux (p + 1) (n, a) (pm - 1) in if valNode <= bv then (valNode, chemNode) else (bv, ba)) 
+													(aux (p + 1) (noeud, arc) (pm - 1)) 
+													tl
+		in aux 0 (etatInitial, " ") profondeurMax
+
+
+(* let meilleurCoup profondeurMax etatInitial profondeur etatsFils evaluation = 
 		let rec aux p e pm a = 
 			if pm = 0 then (evaluation e, a) else
 			let fils = etatsFils e in
@@ -138,11 +172,13 @@ let meilleurCoup profondeurMax etatInitial profondeur etatsFils evaluation =
 				| [] -> (evaluation e, a)
 				| (arc, noeud) :: tl -> (* renvoyer (int * 'x) *)
 						if p mod 2 = 0
-						then List.fold_left (fun (bv, ba) (a, n) -> let v = (aux (p + 1) n (pm - 1) arc) in if bv >= v then (bv, ba) else (v, a)) ((aux (p + 1) noeud (pm - 1) arc), arc) tl
-						else List.fold_left (fun (bv, ba) (a, n) -> let v = (aux (p + 1) n (pm - 1) arc) in if bv >= v then  (v, a) else (bv, ba)) ((aux (p + 1) noeud (pm - 1) arc), arc) tl
-		in aux 0 etatInitial profondeurMax 
+						(* then List.fold_left (fun (bv, ba) (a, n) -> let v = (aux (p + 1) n (pm - 1) arc) in if bv >= v then (bv, ba) else (v, a)) ((aux (p + 1) noeud (pm - 1) arc), arc) tl
+						else List.fold_left (fun (bv, ba) (a, n) -> let v = (aux (p + 1) n (pm - 1) arc) in if bv >= v then  (v, a) else (bv, ba)) ((aux (p + 1) noeud (pm - 1) arc), arc) tl *)
+		in aux 0 etatInitial profondeurMax  *)
 
 
-(* let () = 
-  print_int (recherche 2 etatInitialA5 0  etatsFilsA5 evaluationA5);
-  print_newline (); *)
+let () = 
+	(* let v, chem = meilleurCoup 3 etatInitialA5 0  etatsFilsA5 evaluationA5 in *)
+	let v, chem = meilleurCoup 3 etatInitialA1 0  etatsFilsA1 evaluationA1 in
+  let va = (recherche 3 etatInitialA5 0  etatsFilsA5 evaluationA5) in
+	Printf.printf "%d : %s\n%d\n" v chem va
