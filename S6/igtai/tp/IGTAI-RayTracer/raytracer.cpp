@@ -207,7 +207,7 @@ color3 RDM_bsdf_s(float LdotH, float NdotH, float VdotH, float LdotN,
     //! specular term of the bsdf, using D = RDB_Beckmann, F = RDM_Fresnel, G = RDM_Smith
     float alpha = m->roughness;
     float D = RDM_Beckmann(NdotH, alpha);
-    float F = RDM_Fresnel(LdotH, 1, m->IOR);
+    float F = RDM_Fresnel(LdotH, 1.0f, m->IOR);
     float G = RDM_Smith(LdotH, LdotN, VdotH, VdotN, alpha);
     return m->specularColor * (D * F * G) / (4 * LdotN * VdotN);
 }
@@ -256,7 +256,9 @@ color3 trace_ray(Scene *scene, Ray *ray, KdTree *tree)
 
     if (intersectScene(scene, ray, &intersection))
     {
-        // light
+        // ici, calcul de la couleur au point d'intersection 
+        // entre la rayon et l'objet de la scene
+        // pour chaque source lumineuse
         for (size_t i = 0; i < scene->lights.size(); i++)
         {
             auto lPos = scene->lights[i]->position;
@@ -271,15 +273,20 @@ color3 trace_ray(Scene *scene, Ray *ray, KdTree *tree)
                 &shadow_ray,
                 intersection.position + acne_eps * l,
                 l,
-                0.f,
+                0.0f,
                 glm::distance(lPos, pPos));
-            ////
             if (!intersectScene(scene, &shadow_ray, &shadow_intersec))
             {
                 // - on appelle shade() uniquement si le rayon d'ombre n'intersecte aucun objet dans la scene entre P et L
                 ret += shade(intersection.normal, v, l, scene->lights[i]->color, intersection.mat);
             }
             // Sinon contrib de cette source est noir (color3(0, 0, 0))
+            // reflexions:
+            // ray->depth;
+            Ray rayReflect;
+            auto ray_reflect_dir = reflect(ray->dir, intersection.position);
+            rayInit(&rayReflect, intersection.position + acne_eps * ray_reflect_dir, ray_reflect_dir, 0.0f, distance(lPos, pPos));
+            ret += trace_ray(scene, &rayReflect, tree) * RDM_Fresnel(dot(ray_reflect_dir, intersection.position), 1.0f, intersection.mat->IOR) * intersection.mat->specularColor;
         }
     }
     else
