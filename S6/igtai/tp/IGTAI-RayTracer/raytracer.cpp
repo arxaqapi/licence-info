@@ -248,18 +248,24 @@ color3 shade(vec3 n, vec3 v, vec3 l, color3 lc, Material *mat)
 
 //! if tree is not null, use intersectKdTree to compute the intersection instead
 //! of intersect scene
-
 color3 trace_ray(Scene *scene, Ray *ray, KdTree *tree)
 {
-    color3 ret = color3(0, 0, 0);
-    Intersection intersection;
-
+    if (ray->depth >= 4)
+    {
+        return color3(0.0f, 0.0f, 0.0f);
+    }
+    
+    color3 color_direct = color3(0.0f, 0.0f, 0.0f);
+    color3 color_reflect = color3(0.0f, 0.0f, 0.0f);
+    Intersection intersection, shadow_intersec;
+    Ray shadow_ray, reflect_ray;
     if (intersectScene(scene, ray, &intersection))
     {
-        // ici, calcul de la couleur au point d'intersection 
+        // ici, calcul de la couleur au point d'intersection
         // entre la rayon et l'objet de la scene
         // pour chaque source lumineuse
-        for (size_t i = 0; i < scene->lights.size(); i++)
+        size_t lightsCount = scene->lights.size();
+        for (size_t i = 0; i < lightsCount; i++)
         {
             auto lPos = scene->lights[i]->position;
             auto pPos = intersection.position;
@@ -267,8 +273,6 @@ color3 trace_ray(Scene *scene, Ray *ray, KdTree *tree)
             auto v = -ray->dir;
             // - creer un rayon d'ombre ayant pour point d'origine P+εL
             // et pour dir L, avec P point d'intersesc et ε = acne_eps
-            Ray shadow_ray;
-            Intersection shadow_intersec;
             rayInit(
                 &shadow_ray,
                 intersection.position + acne_eps * l,
@@ -278,27 +282,31 @@ color3 trace_ray(Scene *scene, Ray *ray, KdTree *tree)
             if (!intersectScene(scene, &shadow_ray, &shadow_intersec))
             {
                 // - on appelle shade() uniquement si le rayon d'ombre n'intersecte aucun objet dans la scene entre P et L
-                ret += shade(intersection.normal, v, l, scene->lights[i]->color, intersection.mat);
+                color_direct += shade(intersection.normal, v, l, scene->lights[i]->color, intersection.mat);
             }
-            // Sinon contrib de cette source est noir (color3(0, 0, 0))
-            // reflexions:
-            // ray->depth;
-            Ray rayReflect;
-            auto ray_reflect_dir = reflect(ray->dir, intersection.position);
-            rayInit(&rayReflect, intersection.position + acne_eps * ray_reflect_dir, ray_reflect_dir, 0.0f, distance(lPos, pPos));
-            ret += trace_ray(scene, &rayReflect, tree) * RDM_Fresnel(dot(ray_reflect_dir, intersection.position), 1.0f, intersection.mat->IOR) * intersection.mat->specularColor;
         }
     }
     else
     {
-        ret = scene->skyColor;
+        return scene->skyColor;
     }
-    return ret;
+
+    if (color_direct.r >= 1.0f && color_direct.g >= 1.0f && color_direct.b >= 1.0f)
+    {
+        return color3(1.0f, 1.0f, 1.0f);
+    }
+
+    vec3 ray_reflect_dir = reflect(ray->dir, intersection.normal);
+    rayInit(&reflect_ray, intersection.position + acne_eps * ray_reflect_dir, ray_reflect_dir, 0.0f, 100000.0f, ray->depth + 1);
+    color_reflect = trace_ray(scene, &reflect_ray, tree);
+
+    vec3 h = normalize(-ray->dir + reflect_ray.dir);
+    return color_direct + RDM_Fresnel(dot(reflect_ray.dir, h), 1.f, intersection.mat->IOR) * color_reflect * (intersection.mat->specularColor);
 }
+
 
 void renderImage(Image *img, Scene *scene)
 {
-
     //! This function is already operational, you might modify it for antialiasing
     //! and kdtree initializaion
     float aspect = 1.f / scene->cam.aspect;
