@@ -8,15 +8,15 @@
 #define DEBOGAGE
 
 #ifdef DEBOGAGE
-#define DEBUG fprintf(stderr,"Fichier %s, ligne %d\n",__FILE__,__LINE__);
+#define DEBUG fprintf(stderr, "Fichier %s, ligne %d\n", __FILE__, __LINE__);
 #else
 #define DEBUG
 #endif
 
-#define AFAIRE(fonction) fprintf(stderr,"Corps de la fonction " #fonction \
-                                        " à écrire.\n" ); \
-												 return NULL;
-
+#define AFAIRE(fonction)                              \
+    fprintf(stderr, "Corps de la fonction " #fonction \
+                    " à écrire.\n");                  \
+    return NULL;
 
 /*
  * Inversion d'une image
@@ -25,21 +25,86 @@
  */
 Image Inversion(Image Im)
 {
-  AFAIRE(Inversion);
-  // binaire
-  // niveaux de gris
-  // couleur
-  Im
+    ImageType type = ImType(Im);
+    int nbcols = ImNbCol(Im);
+    int nbrows = ImNbRow(Im);
+    if (type == BitMap)
+    {
+        // b & w
+
+        // le pixel (0,0) de la première image vaut 0
+        // alors que le pixel (0,0) de la seconde image vaut 1
+        unsigned char **image_matrix;
+        image_matrix = ImGetI(Im);
+        for (int i = 0; i < nbrows; i++)
+        {
+            for (int j = 0; j < nbcols; j++)
+            {
+                if (image_matrix[i][j] == 0)
+                {
+                    image_matrix[i][j] = 1;
+                }
+                else
+                {
+                    image_matrix[i][j] = 0;
+                }
+            }
+        }
+    }
+    else if (type == GrayLevel)
+    {
+        // niveaux de gris
+
+        // le pixel (0,0) de la première image vaut 194
+        // alors que le pixel (0,0) de la seconde image vaut 61
+        unsigned char **image_matrix;
+        image_matrix = ImGetI(Im);
+        for (int i = 0; i < nbrows; i++)
+        {
+            for (int j = 0; j < nbcols; j++)
+            {
+                image_matrix[i][j] = abs(255 - image_matrix[i][j]);
+            }
+        }
+    }
+    else if (type == Color)
+    {
+        // couleur
+
+        // le pixel (0,0) de la première matrice vaut (194,192,200)
+        // alors que le pixel (0,0) de la seconde matrice vaut (61,63,55)
+        unsigned char **red_channel;
+        unsigned char **green_channel;
+        unsigned char **blue_channel;
+        red_channel = ImGetR(Im);
+        green_channel = ImGetG(Im);
+        blue_channel = ImGetB(Im);
+        if (red_channel == NULL || green_channel == NULL || blue_channel == NULL)
+        {
+            fprintf(stderr, "[tai.c - Inversion] - Erreur lors de l'accés aux channels RGB\n");
+            exit(1);
+        }
+        for (int i = 0; i < nbrows; i++)
+        {
+            for (int j = 0; j < nbcols; j++)
+            {
+                red_channel[i][j] = abs(255 - red_channel[i][j]);
+                green_channel[i][j] = abs(255 - green_channel[i][j]);
+                blue_channel[i][j] = abs(255 - blue_channel[i][j]);
+            }
+        }
+    }
+    return Im;
 }
 
- /*
+/*
   * Étalement de la dynamique d'une image de niveaux de gris
   * Entrée : image initiale en niveaux de gris
   * Sortie : image résultat
   */
 Image Etalement(Image Im)
 {
-  AFAIRE(Etalement);
+    AFAIRE(Etalement);
 }
 
 /*
@@ -49,7 +114,7 @@ Image Etalement(Image Im)
  */
 Image Binarisation(Image Im, unsigned char Seuil)
 {
-  AFAIRE(Binarisation);
+    AFAIRE(Binarisation);
 }
 
 /*
@@ -60,7 +125,7 @@ Image Binarisation(Image Im, unsigned char Seuil)
  */
 Image Moyen(Image Im, int Taille)
 {
-  AFAIRE(Moyen);
+    AFAIRE(Moyen);
 }
 
 /*
@@ -71,7 +136,7 @@ Image Moyen(Image Im, int Taille)
  */
 Image Median(Image Im, int Taille)
 {
-  AFAIRE(Median);
+    AFAIRE(Median);
 }
 
 /*
@@ -84,22 +149,22 @@ Image Median(Image Im, int Taille)
 */
 int InvalideES(Matrix ElementStructurant)
 {
-  int **ES,NbLig,NbCol,i,j;
+    int **ES, NbLig, NbCol, i, j;
 
-  if (MatType(ElementStructurant)!=Int)
-    return ES_NOT_INT;
-  NbLig=MatNbRow(ElementStructurant);
-	if ((NbLig%2)!=1)
-	  return ES_NOT_ODD;
-  NbCol=MatNbCol(ElementStructurant);
-	if ((NbCol%2)!=1)
-	  return ES_NOT_ODD;
-  ES=MatGetInt(ElementStructurant);
-  for (i=0;i<NbLig;i++)
-    for (j=0;j<NbCol;j++)
-      if (ES[i][j]!=0 && ES[i][j]!=1)
-        return ES_NOT_BIN;
-  return 0;
+    if (MatType(ElementStructurant) != Int)
+        return ES_NOT_INT;
+    NbLig = MatNbRow(ElementStructurant);
+    if ((NbLig % 2) != 1)
+        return ES_NOT_ODD;
+    NbCol = MatNbCol(ElementStructurant);
+    if ((NbCol % 2) != 1)
+        return ES_NOT_ODD;
+    ES = MatGetInt(ElementStructurant);
+    for (i = 0; i < NbLig; i++)
+        for (j = 0; j < NbCol; j++)
+            if (ES[i][j] != 0 && ES[i][j] != 1)
+                return ES_NOT_BIN;
+    return 0;
 }
 
 /*
@@ -110,7 +175,7 @@ int InvalideES(Matrix ElementStructurant)
  */
 Image Erosion(Image Im, Matrix ElementStructurant)
 {
-  AFAIRE(Erosion);
+    AFAIRE(Erosion);
 }
 
 /*
@@ -121,5 +186,5 @@ Image Erosion(Image Im, Matrix ElementStructurant)
  */
 Image Dilatation(Image Im, Matrix ElementStructurant)
 {
-  AFAIRE(Dilatation);
+    AFAIRE(Dilatation);
 }
