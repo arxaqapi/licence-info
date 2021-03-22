@@ -67,11 +67,34 @@ let gloutonSansH g =
 
 (* Algo glouton avec heuristique statique, coloration par ordre de degré décroissant puis alpha *)
 let gloutonDeg g = 
-  let sommets = 
-    List.sort 
-      (fun (voisins_a, sommet_a) (voisins_b, sommet_b) -> if a = b then 0 else if a < b then -1 else 1) 
-      (List.map (fun sommet -> List.length (sommets_adjacents g sommet), sommet) (liste_sommets g)) 
+  let _, sommets = 
+    List.split 
+      (List.sort 
+        (fun (voisins_a, sommet_a) (voisins_b, sommet_b) -> 
+          if voisins_a = voisins_b 
+          then 
+            if sommet_a = sommet_b 
+            then 0 
+            else 
+              if sommet_a < sommet_b 
+              then -1 
+              else 1 
+          else 
+            if voisins_a < voisins_b 
+            then -1 
+            else 1) 
+        (List.map (fun sommet -> List.length (sommets_adjacents g sommet), sommet) (liste_sommets g)))
     in
+    let rec glout l_sommets colo_partielle = match l_sommets with
+    | [] -> colo_partielle
+    | s :: tl ->
+      let v = couleurs_utilisees colo_partielle (sommets_adjacents g s) in
+      let c = next_color v in 
+      glout tl ((s, c) :: colo_partielle)
+  in 
+  let coloration_partielle = glout sommets [] in
+  let cmax = List.fold_left (fun b e -> max b e) 0 (snd (List.split coloration_partielle)) 
+  in coloration_partielle, cmax, sommets
 (*
 - on recupère liste_sommets, on calcule pour chaque sommet sont nb degré sortant 
   et on recrée un liste qu'on trie de cette façon (List.sort (fun (a1, a2) (b1, b2) -> ))
