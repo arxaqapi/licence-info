@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <assert.h>
 #include "limace.h"
 #include "tai.h"
 
@@ -104,7 +105,48 @@ Image Inversion(Image Im)
   */
 Image Etalement(Image Im)
 {
-    AFAIRE(Etalement);
+    // min -> to -> 0
+    // max -> to -> 255
+    ImageType type = ImType(Im);
+    int nbcols = ImNbCol(Im);
+    int nbrows = ImNbRow(Im);
+    if (type == GrayLevel)
+    {
+        // niveaux de gris
+        unsigned char **image_matrix;
+        image_matrix = ImGetI(Im);
+        int min = 255;
+        int max = 0;
+        // get min and max
+        for (int i = 0; i < nbrows; i++)
+        {
+            for (int j = 0; j < nbcols; j++)
+            {
+                if (image_matrix[i][j] > max)
+                {
+                    max = image_matrix[i][j];
+                }
+                if (image_matrix[i][j] < min)
+                {
+                    min = image_matrix[i][j];
+                }
+            }
+        }
+        // printf("[tai.c - Etalement] - min = %d| max = %d\n", min, max);
+        // modif
+        // unsigned char f = image_matrix[i][j];
+        // assert(min <= f && f <= max);
+        unsigned char *Debut, *Fin, *p;
+        Debut = *(image_matrix);       // recuperation de l’adresse de début de la zone, memoire contenant les niveaux de gris
+        Fin = Debut + nbrows * nbcols; /// calcul de l’adresse de fin de la zone
+        for (p = Debut; p < Fin; *p++ = roundf(255 * ((float)(*p) - (float)min) / ((float)max - (float)min)));
+    }
+    else
+    {
+        fprintf(stderr, "[tai.c - Etalement] - Erreur, l'image n'est pas en niveau de gris\n");
+        exit(1);
+    }
+    return Im;
 }
 
 /*
