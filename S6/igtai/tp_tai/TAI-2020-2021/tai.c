@@ -32,8 +32,8 @@ Image Inversion(Image Im)
     {
         // b & w
 
-        // le pixel (0,0) de la première image vaut 0
-        // alors que le pixel (0,0) de la seconde image vaut 1
+        // le pixel (0,0) de la première image (chenille) vaut 1
+        // alors que le pixel (0,0) de la seconde image vaut 0
         unsigned char **image_matrix;
         image_matrix = ImGetI(Im);
         for (int i = 0; i < nbrows; i++)
@@ -55,15 +55,15 @@ Image Inversion(Image Im)
     {
         // niveaux de gris
 
-        // le pixel (0,0) de la première image vaut 194
-        // alors que le pixel (0,0) de la seconde image vaut 61
+        // le pixel (0,0) de la première image (chenille) vaut 61
+        // alors que le pixel (0,0) de la seconde image vaut 194
         unsigned char **image_matrix;
         image_matrix = ImGetI(Im);
         for (int i = 0; i < nbrows; i++)
         {
             for (int j = 0; j < nbcols; j++)
             {
-                image_matrix[i][j] = abs(255 - image_matrix[i][j]);
+                image_matrix[i][j] = 255 - image_matrix[i][j];
             }
         }
     }
@@ -71,8 +71,8 @@ Image Inversion(Image Im)
     {
         // couleur
 
-        // le pixel (0,0) de la première matrice vaut (194,192,200)
-        // alors que le pixel (0,0) de la seconde matrice vaut (61,63,55)
+        // le pixel (0,0) de la première matrice (chenille) vaut (61,63,55)
+        // alors que le pixel (0,0) de la seconde matrice vaut (194,192,200)
         unsigned char **red_channel;
         unsigned char **green_channel;
         unsigned char **blue_channel;
@@ -88,9 +88,9 @@ Image Inversion(Image Im)
         {
             for (int j = 0; j < nbcols; j++)
             {
-                red_channel[i][j] = abs(255 - red_channel[i][j]);
-                green_channel[i][j] = abs(255 - green_channel[i][j]);
-                blue_channel[i][j] = abs(255 - blue_channel[i][j]);
+                red_channel[i][j] = 255 - red_channel[i][j];
+                green_channel[i][j] = 255 - green_channel[i][j];
+                blue_channel[i][j] = 255 - blue_channel[i][j];
             }
         }
     }
