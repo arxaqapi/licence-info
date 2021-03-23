@@ -363,25 +363,22 @@ Variables A B C : Prop.
 (* une fonction est une preuve : par exemple, la fonction identité
    "prouve" que A implique A *)
 Definition identite : A -> A := fun a => a.
-(* prouver les propriétés suivantes *)
+Check identite.
 
-(*
-Definition ex0 : B -> B := (* ... (à compléter) *)
-*)
 Definition ex0 : B -> B := fun b => b.
-Theorem ex0_proof: ex0 B = B.
-Proof.
-   auto.
-Qed.
+Check ex0.
 
-(*
-Definition ex1 : A -> B -> A := (* ... (à compléter) *)
+Definition ex1 : A -> B -> A := fun a b => a.
+Check ex1.
 
-Definition ex2 : A -> B -> B := (* ... (à compléter) *)
+Definition ex2 : A -> B -> B := fun a b => b.
+Check ex2.
 
-Definition ex3 : A -> (A -> B) -> B := (* ... (à compléter) *)
+Definition ex3 : A -> (A -> B) -> B := fun a b => b a.
+Check ex3.
 
-Definition ex4 : (A -> B) -> (B -> C) -> A -> C := (* ... (à compléter) *)
+Definition ex4 : (A -> B) -> (B -> C) -> A -> C := fun a b c => b (a c).
+Check ex4.
 
-Definition ex5 : (A -> B) -> (A -> B -> C) -> A -> C := (* ... (à compléter) *)
- *)
+Definition ex5 : (A -> B) -> (A -> B -> C) -> A -> C := fun a b c => b c (a c).
+Check ex5.
