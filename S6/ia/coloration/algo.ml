@@ -67,6 +67,7 @@ let gloutonSansH g =
 
 (* Algo glouton avec heuristique statique, coloration par ordre de degré décroissant puis alpha *)
 let gloutonDeg g = 
+  (* COMPARE *)
   let _, sommets = 
     List.split 
       (List.sort 
