@@ -18,7 +18,7 @@ let sont_adjacents (g : ('a * 'a) list) (s1 : 'a) (s2 : 'a) : bool =
 (* Creates the list of the graphs vertices *)
 let liste_sommets g =
   let la, lb = List.split g in 
-  List.sort_uniq (fun a b -> if a = b then 0 else if a < b then -1 else 1) (la @ lb)
+  List.sort_uniq compare (la @ lb)
 
 (* Creates the list of all adjacent vertices of a given vertice *)
 let sommets_adjacents g s = 
@@ -28,7 +28,7 @@ let sommets_adjacents g s =
     if h1 = s then h2 :: (aux (tl1, tl2)) else 
     if h2 = s then h1 :: (aux (tl1, tl2)) else (aux (tl1, tl2))
   | _, _ -> failwith "List sizes does not match"
-  in List.sort_uniq (fun a b -> if a = b then 0 else if a < b then -1 else 1) (aux (List.split g))
+  in List.sort_uniq compare (aux (List.split g))
 
 (* === UTIL === *)
 
@@ -46,7 +46,7 @@ let couleurs_utilisees coloration_partielle s_adjacents =
     if List.mem sommet s_adjacents = true 
     then couleur :: (aux tl)
     else aux tl
-  in List.sort_uniq (fun a b -> if a = b then 0 else if a < b then -1 else 1) (aux coloration_partielle)
+  in List.sort_uniq compare (aux coloration_partielle)
 
 
 (* === UTIL === *)
@@ -67,25 +67,8 @@ let gloutonSansH g =
 
 (* Algo glouton avec heuristique statique, coloration par ordre de degré décroissant puis alpha *)
 let gloutonDeg g = 
-  (* COMPARE *)
-  let _, sommets = 
-    List.split 
-      (List.sort 
-        (fun (voisins_a, sommet_a) (voisins_b, sommet_b) -> 
-          if voisins_a = voisins_b 
-          then 
-            if sommet_a = sommet_b 
-            then 0 
-            else 
-              if sommet_a < sommet_b 
-              then -1 
-              else 1 
-          else 
-            if voisins_a < voisins_b 
-            then -1 
-            else 1) 
-        (List.map (fun sommet -> List.length (sommets_adjacents g sommet), sommet) (liste_sommets g)))
-    in
+  let s_ponderees = (List.map (fun sommet -> List.length (sommets_adjacents g sommet), sommet) (liste_sommets g)) in
+  let _, sommets = List.split (List.sort (fun (d_a, _) (d_b, _) -> - compare d_a d_b) s_ponderees) in
     let rec glout l_sommets colo_partielle = match l_sommets with
     | [] -> colo_partielle
     | s :: tl ->
@@ -96,11 +79,6 @@ let gloutonDeg g =
   let coloration_partielle = glout sommets [] in
   let cmax = List.fold_left (fun b e -> max b e) 0 (snd (List.split coloration_partielle)) 
   in coloration_partielle, cmax, sommets
-(*
-- on recupère liste_sommets, on calcule pour chaque sommet sont nb degré sortant 
-  et on recrée un liste qu'on trie de cette façon (List.sort (fun (a1, a2) (b1, b2) -> ))
-- puis algo déroule sans prob
-*)
 
 
 (* let () =
