@@ -58,14 +58,14 @@ Proof.
     intros Ha.
     intros Hb.
     apply Ha.
-Admitted.
+Qed.
 
 Lemma ex2 : A -> B -> B.
 Proof.
     intros Ha.
     intros Hb.
     apply Hb.
-Admitted.
+Qed.
 
 (*
   Pour ex3, on remarquera que le type de la 2eme hypothese introduite est
@@ -81,7 +81,7 @@ Proof.
     intros Hab.
     apply Hab. (* ici c'est une implication, si on a A on a B*)
     apply Ha. (* coq construit la fonction d'iplication en interne, il lui manque 1 argument (A) il le demande*)
-Admitted.
+Qed.
 
 Lemma ex3_V2 : A -> (A -> B) -> B.
 Proof.
@@ -89,7 +89,7 @@ Proof.
     intros Hab.
     Check (Hab Ha).
     apply (Hab Ha).
-Admitted.
+Qed.
 
 Lemma ex4 : (A -> B) -> (B -> C) -> A -> C.
 Proof.
@@ -97,7 +97,7 @@ Proof.
     intros Hbc.
     intros Ha.
     apply (Hbc (Hab Ha)).
-Admitted.
+Qed.
 
 Lemma ex5 : (A -> B) -> (A -> B -> C) -> A -> C.
 Proof.
@@ -105,7 +105,7 @@ Proof.
     intros Habc.
     intros Ha.
     apply (Habc Ha (Hab Ha)).
-Admitted.
+Qed.
 
 (* en présence de plusieurs sous-buts, on peut utiliser des accolades
    pour les délimiter *)
@@ -117,7 +117,7 @@ Proof.
         apply Ha.
     }
     apply (Hab Ha).
-Admitted.
+Qed.
 
 (* ou délimiter les sous-buts avec des items "-" *)
 Lemma ex5'' : (A -> B) -> (A -> B -> C) -> A -> C.
@@ -126,13 +126,13 @@ Proof.
     apply Habc.
     - apply Ha.
     - apply (Hab Ha).
-Admitted.
+Qed.
 
 (* remarque: ces lemmes sont assez simples et la tactique «auto» les
    prouve tous *)
 Lemma ex5''' : (A -> B) -> (A -> B -> C) -> A -> C.
 Proof.
-auto.
+    auto.
 Qed.
 
 (* Considérons la conjonction de 2 propositions : A /\ B.
@@ -143,34 +143,39 @@ Check conj.
 
 Lemma ex6 : A -> B -> A /\ B.
 Proof.
-intros Ha Hb.
-apply conj.
-- apply Ha.
-- apply Hb.
+    intros Ha Hb.
+    apply conj.
+    - apply Ha.
+    - apply Hb.
 Qed.
 
 (* la tactique «split» est un synonyme de «apply conj» *)
 Lemma ex6' : A -> B -> A /\ B.
 Proof.
-intros Ha Hb.
-split. (* 2 sous-buts sont produits: prouver A, prouver B *)
-- apply Ha. (* 1er sous-but: on prouve A *)
-- apply Hb. (* 2eme sous-but: on prouve B *)
+    intros Ha Hb.
+    split. (* 2 sous-buts sont produits: prouver A, prouver B *)
+    - apply Ha. (* 1er sous-but: on prouve A *)
+    - apply Hb. (* 2eme sous-but: on prouve B *)
 Qed.
 
 (* on peut détruire A /\ B après l'avoir introduit, avec "destruct …"
 ou "destruct … as [Ha Hb]" *)
 Lemma ex7 : A /\ B -> A.
-intros Hab. (* Hab est une preuve de A/\B *)
-destruct Hab as [Ha Hb]. (* Ha est une preuve de A, Hb une preuve de B *)
-apply Ha.
+    intros Hab. (* Hab est une preuve de A/\B *)
+    destruct Hab as [Ha Hb]. (* Ha est une preuve de A, Hb une preuve de B *)
+    apply Ha.
 Qed.
 
 (* Prouver le lemme suivant *)
 Lemma ex8 : A /\ B -> B /\ A.
+    intros Hab.
+    destruct Hab as [Ha Hb].
+    apply (conj Hb Ha).
+    (* split.
+    - apply Hb.
+    - apply Ha. *)
 Proof.
-(* ... (à compléter) *)
-Admitted.
+Qed.
 
 (* la disjonction (ou) est similaire : A \/ B.
    À partir de A (resp. B), on a une preuve de A \/ B.
@@ -181,17 +186,17 @@ Check or_intror.
 
 Lemma ex9 : A -> A \/ B.
 Proof.
-intros Ha.
-apply or_introl.
-apply Ha.
+    intros Ha.
+    apply or_introl.
+    apply Ha.
 Qed.
 
 (* la tactique «left» (resp. right) est un synonyme de «apply or_introl» *)
 Lemma ex9' : A -> A \/ B.
 Proof.
-intros Ha.
-left.
-apply Ha.
+    intros Ha.
+    left.
+    apply Ha.
 Qed.
 
 (* de même que A /\ B, on peut détruire A \/ B avec "destruct …" ou
@@ -202,20 +207,25 @@ Qed.
  *)
 Lemma ex10 : A \/ B -> (B -> A) -> A.
 Proof.
-intros Hab.
-destruct Hab as [Ha | Hb]. (* crée 2 sous-buts *)
-- intros _. (* on n'a pas besoin de l'hypothèse introduite, donc on l'ignore avec _ *)
-  apply Ha.
-- intros Himpl.
-  apply Himpl.
-  apply Hb.
+    intros Hab.
+    destruct Hab as [Ha | Hb]. (* crée 2 sous-buts *)
+    - intros _. (* on n'a pas besoin de l'hypothèse introduite, donc on l'ignore avec _ *)
+    apply Ha.
+    - intros Himpl.
+    apply Himpl.
+    apply Hb.
 Qed.
 
 (* Prouver le lemme suivant *)
 Lemma ex11 : A \/ B -> B \/ A.
 Proof.
-(* ... (à compléter) *)
-Admitted.
+    intros Hab.
+    destruct Hab as [Ha | Hb].
+    - right.
+        apply Ha.
+    - left.
+        apply Hb. 
+Qed.
 
 End PremieresTactiques.
 
@@ -230,19 +240,34 @@ Variable R : nat -> nat -> Prop.
 (* Prouver *)
 Lemma ex12 : (forall x, P x) /\ (forall x, Q x) -> (forall x, P x /\ Q x).
 Proof. (* on pourra utiliser «intros x» et apply *)
-(* ... (à compléter) *)
-Admitted.
+    intros H.
+    destruct H as [Hpx Hqx].
+    intros x.
+    apply conj.
+    - apply (Hpx x).
+    - apply (Hqx x).
+    (* apply (conj  (Hqx x)). *)
+Qed.
 
 (* Prouver *)
 Lemma ex13 : (forall x, P x) \/ (forall x, Q x) -> (forall x, P x \/ Q x).
 Proof.
-(* ... (à compléter) *)
-Admitted.
+    intros H.
+    destruct H as [Hpx | Hqx].
+    - intros x.
+        left.
+        apply (Hpx x).
+    - intros x.
+        right.
+        apply (Hqx x).
+Qed.
 
 (* Essayez de prouver (si c'est possible !) *)
 Lemma ex14 : (forall x, P x \/ Q x) -> (forall x, P x) \/ (forall x, Q x).
 Proof.
-(* ... (à compléter) *)
+    (* preuve pas possible *)
+    (* faux en logique *)
+    (* on pourrait donner un contrexemple *)
 Abort.
 
 (* (H : exists x, …) se détruit avec "destruct H as [x Hx]" *)
@@ -251,18 +276,21 @@ Abort.
   satisfait P *)
 Lemma ex15 : (exists x, forall y, R x y) -> (forall y, exists x, R x y).
 Proof.
-intros Hex.
-destruct Hex as [x Hx].
-intros y.
-exists x.
-apply Hx.
+    intros Hex.
+    destruct Hex as [x Hx].
+    intros y.
+    exists x.
+    apply (Hx y).
 Qed.
 
 (* Prouver *)
 Lemma ex16 : (exists x, P x -> Q x) -> (forall x, P x) -> exists x, Q x.
 Proof.
-(* ... (à compléter) *)
-Admitted.
+    intros H Hp.
+    destruct H as [x Hpq].
+    exists x.
+    apply (Hpq (Hp x)).
+Qed.
 
 End CalculPredicats.
 
@@ -286,7 +314,7 @@ Qed.
 Lemma and_commutatif : forall a b, a && b = b && a.
 Proof.
 (* ... (à compléter) *)
-Admitted.
+Qed.
 
 (* on considère l'addition sur les entiers définie dans la librairie Coq par :
 
@@ -345,19 +373,19 @@ Qed.
 Lemma plus1n : forall n, plus 1 n = S n.
 Proof.
 (* ... (à compléter) *)
-Admitted.
+Qed.
 
 (* Prouver *)
 Lemma plusSn : forall n m, S (plus n m) = plus n (S m).
 Proof.
 (* ... (à compléter) *)
-Admitted.
+Qed.
 
 (* Prouver (un peu plus dur, ne pas hésiter à utiliser les lemmes précédents)  *)
 Lemma plus_commutatif : forall n m, plus n m = plus m n.
 Proof.
 (* ... (à compléter) *)
-Admitted.
+Qed.
 
 (* on peut aussi utiliser les opérateurs +,* qui ne sont que des notations *)
 Lemma plus_commutatif_bis : forall n m, n + m = m + n.
@@ -483,7 +511,7 @@ Definition app (l l' : L.list_nat) : L.list_nat :=
 Lemma app_length : forall l l', L.length (app l l') = L.length l + L.length l'.
 Proof.
 (* ... (à compléter) *)
-Admitted.
+Qed.
 
 End ListNatExt.
 
@@ -502,4 +530,4 @@ Module L' := ListNatExt ListNatImpl.
 Lemma app3 : forall l l', L'.length (L'.app l l') = L'.length (L'.app l' l).
 Proof.
 (* ... (à compléter) *)
-Admitted.
+Qed.
