@@ -304,16 +304,23 @@ Open Scope bool_scope.
 (énumération de tous les cas) : *)
 Lemma negneg : forall b, negb (negb b) = b.
 Proof.
-intros b.
-destruct b. (* génère un but pour chaque valeur possible de b *)
-- easy. (* un peu plus puissant que "reflexivity" *)
-- easy.
+    intros b.
+    destruct b. (* génère un but pour chaque valeur possible de b *)
+    - easy. (* un peu plus puissant que "reflexivity" *)
+    - easy.
 Qed.
 
 (* Prouver *)
 Lemma and_commutatif : forall a b, a && b = b && a.
 Proof.
-(* ... (à compléter) *)
+    intros a b.
+    destruct a.
+    - destruct b. 
+        reflexivity.
+        reflexivity.
+    - destruct b.
+        reflexivity.
+        reflexivity.
 Qed.
 
 (* on considère l'addition sur les entiers définie dans la librairie Coq par :
@@ -333,58 +340,66 @@ Par contre (plus n 0) ne se réduit pas.
 (* la tactique «simpl» permet de simplifier des termes *)
 Lemma plus0n : forall n, plus 0 n = n.
 Proof.
-intros n.
-simpl.
-reflexivity.
+    intros n.
+    simpl.
+    reflexivity.
 Qed.
 
 (* mais on peut aussi écrire directement *)
 Lemma plus0n' : forall n, plus 0 n = n.
 Proof.
-reflexivity. (* puisque les 2 termes sont identiques après réduction *)
+    reflexivity. (* puisque les 2 termes sont identiques après réduction *)
 Qed.
 
 (* ça ne marche pas dans l'autre sens *)
 Lemma plusn0 : forall n, plus n 0 = n.
-Proof.
-intros n.
-simpl. (* ne fait rien *)
-(* en effet, plus est défini récursivement sur son premier argument,
-ici il s'agit de n qui est un entier naturel quelconque (on ne sait
-pas s'il est de la forme O ou S n') donc on ne peut rien calculer *)
+    Proof.
+    intros n.
+    simpl. (* ne fait rien *)
+    (* en effet, plus est défini récursivement sur son premier argument,
+    ici il s'agit de n qui est un entier naturel quelconque (on ne sait
+    pas s'il est de la forme O ou S n') donc on ne peut rien calculer *)
 Abort.
 
 (* On va donc procéder par récurrence sur n on utilise pour cela la
    tactique induction *)
 Lemma plusn0 : forall n, plus n 0 = n.
 Proof.
-(* pas besoin de faire "intros n" avant ! *)
-induction n.
-- (* simpl. inutile *) reflexivity. (* cas de base *)
-- simpl. (* utile pour faire apparaitre le terme de gauche de l'égalité *)
-  rewrite IHn. (* hypothèse de récurrence *)
-  (* on peut utiliser rewrite avec n'importe quelle égalité *)
-  (* si besoin on pourrait utiliser l'égalité de droite à gauche en faisant
-     rewrite <-IHn *)
-  easy.
+    (* pas besoin de faire "intros n" avant ! *)
+    induction n.
+    - (* simpl. inutile *) reflexivity. (* cas de base *)
+    - simpl. (* utile pour faire apparaitre le terme de gauche de l'égalité *)
+    rewrite IHn. (* hypothèse de récurrence *)
+    (* on peut utiliser rewrite avec n'importe quelle égalité *)
+    (* si besoin on pourrait utiliser l'égalité de droite à gauche en faisant
+        rewrite <-IHn *)
+    reflexivity. (* easy. *)
 Qed.
 
 (* Prouver *)
 Lemma plus1n : forall n, plus 1 n = S n.
 Proof.
-(* ... (à compléter) *)
+    induction n.
+    - simpl. reflexivity.
+    - simpl. reflexivity.
 Qed.
 
 (* Prouver *)
 Lemma plusSn : forall n m, S (plus n m) = plus n (S m).
 Proof.
-(* ... (à compléter) *)
+    induction n.
+    induction m.
+    - simpl. reflexivity.
+    - simpl. reflexivity.
+    - intros m. simpl. rewrite IHn. reflexivity.
 Qed.
 
 (* Prouver (un peu plus dur, ne pas hésiter à utiliser les lemmes précédents)  *)
 Lemma plus_commutatif : forall n m, plus n m = plus m n.
 Proof.
-(* ... (à compléter) *)
+    induction n.    
+    - intros m. simpl. rewrite plusn0. reflexivity.
+    - intros m. simpl. rewrite IHn. rewrite plusSn. reflexivity.
 Qed.
 
 (* on peut aussi utiliser les opérateurs +,* qui ne sont que des notations *)
