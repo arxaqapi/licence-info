@@ -63,18 +63,17 @@ let nb_vois_non_coloriee coloration_partielle s_adjacents =
     | s :: tl -> if not (List.mem s sommets_colorer) then 1 + aux tl else aux tl
   in aux s_adjacents
 
-let rec extract_s_dsat_max (l_sommets : 'a list) g coloration_partielle = 
+let rec dsat_max_ordered_list (l_sommets : 'a list) g coloration_partielle = 
     let dsat_ordered_list =
       List.sort 
       (fun (dsat_a, s_a) (dsat_b, s_b) -> 
         if dsat_a = dsat_b 
-        then - compare (nb_vois_non_coloriee coloration_partielle (sommets_adjacents g s_a)) (nb_vois_non_coloriee coloration_partielle (sommets_adjacents g s_b)) 
+        then 
+          let test = - compare (nb_vois_non_coloriee coloration_partielle (sommets_adjacents g s_a)) (nb_vois_non_coloriee coloration_partielle (sommets_adjacents g s_b)) in
+          if test = 0 then compare s_a s_b else test
         else - compare dsat_a dsat_b) 
       (List.map (fun s -> (dsat s g coloration_partielle), s) l_sommets) in 
       let _, s_list = List.split dsat_ordered_list in s_list
-    (* match dsat_ordered_list with 
-    | [] -> []
-    | h :: tl -> [h] *)
 
   (* === UTIL === *)
 
@@ -109,7 +108,7 @@ let gloutonDeg g =
 
 let gloutonDSat g =
   let sommets = ordre_degre_decroissant g in
-  let rec glout l_sommets colo_partielle = match extract_s_dsat_max l_sommets g colo_partielle with
+  let rec glout l_sommets colo_partielle = match dsat_max_ordered_list l_sommets g colo_partielle with
     | [] -> colo_partielle
     | s :: tl ->
       let v = couleurs_utilisees colo_partielle (sommets_adjacents g s) in
