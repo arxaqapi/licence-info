@@ -48,8 +48,35 @@ let couleurs_utilisees coloration_partielle s_adjacents =
     else aux tl
   in List.sort_uniq compare (aux coloration_partielle)
 
+let ordre_degre_decroissant g = 
+  let s_ponderees = (List.map (fun sommet -> List.length (sommets_adjacents g sommet), sommet) (liste_sommets g)) in
+  let _, sommets = List.split (List.sort (fun (d_a, _) (d_b, _) -> - compare d_a d_b) s_ponderees) in sommets
 
-(* === UTIL === *)
+let dsat s g coloration_partielle = 
+  List.length (couleurs_utilisees coloration_partielle (sommets_adjacents g s))
+
+let nb_vois_non_coloriee coloration_partielle s_adjacents = 
+  let sommets_colorer, _ = List.split coloration_partielle in
+  let rec aux s_adjacents =
+    match s_adjacents with
+    | [] -> 0
+    | s :: tl -> if not (List.mem s sommets_colorer) then 1 + aux tl else aux tl
+  in aux s_adjacents
+
+let rec extract_s_dsat_max (l_sommets : 'a list) g coloration_partielle = 
+    let dsat_ordered_list =
+      List.sort 
+      (fun (dsat_a, s_a) (dsat_b, s_b) -> 
+        if dsat_a = dsat_b 
+        then - compare (nb_vois_non_coloriee coloration_partielle (sommets_adjacents g s_a)) (nb_vois_non_coloriee coloration_partielle (sommets_adjacents g s_b)) 
+        else - compare dsat_a dsat_b) 
+      (List.map (fun s -> (dsat s g coloration_partielle), s) l_sommets) in 
+      let _, s_list = List.split dsat_ordered_list in s_list
+    (* match dsat_ordered_list with 
+    | [] -> []
+    | h :: tl -> [h] *)
+
+  (* === UTIL === *)
 
 (* Algo glouton sans heuristique, ordre de coloriage des sommets indifférents *)
 let gloutonSansH g = 
@@ -67,8 +94,7 @@ let gloutonSansH g =
 
 (* Algo glouton avec heuristique statique, coloration par ordre de degré décroissant puis alpha *)
 let gloutonDeg g = 
-  let s_ponderees = (List.map (fun sommet -> List.length (sommets_adjacents g sommet), sommet) (liste_sommets g)) in
-  let _, sommets = List.split (List.sort (fun (d_a, _) (d_b, _) -> - compare d_a d_b) s_ponderees) in
+  let sommets = ordre_degre_decroissant g in
     let rec glout l_sommets colo_partielle = match l_sommets with
     | [] -> colo_partielle
     | s :: tl ->
@@ -81,8 +107,15 @@ let gloutonDeg g =
   in coloration_partielle, cmax, sommets
 
 
-(* let () =
-  if sont_adjacents g1 "SA" "V" 
-  then print_endline "Found adjacent nodes"
-  else print_endline "Did not found adjacent nodes" *)
-(* let () = gloutonSansH g1 *)
+let gloutonDSat g =
+  let sommets = ordre_degre_decroissant g in
+  let rec glout l_sommets colo_partielle = match extract_s_dsat_max l_sommets g colo_partielle with
+    | [] -> colo_partielle
+    | s :: tl ->
+      let v = couleurs_utilisees colo_partielle (sommets_adjacents g s) in
+      let c = next_color v in 
+      glout tl ((s, c) :: colo_partielle)
+  in 
+  let coloration_partielle = glout sommets [] in
+  let cmax = List.fold_left (fun b e -> max b e) 0 (snd (List.split coloration_partielle)) 
+  in coloration_partielle, cmax, List.rev (fst (List.split coloration_partielle))
