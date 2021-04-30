@@ -179,8 +179,11 @@ Module EXP(ID : tIDENT) <: tEXP ID.
       reflexivity.
     - simpl in *.
       rewrite Bool.andb_true_iff in H.
-      admit.
-  Admitted.
+      destruct H as [H1 H2].
+      rewrite (IHe1 env1 env2 H1).
+      rewrite (IHe2 env1 env2 H2).
+      reflexivity.
+  Qed.
 
   (* Définir la fonction mkAdd prenant en argument 2 expressions et
      renvoyant l'expression somme sauf si l'un des argument est la
@@ -330,9 +333,14 @@ Module MergeCsts (ID : tIDENT).
       + simpl.  reflexivity.
     - unfold tr. unfold normalize.
       rewrite eval_mkAadd.
-      (* simpl (eval env (Const _)). *)
-      rewrite (eval_get_rem env ).
-  Admitted. (* FIXME *)
+      simpl.
+      rewrite eval_mkAadd.
+      replace (getConst e1 + getConst e2 + 
+        (eval env (remConst e1) + eval env (remConst e2))) 
+        with ((getConst e1 + eval env (remConst e1)) + (getConst e2 + eval env (remConst e2)))  by lia.
+        rewrite eval_get_rem, eval_get_rem.
+        reflexivity.
+  Qed.
 
 End MergeCsts.
 
